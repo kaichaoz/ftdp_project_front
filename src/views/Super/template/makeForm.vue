@@ -31,7 +31,7 @@
         <div v-if="templateList[i] =='1'">
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="showInfoShow()">
-            <infoShow class="publicAll infoShow"></infoShow>
+            <infoShow :isTrueList="isTrueInfoShowList" class="publicAll infoShow"></infoShow>
           </div>
         </div>
 
@@ -51,7 +51,11 @@
     ></siteUser>
 
     <!-- 修改infoShow页面底部弹框 -->
-    <siteInfoShow></siteInfoShow>
+    <siteInfoShow
+      :siteInfoShowShowP="siteInfoShowShow"
+      :isTrueListP="isTrueInfoShowList"
+      @listenSiteInfoShowToMakeForm="listenSiteInfoShow"
+    ></siteInfoShow>
 
     <!-- 左滑弹出框 -->
     <van-popup v-model="showPopup" position="left" :style="{ height: '100%' }">
@@ -190,13 +194,21 @@ export default {
       this.siteInfoShowShow = true; // 显示infoShow底部弹框
     },
 
+    listenSiteInfoShow(siteInfoShowShow, istrueUserList) {
+      this.siteInfoShowShow = siteInfoShowShow; // 关闭底部弹框
+      this.isTrueInfoShowList = []; // 清空userSite需要显示的数组内容
+      for (let index = 0; index < istrueUserList.length; index++) {
+        this.isTrueInfoShowList.push(istrueUserList[index].isTrue);
+      }
+    },
+
     // =================页面加载和抬头按钮部分=====================
 
     // 初始化内容
     start() {
       this.showPopup = false; // 左滑不显示
       this.siteUserShow = false; // userSite底部弹框不显示
-
+      this.siteInfoShowShow = false; // infoShow底部弹框不显示
       this.templateList = []; // 初始化页面有谁：012:表示三个从上排列下去
       this.isTrueUserList = [true, true, true, true, true, true, true]; //初始化加载：控制userSite和user中user7个显示数据应从库里获取
     },

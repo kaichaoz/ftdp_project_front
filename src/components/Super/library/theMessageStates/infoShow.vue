@@ -9,7 +9,7 @@
 <template>
   <div>
     <div class="body">
-      <div class="info1"  v-for="(item, index) in infoTitle">
+      <div class="info1" v-for="(item, index) in infoTitle">
         <div class="showTitle1">{{infoTitle[index]}}</div>
         <div v-if="infoShow" class="showInfo1">{{infoShow[index]}}</div>
       </div>
@@ -21,7 +21,7 @@
   width: 278px;
   height: 98px;
   /* background-color: red; */
-  border: 1px solid ;
+  border: 1px solid;
 }
 
 div .info1 {
@@ -59,12 +59,19 @@ div .info1 {
 </style>
 <script>
 export default {
+  props: {
+    // 父页面makeForm传递：user在页面要显示的内容数组
+    isTrueList: {
+      type: Array,
+      default: () => [true, true, true, true, true, true, true]
+    }
+  },
   data() {
     return {
       show: false,
       value: "",
       infoTitle: ["某某得分", "某某信息", "评分"],
-      infoShow:["122","122","333"]
+      infoShow: ["122", "122", "333"]
     };
   },
   mounted() {},
@@ -74,6 +81,13 @@ export default {
     //   if (this.searchMessage === "") {
     //   }
     // }
+
+    start() {
+      this.nameIsTrue = []; // 清空当前是否显示数组数据
+      for (let i = 0; i < this.isTrueList.length; i++) {
+        this.nameIsTrue[i] = this.isTrueList[i];
+      }
+    }
   }
 };
 </script>

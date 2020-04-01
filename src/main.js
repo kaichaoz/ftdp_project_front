@@ -14,13 +14,16 @@ import 'vant/lib/index.css'
 
 // 引入自定义公共样式
 import './css/index.css'
- 
+
 import { SwipeCell } from 'vant'; // 左右滑动弹出编辑、删除等
 import { Field } from "vant";
 import touch from 'vue-directive-touch';  // 滑动：长按，左右划等
 import { Overlay } from 'vant';  // 遮罩层
 import { ActionSheet } from 'vant';  // 上拉菜单
+import { DropdownMenu, DropdownItem } from 'vant';  // 下拉菜单
 
+Vue.use(DropdownMenu);
+Vue.use(DropdownItem);
 Vue.use(ActionSheet);
 Vue.use(Overlay);
 Vue.use(touch);

@@ -12,7 +12,7 @@
     <van-action-sheet v-model="siteUserShow" title="图片信息">
       <!-- <div class="content"></div> -->
       <div class="body">
-        <van-field v-model="userName" label="组件名称" placeholder="请输入名称" />
+        <!-- <van-field v-model="userName" label="组件名称" placeholder="请输入名称" /> -->
 
         <div class="isTrue" v-for="(item,i) in isTrueList">
           <van-cell center :title="isTrueList[i].name">

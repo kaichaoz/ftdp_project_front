@@ -139,7 +139,7 @@ export default {
 
       // 所属分组
       groupOption: [
-        { text: "公共项目", value: 0 },
+        { text: "公共项目", value: 0},
         { text: "男生项目", value: 1 },
         { text: "女生项目", value: 2 }
       ],

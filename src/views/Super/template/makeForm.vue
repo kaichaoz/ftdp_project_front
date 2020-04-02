@@ -22,19 +22,23 @@
     <!-- 页面框内容 -->
     <div id="addTemplate" class="allTemplate" v-touch:right="eventFun">
       <div v-for="(item ,i) in templateList ">
+        <!-- user组件 -->
         <div v-if="templateList[i] =='0'">
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="showUser()">
             <user :isTrueList="isTrueUserList" class="publicAll user"></user>
           </div>
         </div>
+
+        <!-- infoShow组件 -->
         <div v-if="templateList[i] =='1'">
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="showInfoShow()">
-            <infoShow :isTrueList="isTrueInfoShowList" class="publicAll infoShow"></infoShow>
+            <infoShow :infoShowListP="isTrueInfoShowList" class="publicAll infoShow"></infoShow>
           </div>
         </div>
 
+        <!-- numberIndex组件 -->
         <div v-if="templateList[i] =='2'">
           <img @click="spliceList(i)" :src="cross" alt />
 
@@ -53,7 +57,7 @@
     <!-- 修改infoShow页面底部弹框 -->
     <siteInfoShow
       :siteInfoShowShowP="siteInfoShowShow"
-      :isTrueListP="isTrueInfoShowList"
+      :siteInfoShowListP="isTrueInfoShowList"
       @listenSiteInfoShowToMakeForm="listenSiteInfoShow"
     ></siteInfoShow>
 
@@ -161,11 +165,11 @@ export default {
 
       // user:
       siteUserShow: false, // 显示userSite设置底部弹框
-      isTrueUserList: [], // userSite需要显示的数组内容
+      isTrueUserList: [], // userSite和user需要显示的数组内容
 
       // infoShow:
       siteInfoShowShow: false, // 显示userSite设置底部弹框
-      isTrueInfoShowList: [] // userSite需要显示的数组内容
+      isTrueInfoShowList: [] // siteInfoShow和infoShow需要显示的数组内容
     };
   },
   mounted() {
@@ -196,10 +200,10 @@ export default {
 
     listenSiteInfoShow(siteInfoShowShow, istrueUserList) {
       this.siteInfoShowShow = siteInfoShowShow; // 关闭底部弹框
-      this.isTrueInfoShowList = []; // 清空userSite需要显示的数组内容
-      for (let index = 0; index < istrueUserList.length; index++) {
-        this.isTrueInfoShowList.push(istrueUserList[index].isTrue);
-      }
+      // this.isTrueInfoShowList = []; // 清空userSite需要显示的数组内容
+      // for (let index = 0; index < istrueUserList.length; index++) {
+      //   this.isTrueInfoShowList.push(istrueUserList[index].isTrue);
+      // }
     },
 
     // =================页面加载和抬头按钮部分=====================
@@ -211,6 +215,12 @@ export default {
       this.siteInfoShowShow = false; // infoShow底部弹框不显示
       this.templateList = []; // 初始化页面有谁：012:表示三个从上排列下去
       this.isTrueUserList = [true, true, true, true, true, true, true]; //初始化加载：控制userSite和user中user7个显示数据应从库里获取
+
+      this.isTrueInfoShowList = [
+        { isTrue: true, infoTitle: "某某得分", infoNum: "110" },
+        { isTrue: true, infoTitle: "某某信息", infoNum: "119" },
+        { isTrue: true, infoTitle: "评分", infoNum: "120" }
+      ];
     },
     // 返回按钮
     returnPage() {

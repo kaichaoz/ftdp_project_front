@@ -10,27 +10,16 @@
 <template>
   <div>
     <van-action-sheet v-model="siteInfoShow" title="图片信息">
-      <!-- <div class="content"></div> -->
-      <div class="body">
-        <!-- <van-field v-model="userName" label="组件名称" placeholder="请输入名称" /> -->
-
+      <div class="siteInfoShowbody">
         <div class="isTrue" v-for="(item,i) in isTrueList">
-          <!-- <van-cell center :title="isTrueList[i].name">
-            <template #right-icon>
-              <van-switch v-model="isTrueList[i].isTrue" size="24" />
-            </template>
-          </van-cell>-->
-
           <div class="dropDownAndTrueDiv">
-            <!-- <dropDownBox></dropDownBox> -->
-
-            <select class="dropDownDiv">
-              <option style="width:auto" class="optionList" value="volvo">Volvo</option>
-              <option value="saab">Saab</option>
-              <option value="opel">Opel</option>
-              <option value="audi">Audi</option>
-            </select>
-
+            <dropDownBox
+              class="drop"
+              :id="'item' + i"
+              :idP="i"
+              :dropDownShowP="isTrueList[i].infoTitle"
+              :dropDownListP="isTrueList"
+            ></dropDownBox>
             <div class="trueDiv">
               <van-switch v-model="isTrueList[i].isTrue" size="24" />
             </div>
@@ -41,14 +30,6 @@
   </div>
 </template>
 <style scoped>
->>> .option {
-  width: 50px;
-  height: 30px;
-}
-.optionList {
-  width: 50px;
-  height: 30px;
-}
 .dropDownAndTrueDiv {
   margin: 20px;
 }
@@ -68,12 +49,14 @@
 
   overflow: hidden;
 }
+
+.drop {
+  display: inline-block;
+}
 .trueDiv {
   float: right;
   margin-top: 6px;
   margin-right: 30px;
-  /* width: 30px; */
-  /* height: 30px; */
 }
 .managementName {
   border: 1px solid #e0e9ea;
@@ -81,7 +64,7 @@
   margin-top: 40px;
   border-radius: 5px;
 }
-.body {
+.siteInfoShowbody {
   height: 200px;
 }
 .isTrue {
@@ -107,29 +90,25 @@ export default {
   },
   props: {
     siteInfoShowShowP: { default: false }, // 接收父页面makeForm传递过来: 显示底部弹框
-    isTrueListP: { type: Array, default: () => {} } // 接收父页面makeForm传递过来: 显示底部数据
+
+    // 接收父页面makeForm传递过来: 显示底部数据
+    siteInfoShowListP: {
+      type: Array,
+      default: () => [
+        { isTrue: true, infoTitle: "某某得分", infoNum: "110" },
+        { isTrue: true, infoTitle: "某某信息", infoNum: "119" },
+        { isTrue: true, infoTitle: "评分", infoNum: "120" }
+      ]
+    }
   },
   data() {
     return {
-      optionList: ["Volvo", "Saab"],
-
-      //  下拉框
-      value1: 0,
-      option1: [
-        { text: "全部商品", value: 0 },
-        { text: "新款商品", value: 1 },
-        { text: "活动商品", value: 2 }
-      ],
-
-      siteInfoShow: false, //底部弹框是否显示
-      userName: "", // 输入名字
+      dropDownShow: "",
+      dropDownList: ["herry", "白爱民", "老白"], // 当前塔头显示的内容数组
+      siteInfoShow: false, //底部弹框是否显示,
 
       // 底部弹框显示内容和是否显示
-      isTrueList: [
-        { name: "输入成绩", isTrue: true },
-        { name: "实际成绩", isTrue: true },
-        { name: "等级", isTrue: true }
-      ]
+      isTrueList: []
     };
   },
   watch: {
@@ -141,10 +120,9 @@ export default {
     },
 
     // 监听父页面传来数据：底部弹框数组内容
-    isTrueListP(newVal) {
-      for (let i = 0; i < newVal.length; i++) {
-        this.isTrueList[i].isTrue = newVal[i];
-      }
+    siteInfoShowListP(newVal) {
+      this.isTrueList = [];
+      this.isTrueList = newVal;
     },
 
     // isTrue改变值后：返回给父页面数据（打开和关闭都传值）
@@ -152,7 +130,14 @@ export default {
       this.$emit("listenSiteInfoShowToMakeForm", newVal, this.isTrueList);
     }
   },
-  mounted() {},
-  methods: {}
+  mounted() {
+    this.start();
+  },
+  methods: {
+    start() {
+      this.isTrueList = [];
+      this.isTrueList = this.siteInfoShowListP;
+    }
+  }
 };
 </script>

@@ -9,9 +9,9 @@
 <template>
   <div>
     <div class="body">
-      <div class="info1" v-for="(item, index) in infoTitle">
-        <div class="showTitle1">{{infoTitle[index]}}</div>
-        <div v-if="infoShow" class="showInfo1">{{infoShow[index]}}</div>
+      <div class="info1" v-for="(item, index) in isTrueList" v-model="isTrueList[index].isTrue">
+        <div class="showTitle1" v-text="isTrueList[index].infoTitle">{{isTrueList[index].infoTitle}}</div>
+        <div class="showInfo1" v-text="isTrueList[index].infoNum"></div>
       </div>
     </div>
   </div>
@@ -61,32 +61,35 @@ div .info1 {
 export default {
   props: {
     // 父页面makeForm传递：user在页面要显示的内容数组
-    isTrueList: {
+    infoShowListP: {
       type: Array,
-      default: () => [true, true, true, true, true, true, true]
+      default: () => [
+        { isTrue: true, infoTitle: "某某得分", infoNum: "110" },
+        { isTrue: true, infoTitle: "某某信息", infoNum: "119" },
+        { isTrue: true, infoTitle: "评分", infoNum: "120" }
+      ]
     }
   },
+
   data() {
     return {
-      show: false,
-      value: "",
-      infoTitle: ["某某得分", "某某信息", "评分"],
-      infoShow: ["122", "122", "333"]
+      isTrueList: []
     };
   },
-  mounted() {},
+  watch: {
+    infoShowListP(newVal) {
+      this.isTrueList = [];
+      this.isTrueList = newVal;
+      console.log(newVal);
+    }
+  },
+  mounted() {
+    this.start();
+  },
   methods: {
-    // newitems() {
-    //   var searchArr = [];
-    //   if (this.searchMessage === "") {
-    //   }
-    // }
-
     start() {
-      this.nameIsTrue = []; // 清空当前是否显示数组数据
-      for (let i = 0; i < this.isTrueList.length; i++) {
-        this.nameIsTrue[i] = this.isTrueList[i];
-      }
+      this.isTrueList = [];
+      this.isTrueList = this.infoShowListP;
     }
   }
 };

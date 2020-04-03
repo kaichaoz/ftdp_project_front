@@ -11,64 +11,24 @@
   <div>
     <van-action-sheet v-model="siteInfoShow" title="图片信息">
       <div class="siteInfoShowbody">
-        <div class="isTrue" v-for="(item,i) in isTrueList">
-          <div class="dropDownAndTrueDiv">
-            <dropDownBox
-              class="drop"
-              :id="'item' + i"
-              :idP="i"
-              :dropDownShowP="isTrueList[i].infoTitle"
-              :dropDownListP="isTrueList"
-            ></dropDownBox>
-            <div class="trueDiv">
-              <van-switch v-model="isTrueList[i].isTrue" size="24" />
-            </div>
-          </div>
-        </div>
+        <dropDownBox :siteInfoShowListP="toDropDownBoxList" @litenDropDownBox="litenDropDownBox"></dropDownBox>
       </div>
     </van-action-sheet>
   </div>
 </template>
 <style scoped>
-.dropDownAndTrueDiv {
-  margin: 20px;
-}
 .dropDownDiv {
   margin-left: -50px;
   width: 150px;
   height: 30px;
   text-align: center;
   border-radius: 5px;
-
-  /* // 去除样式 */
-  /* appearance: none;   */
-  /* Firefox */
-  /* -moz-appearance: none; */
-  /* Safari 和 Chrome */
-  /* -webkit-appearance: none;  */
-
   overflow: hidden;
 }
 
-.drop {
-  display: inline-block;
-}
-.trueDiv {
-  float: right;
-  margin-top: 6px;
-  margin-right: 30px;
-}
-.managementName {
-  border: 1px solid #e0e9ea;
-  overflow: hidden;
-  margin-top: 40px;
-  border-radius: 5px;
-}
 .siteInfoShowbody {
   height: 200px;
-}
-.isTrue {
-  margin-top: 2px;
+  margin: 20px;
 }
 
 /* van组件所有居左 */
@@ -90,25 +50,37 @@ export default {
   },
   props: {
     siteInfoShowShowP: { default: false }, // 接收父页面makeForm传递过来: 显示底部弹框
-
     // 接收父页面makeForm传递过来: 显示底部数据
     siteInfoShowListP: {
       type: Array,
       default: () => [
-        { isTrue: true, infoTitle: "某某得分", infoNum: "110" },
-        { isTrue: true, infoTitle: "某某信息", infoNum: "119" },
-        { isTrue: true, infoTitle: "评分", infoNum: "120" }
+        {
+          isTrue: true,
+          infoTitle: "某某得分",
+          infoNum: "110",
+          infoList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          isTrue: true,
+          infoTitle: "某某信息",
+          infoNum: "119",
+          infoList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          isTrue: true,
+          infoTitle: "评分",
+          infoNum: "120",
+          infoList: ["某某得分", "某某信息", "评分"]
+        }
       ]
     }
   },
   data() {
     return {
-      dropDownShow: "",
-      dropDownList: ["herry", "白爱民", "老白"], // 当前塔头显示的内容数组
       siteInfoShow: false, //底部弹框是否显示,
-
       // 底部弹框显示内容和是否显示
-      isTrueList: []
+
+      toDropDownBoxList: [] // 与dropDownBox同步的数据
     };
   },
   watch: {
@@ -121,22 +93,33 @@ export default {
 
     // 监听父页面传来数据：底部弹框数组内容
     siteInfoShowListP(newVal) {
-      this.isTrueList = [];
-      this.isTrueList = newVal;
+      this.toDropDownBoxList = [];
+      this.toDropDownBoxList = newVal;
     },
 
-    // isTrue改变值后：返回给父页面数据（打开和关闭都传值）
+    // 父组件makeForm中isTrue改变值后：返回给父页面makeForm数据（打开和关闭都传值）
     siteInfoShow(newVal) {
-      this.$emit("listenSiteInfoShowToMakeForm", newVal, this.isTrueList);
+      this.$emit(
+        "listenSiteInfoShowToMakeForm",
+        newVal,
+        this.toDropDownBoxList
+      );
     }
   },
   mounted() {
     this.start();
   },
   methods: {
+    // 初始化
     start() {
-      this.isTrueList = [];
-      this.isTrueList = this.siteInfoShowListP;
+      this.toDropDownBoxList = [];
+      this.toDropDownBoxList = this.siteInfoShowListP;
+    },
+
+    // 接收子组件dropDownBox返回的数据
+    litenDropDownBox(newVal) {
+      this.toDropDownBoxList = [];
+      this.toDropDownBoxList = newVal;
     }
   }
 };

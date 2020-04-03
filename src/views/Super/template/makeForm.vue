@@ -198,12 +198,11 @@ export default {
       this.siteInfoShowShow = true; // 显示infoShow底部弹框
     },
 
+    // 接收siteInfoShow改变后的值
     listenSiteInfoShow(siteInfoShowShow, istrueUserList) {
       this.siteInfoShowShow = siteInfoShowShow; // 关闭底部弹框
-      // this.isTrueInfoShowList = []; // 清空userSite需要显示的数组内容
-      // for (let index = 0; index < istrueUserList.length; index++) {
-      //   this.isTrueInfoShowList.push(istrueUserList[index].isTrue);
-      // }
+      this.isTrueInfoShowList = []; // 清空userSite需要显示的数组内容
+      this.isTrueInfoShowList = istrueUserList; //将接收修改后的值赋值
     },
 
     // =================页面加载和抬头按钮部分=====================
@@ -217,9 +216,24 @@ export default {
       this.isTrueUserList = [true, true, true, true, true, true, true]; //初始化加载：控制userSite和user中user7个显示数据应从库里获取
 
       this.isTrueInfoShowList = [
-        { isTrue: true, infoTitle: "某某得分", infoNum: "110" },
-        { isTrue: true, infoTitle: "某某信息", infoNum: "119" },
-        { isTrue: true, infoTitle: "评分", infoNum: "120" }
+        {
+          isTrue: false,
+          infoTitle: "某某得分",
+          infoNum: "110",
+          infoList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          isTrue: true,
+          infoTitle: "某某信息",
+          infoNum: "119",
+          infoList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          isTrue: true,
+          infoTitle: "评分",
+          infoNum: "120",
+          infoList: ["某某得分", "某某信息", "评分"]
+        }
       ];
     },
     // 返回按钮

@@ -9,9 +9,9 @@
 <template>
   <div>
     <div class="body">
-      <div class="info1" v-for="(item, index) in isTrueList" v-model="isTrueList[index].isTrue">
-        <div class="showTitle1" v-text="isTrueList[index].infoTitle">{{isTrueList[index].infoTitle}}</div>
-        <div class="showInfo1" v-text="isTrueList[index].infoNum"></div>
+      <div :id="'info' + index" class="info" v-for="(item, index) in isTrueList">
+        <div class="showTitle" v-text="isTrueList[index].infoTitle"></div>
+        <div class="showInfo" v-text="isTrueList[index].infoNum"></div>
       </div>
     </div>
   </div>
@@ -24,7 +24,7 @@
   border: 1px solid;
 }
 
-div .info1 {
+div .info {
   overflow: hidden;
   width: 68px;
   height: 78px;
@@ -36,7 +36,7 @@ div .info1 {
   font-size: 14px;
   color: black;
 }
-.info1 .showTitle1 {
+.info .showTitle {
   width: 58px;
   height: 28px;
   /* background-color: black; */
@@ -46,7 +46,7 @@ div .info1 {
   left: 4px;
 }
 
-.info1 .showInfo1 {
+.info .showInfo {
   width: 58px;
   height: 28px;
   /* border: 1px solid white; */
@@ -77,19 +77,38 @@ export default {
     };
   },
   watch: {
+    // 父页面数据更改后冲洗接收数组数据
     infoShowListP(newVal) {
       this.isTrueList = [];
       this.isTrueList = newVal;
-      console.log(newVal);
+      // this.swapPosition();
     }
   },
   mounted() {
     this.start();
   },
+  updated() {
+    // this.swapPosition();
+  },
   methods: {
     start() {
       this.isTrueList = [];
       this.isTrueList = this.infoShowListP;
+      // this.swapPosition();
+    },
+
+    // 当前值如果和其他显示的框的值相同，则返回其他相同值的下标,否则返回-1
+    swapPosition() {
+      for (let index = 0; index < this.isTrueList.length; index++) {
+        var a = document.getElementById("info" + index);
+
+        console.log(a);
+        console.log(this.isTrueList);
+        if (this.isTrueList[index].isTrue == false) {
+          console.log(this.isTrueList[index].isTrue);
+          a.style.display = "none";
+        }
+      }
     }
   }
 };

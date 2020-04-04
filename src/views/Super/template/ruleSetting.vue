@@ -8,14 +8,30 @@
 *@说明：-->
 <template>
   <div>
+    <!-- 抬头 -->
     <div class="title commonColor">
       <img @click="intoSetting()" class="iocName" :src="plus" alt />
       <div class="button" @click="intoModel()">编辑模板</div>
       <div class="titleName">50米规则</div>
     </div>
+
+    <!-- 内容 -->
+    <div class="ruleSettingBody" v-for="(item,i) in 4">
+      <div @click="toRuleTemplate()" class="toRuleTemplateBut">大二男优秀规则</div>
+    </div>
   </div>
 </template>
 <style scoped>
+.toRuleTemplateBut {
+  border: 1px solid #fff;
+  width: 300px;
+  height: 30px;
+  align-items: center;
+  margin: 20px auto 10px;
+  font-size: 18px;
+  background-color: #fff;
+  border-radius: 5px;
+}
 .commonColor {
   background: #fecd2a;
 }
@@ -64,7 +80,10 @@ export default {
     },
     // 抬头右侧按钮跳转到模板设置
     intoSetting() {
-      //   this.$router.push({ name: "setting" });
+      this.$router.push({ name: "ruleTemplate" });
+    },
+    toRuleTemplate() {
+      this.$router.push({ name: "ruleTemplate" });
     }
   }
 };

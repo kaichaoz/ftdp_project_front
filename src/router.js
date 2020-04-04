@@ -160,6 +160,17 @@ const router = new Router({
         // requireAuth: true // 当有这个字段的时候,我们就认为这个路由页面是要有登录权限的
       }
     },
+    {
+      path: '/ruleTemplate',
+      name: 'ruleTemplate',
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ '../src/views/Super/template/ruleTemplate.vue'),
+      meta: {
+        // keepAlive: true,
+        title: 'ruleTemplate'
+        // requireAuth: true // 当有这个字段的时候,我们就认为这个路由页面是要有登录权限的
+      }
+    },
 
   ]
 })

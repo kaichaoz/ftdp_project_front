@@ -127,8 +127,8 @@
 }
 </style>
 <script>
-import escape from "../../../api/escape"
-import { ContactCard } from 'vant';
+import escape from "../../../api/escape";
+import { ContactCard } from "vant";
 export default {
   data() {
     return {
@@ -139,7 +139,7 @@ export default {
 
       // 所属分组
       groupOption: [
-        { text: "公共项目", value: 0},
+        { text: "公共项目", value: 0 },
         { text: "男生项目", value: 1 },
         { text: "女生项目", value: 2 }
       ],
@@ -150,17 +150,17 @@ export default {
   },
   mounted() {},
   methods: {
-
     // 返回
     returnPage() {
-      window.history.go(-1); // windos的返回上一页
+      // window.history.go(-1); // windos的返回上一页
       // this.$router.go(-1) // vue的返回上一页
+      this.$router.push({ name: "management" });
     },
 
     //下一步
     nextStep() {
       // console.log("2");
-      this.$router.push({name:"makeForm"})
+      this.$router.push({ name: "makeForm" });
     },
 
     // 光标离开备注输入框执行存储
@@ -171,7 +171,7 @@ export default {
     storageTxtNode() {
       var temp = document.getElementById("editer").innerText; // 获取文本框内容
       temp = escape.htmlEncode(temp); // 将特殊字符转格式
-      console.log(temp)
+      console.log(temp);
     }
   }
 };

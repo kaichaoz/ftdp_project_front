@@ -23,7 +23,7 @@
     <div id="addTemplate" class="allTemplate" v-touch:right="eventFun">
       <div v-for="(item ,i) in templateList ">
         <!-- user组件 -->
-        <div v-if="templateList[i] =='0'">
+        <div :id="'userComDiv' + i" v-if="templateList[i] =='0'">
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="showUser()">
             <user :isTrueList="isTrueUserList" class="publicAll user"></user>
@@ -31,7 +31,7 @@
         </div>
 
         <!-- infoShow组件 -->
-        <div v-if="templateList[i] =='1'">
+        <div :id="'infoShowComDiv' + i" v-if="templateList[i] =='1'">
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="showInfoShow()">
             <infoShow :infoShowListP="isTrueInfoShowList" class="publicAll infoShow"></infoShow>
@@ -39,7 +39,7 @@
         </div>
 
         <!-- numberIndex组件 -->
-        <div v-if="templateList[i] =='2'">
+        <div :id="'numberIndexComDiv' + i" v-if="templateList[i] =='2'">
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="showNumberIndex()">
             <numberIndex :numuberIndexListP="isTrueNumberIndexList" class="publicAll numberIndex"></numberIndex>
@@ -180,7 +180,7 @@ export default {
       siteInfoShowShow: false, // 显示InfoShow设置底部弹框
       isTrueInfoShowList: [], // siteInfoShow和infoShow需要显示的数组内容
 
-      // NumberIndex:
+      // NumberIndex:kugou
       siteNumberIndexShow: false, // 显示NumberIndex设置底部弹框
       isTrueNumberIndexList: [] // siteNumberIndex和NumberIndex需要显示的数组内容
     };
@@ -224,11 +224,11 @@ export default {
       this.siteNumberIndexShow = true; // 显示infoShow底部弹框
     },
 
-    // 接收siteInfoShow改变后的值
+    // 接收siteNumberIndex改变后的值
     listenSiteNumberIndex(siteNumberIndexShow, istrueNumberIndexList) {
       this.siteNumberIndexShow = siteNumberIndexShow; // 关闭底部弹框
-      // this.isTrueInfoShowList = []; // 清空userSite需要显示的数组内容
-      // this.isTrueInfoShowList = istrueUserList; //将接收修改后的值赋值
+      this.isTrueNumberIndexList = []; // 清空userSite需要显示的数组内容
+      this.isTrueNumberIndexList = istrueNumberIndexList; //将接收修改后的值赋值
     },
 
     // =================页面加载和抬头按钮部分=====================
@@ -250,7 +250,7 @@ export default {
       // 初始化结合后端传递给site的infoShow页面数据
       this.isTrueInfoShowList = [
         {
-          isTrue: false,
+          isTrue: true,
           infoTitle: "某某得分",
           infoNum: "110",
           infoList: ["某某得分", "某某信息", "评分"]
@@ -279,8 +279,9 @@ export default {
     },
     // 返回按钮
     returnPage() {
-      window.history.go(-1); // windos的返回上一页
+      // window.history.go(-1); // windos的返回上一页
       // this.$router.go(-1) // vue的返回上一页
+      this.$router.push({ name: "createName" });
     },
 
     //下一步按钮

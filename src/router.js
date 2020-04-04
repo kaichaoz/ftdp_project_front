@@ -116,7 +116,7 @@ const router = new Router({
         // requireAuth: true // 当有这个字段的时候,我们就认为这个路由页面是要有登录权限的
       }
     },
-     {
+    {
       path: '/setting',
       name: 'setting',
       // which is lazy-loaded when the route is visited.
@@ -149,7 +149,18 @@ const router = new Router({
         // requireAuth: true // 当有这个字段的时候,我们就认为这个路由页面是要有登录权限的
       }
     },
-    
+    {
+      path: '/ruleSetting',
+      name: 'ruleSetting',
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ '../src/views/Super/template/ruleSetting.vue'),
+      meta: {
+        // keepAlive: true,
+        title: 'ruleSetting'
+        // requireAuth: true // 当有这个字段的时候,我们就认为这个路由页面是要有登录权限的
+      }
+    },
+
   ]
 })
 

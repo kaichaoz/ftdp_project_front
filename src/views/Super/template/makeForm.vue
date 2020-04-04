@@ -41,8 +41,9 @@
         <!-- numberIndex组件 -->
         <div v-if="templateList[i] =='2'">
           <img @click="spliceList(i)" :src="cross" alt />
-
-          <numberIndex class="publicAll numberIndex"></numberIndex>
+          <div @click="showNumberIndex()">
+            <numberIndex :numuberIndexListP="isTrueNumberIndexList" class="publicAll numberIndex"></numberIndex>
+          </div>
         </div>
       </div>
     </div>
@@ -60,6 +61,13 @@
       :siteInfoShowListP="isTrueInfoShowList"
       @listenSiteInfoShowToMakeForm="listenSiteInfoShow"
     ></siteInfoShow>
+
+    <!-- 修改NumberIndex页面底部弹框 -->
+    <siteNumberIndex
+      :siteNumberIndexShowP="siteNumberIndexShow"
+      :siteNumberIndexListP="isTrueNumberIndexList"
+      @listenSiteNumberIndexToMakeForm="listenSiteNumberIndex"
+    ></siteNumberIndex>
 
     <!-- 左滑弹出框 -->
     <van-popup v-model="showPopup" position="left" :style="{ height: '100%' }">
@@ -147,7 +155,7 @@ import infoShow from "../../../components/Super/library/theMessageStates/infoSho
 import numberIndex from "../../../components/Super/library/enterInformation/numberIndex";
 import siteUser from "../../../components/Super/template/siteUser";
 import siteInfoShow from "../../../components/Super/template/siteInfoShow";
-
+import siteNumberIndex from "../../../components/Super/template/siteNumberIndex";
 export default {
   components: {
     sidebar,
@@ -155,7 +163,8 @@ export default {
     infoShow,
     numberIndex,
     siteUser,
-    siteInfoShow
+    siteInfoShow,
+    siteNumberIndex
   },
   data() {
     return {
@@ -168,8 +177,12 @@ export default {
       isTrueUserList: [], // userSite和user需要显示的数组内容
 
       // infoShow:
-      siteInfoShowShow: false, // 显示userSite设置底部弹框
-      isTrueInfoShowList: [] // siteInfoShow和infoShow需要显示的数组内容
+      siteInfoShowShow: false, // 显示InfoShow设置底部弹框
+      isTrueInfoShowList: [], // siteInfoShow和infoShow需要显示的数组内容
+
+      // NumberIndex:
+      siteNumberIndexShow: false, // 显示NumberIndex设置底部弹框
+      isTrueNumberIndexList: [] // siteNumberIndex和NumberIndex需要显示的数组内容
     };
   },
   mounted() {
@@ -205,16 +218,36 @@ export default {
       this.isTrueInfoShowList = istrueUserList; //将接收修改后的值赋值
     },
 
+    // ----------------NumberIndex-------------------
+
+    showNumberIndex() {
+      this.siteNumberIndexShow = true; // 显示infoShow底部弹框
+    },
+
+    // 接收siteInfoShow改变后的值
+    listenSiteNumberIndex(siteNumberIndexShow, istrueNumberIndexList) {
+      this.siteNumberIndexShow = siteNumberIndexShow; // 关闭底部弹框
+      // this.isTrueInfoShowList = []; // 清空userSite需要显示的数组内容
+      // this.isTrueInfoShowList = istrueUserList; //将接收修改后的值赋值
+    },
+
     // =================页面加载和抬头按钮部分=====================
 
     // 初始化内容
     start() {
+      // 当前页面内容：
+      this.templateList = []; // 初始化页面有谁：012:表示三个从上排列下去
+
+      // 控制site等子页面为true内容：
       this.showPopup = false; // 左滑不显示
       this.siteUserShow = false; // userSite底部弹框不显示
       this.siteInfoShowShow = false; // infoShow底部弹框不显示
-      this.templateList = []; // 初始化页面有谁：012:表示三个从上排列下去
+      this.siteNumberIndexShow = false; // NumberIndex底部弹框不显示
+
+      // 控制给子页面传递数据，后端数据来源：
       this.isTrueUserList = [true, true, true, true, true, true, true]; //初始化加载：控制userSite和user中user7个显示数据应从库里获取
 
+      // 初始化结合后端传递给site的infoShow页面数据
       this.isTrueInfoShowList = [
         {
           isTrue: false,
@@ -235,6 +268,14 @@ export default {
           infoList: ["某某得分", "某某信息", "评分"]
         }
       ];
+      this.isTrueNumberIndexList = [
+        {
+          infoNum: "请输入成就 单位"
+        },
+        {
+          infoNum: "及格分 >=10"
+        }
+      ];
     },
     // 返回按钮
     returnPage() {
@@ -244,7 +285,7 @@ export default {
 
     //下一步按钮
     nextStep() {
-      this.$router.push({ name: "makeForm" });
+      this.$router.push({ name: "ruleSetting" });
     },
 
     //  ==================右划添加组件部分=======================

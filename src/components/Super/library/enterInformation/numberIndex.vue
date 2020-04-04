@@ -9,10 +9,16 @@
 <template>
   <div>
     <div class="body">
-      <div class="infoTitle">{{infoTitle}}</div>
+      <div class="infoTitle" v-text="numberIndexList[0].infoNum"></div>
       <div class="infoInput">
         <van-cell-group>
-          <van-field input-align="center" type="number" :maxlength="maxlength" v-model="value" :placeholder="infoInput" />
+          <van-field
+            input-align="center"
+            type="number"
+            :maxlength="maxlength"
+            v-model="userInputValue"
+            :placeholder="numberIndexList[1].infoNum"
+          />
         </van-cell-group>
       </div>
     </div>
@@ -44,16 +50,45 @@
 </style>
 <script>
 export default {
+  props: {
+    numuberIndexListP: {
+      type: Array,
+      default: () => [
+        {
+          infoNum: "请输入成绩 单位"
+        },
+        {
+          infoNum: "及格分 >=10"
+        }
+      ]
+    }
+  },
   data() {
     return {
-      // show: false,
-      value: "",
-      infoTitle: "体育项目名（单位）",
-      infoInput: "300分及格",
-      maxlength:"4"
+      userInputValue: "",
+      maxlength: "4",
+
+      numberIndexList: [],
+      infoTitle: "请输入成绩 单位",
+      infoInput: "及格分 >=10"
     };
   },
+  watch: {
+    numuberIndexListP(newVal) {
+      this.numberIndexList = [];
+      this.numberIndexList = newVal;
+      console.log("更改后：" + this.numberIndexList);
+    }
+  },
   mounted() {},
-  methods: {}
+  created() {
+    this.start();
+  },
+  methods: {
+    start() {
+      this.numberIndexList = [];
+      this.numberIndexList = this.numuberIndexListP;
+    }
+  }
 };
 </script>

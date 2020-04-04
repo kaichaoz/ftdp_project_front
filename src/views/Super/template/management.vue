@@ -10,7 +10,7 @@
   <div>
     <div class="title commonColor">
       <!-- <div class="iocNameDiv"> -->
-      <img @click="intoSetting" class="iocName" :src="iocName" alt />
+      <img @click="intoSetting()" class="iocName" :src="iocName" alt />
       <!-- </div> -->
 
       <div class="button" @click="intoModel()">组件管理</div>
@@ -23,7 +23,6 @@
         <div class="bodyDiv" v-for="(item ,index) in list ">
           <van-collapse class="publicClassification" v-model="list[index].activeNames" accordion>
             <van-collapse-item v-if="list" class="collapseOne" :title="list[index].title" name="1">
-              
               <swipeCell></swipeCell>
 
               <!-- 加号 -->
@@ -113,7 +112,6 @@ export default {
   },
   data() {
     return {
-
       iocName: require("../../../assets/super/setting.png"), // 抬头右侧设置图片
 
       plus: require("../../../assets/super/plus.png"), // 底部加号图片
@@ -134,13 +132,11 @@ export default {
       }
     };
   },
-  updated(){
-    console.log(this.list)
+  updated() {
+    console.log(this.list);
   },
   mounted() {},
   methods: {
-
-
     // 抬头左侧按钮跳转到组件管理
     intoModel() {
       this.$router.push({ name: "library" });

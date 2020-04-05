@@ -23,6 +23,7 @@
         <div class="bodyDiv" v-for="(item ,index) in list ">
           <van-collapse class="publicClassification" v-model="list[index].activeNames" accordion>
             <van-collapse-item v-if="list" class="collapseOne" :title="list[index].title" name="1">
+              <!-- 具体模板 -->
               <swipeCell></swipeCell>
 
               <!-- 加号 -->
@@ -116,6 +117,7 @@ export default {
 
       plus: require("../../../assets/super/plus.png"), // 底部加号图片
 
+      // 模板名称
       list: [
         { activeNames: "1", title: "公共项目" },
         { activeNames: "1", title: "男生项目" },
@@ -133,6 +135,7 @@ export default {
     };
   },
   updated() {
+    // 数据更新后：
     console.log(this.list);
   },
   mounted() {},

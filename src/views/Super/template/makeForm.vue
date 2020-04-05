@@ -80,11 +80,12 @@
 </template>
 <style scoped>
 img {
-  width: 25px;
   height: 25px;
+  width: 25px;
   /* float: right; */
   /* margin: 20px; */
   position: absolute;
+  /* top: 200px; */
   left: 300px;
 }
 .commonColor {

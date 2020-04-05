@@ -26,8 +26,8 @@ export default {
     return {
       title: "500米",
       value: "",
-      text1:"编辑",
-      text2:"删除"
+      text1: "编辑",
+      text2: "删除"
     };
   },
   mounted() {},
@@ -50,12 +50,10 @@ export default {
           break;
       }
     },
-    intoCreateName(){
+    intoCreateName() {
       this.$router.push({ name: "createName" });
     },
-    deleteName(){
-
-    }
+    deleteName() {}
   }
 };
 </script>

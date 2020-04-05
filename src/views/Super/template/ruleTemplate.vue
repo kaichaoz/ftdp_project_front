@@ -10,22 +10,40 @@
   <div>
     <!-- 抬头 -->
     <div class="title commonColor">
-      <div class="button" @click="intoModel()">返回</div>
+      <!-- <img @click="intoSetting()" class="iocName" :src="plus" alt /> -->
+      <div class="iocName" @click="savePage()">保存</div>
+      <div class="button" @click="returnPage()">返回</div>
       <div class="titleName">规则设置</div>
     </div>
 
     <!-- 内容 -->
     <div class="ruleTemplateBody">
       <!-- 下拉框 -->
-      <div class="managementName" v-for="(item,i ) in 3">
-        <van-dropdown-menu active-color="#fecd2a">
-          <van-dropdown-item v-model="value" :options="option" />
-        </van-dropdown-menu>
+      <div>
+        <div class="managementName">
+          <van-dropdown-menu active-color="#fecd2a">
+            <van-dropdown-item v-model="dropDownComponent" :options="dropDownOptionComponent" />
+          </van-dropdown-menu>
+        </div>
+      </div>
+
+      <!-- 下拉框 -->
+      <div v-for="(item,i) in dropDownOptionList">
+        <div class="managementName">
+          <van-dropdown-menu active-color="#fecd2a">
+            <van-dropdown-item v-model="dropdownModel[i]" :options="dropDownOptionList[i]" />
+          </van-dropdown-menu>
+        </div>
       </div>
 
       <!-- 输入任意文本 -->
-      <div style="margin-top:30px" v-for="(item,i) in 5">
-        <van-field style="border-radius: 5px" v-model="text" label="文本" />
+      <div style="margin-top:30px" v-for="(item,i) in fieldValue" v-if="fieldValue[i].isTrue">
+        <van-field
+          type="text"
+          style="border-radius: 5px"
+          v-model="fieldValue[i].textValue"
+          :label="fieldText[i].textName"
+        />
       </div>
     </div>
   </div>
@@ -64,10 +82,10 @@
 
 /* 下拉框图片位置： */
 >>> .van-dropdown-menu__title::after {
-  top: 15%;
+  /* top: 15%;
   right: -236px;
   width: 7px;
-  height: 7px;
+  height: 7px; */
 }
 
 /* 文本输入框两边隔12px */
@@ -84,11 +102,23 @@
   margin-left: -8px;
 }
 
+/* 文本输入内容居中 */
+>>> .van-field__control {
+  text-align: center;
+}
+
 /* 抬头部分： */
 .commonColor {
   background: #fecd2a;
 }
-
+.title .iocName {
+  float: right;
+  width: 100px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-bottom: auto;
+  font-size: 20px;
+}
 .title {
   overflow: hidden;
   border: 1px solid #fecd2a;
@@ -114,25 +144,78 @@
 export default {
   data() {
     return {
-      value: 0,
-      option: [
+      // 组件下拉框当前值，默认显示第一个
+      dropDownComponent: 0,
+
+      // 本页面：下拉框显示绑定的三个值
+      dropdownModel: [0, 0],
+
+      // 下拉框渲染数据：里面的数据是从数据库来的，所以value需要动态赋值出来
+      dropDownOptionList: [
+        [
+          { text: "大一", value: 0 },
+          { text: "大二", value: 1 },
+          { text: "大三", value: 2 },
+          { text: "大四", value: 3 }
+        ],
+        [
+          { text: "男", value: 0 },
+          { text: "女", value: 1 }
+        ]
+      ],
+
+      //输入框渲染数据
+      fieldValue: [
+        { isTrue: true, textValue: "3200" },
+        { isTrue: true, textValue: "4000" },
+        { isTrue: true, textValue: "30" },
+        { isTrue: true, textValue: "30" },
+        { isTrue: true, textValue: "优秀" }
+      ],
+
+      // 需要传入或更改：--------------
+
+      //输入框渲染数据
+      fieldText: [
+        { textName: "开始范围" },
+        { textName: "结束范围" },
+        { textName: "原始得分" },
+        { textName: "权重" },
+        { textName: "评级" }
+      ],
+
+      // 组件下拉框
+      dropDownOptionComponent: [
         { text: "组件一", value: 0 },
         { text: "组件二", value: 1 },
         { text: "组件三", value: 2 }
-      ],
+      ]
 
-      text: "",
-
-      ruleTemList: [{ nowName: "", nameList: [] }, {}]
+      //下拉框是否显示
+      // dropDownIsTrue: [],
+      //输入框是否显示
+      // fieldIsTrue: [],
     };
   },
-  mounted() {},
+
+  mounted() {
+    // this.dropDownIsTrue = [];
+    // this.dropDownOptionList = [];
+    // this.fieldIsTrue = [];
+    // this.fieldTextList = [];
+    // this.dropDownIsTrue = this.$route.params.dropDownIsTrue;
+    // this.dropDownOptionList = this.$route.params.dropDownOptionList;
+    // this.fieldIsTrue = this.$route.params.fieldIsTrue;
+    // this.fieldTextList = this.$route.params.fieldTextList;
+  },
   methods: {
     // 抬头左侧按钮跳转到组件管理
-    intoModel() {
+    returnPage() {
       this.$router.push({ name: "ruleSetting" });
     },
 
+    // 抬头右侧按钮保存页面数据
+    savePage() {},
     onConfirm() {
       this.$refs.item.toggle();
     }

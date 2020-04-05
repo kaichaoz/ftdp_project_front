@@ -26,7 +26,7 @@
 .leftBody {
   width: 250px;
   height: 600px;
-  border: 1px solid black;
+  border: 1px solid white;
   margin: 30px 10px 10px 10px;
   position: relative;
   z-index: 2;

@@ -42,6 +42,20 @@ const router = new Router({
     },
 
 
+    
+    {
+      path: '/zyj',
+      name: 'zyj',
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ '../src/views/herry-project/zyj.vue'),
+      meta: {
+        // keepAlive: true,
+        title: 'zyj'
+        // requireAuth: true // 当有这个字段的时候,我们就认为这个路由页面是要有登录权限的
+      }
+    },
+
+
 
 
     // 一下部分为新项目：

@@ -8,7 +8,8 @@
 *@说明：-->
 <template>
   <div>
-<van-button type="default">默认按钮</van-button>
+<van-cell title="单元格" value="内容" size="large" />
+<van-cell title="单元格" value="内容" size="large" label="描述信息" />
 
   </div>
 </template>
@@ -18,7 +19,7 @@
 }
 </style>
 <script>
-export default {
+export default {  //默认输出
   data() {
     return {
       show: true,
@@ -28,7 +29,9 @@ export default {
       // infoShow:require("../../assets/super/libraryinfoShow.jpg")
     };
   },
-  mounted() {},
+  mounted() {
+    this.cleartime();
+  },
   methods: {
     touchin() {
       clearInterval(this.Loop); //再次清空定时器，防止重复注册定时器
@@ -43,9 +46,6 @@ export default {
       // 这个方法主要是用来将每次手指移出之后将计时器清零
       clearInterval(this.Loop);
     },
-
-
-
     
   }
 };

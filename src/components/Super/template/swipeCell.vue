@@ -50,9 +50,18 @@ export default {
           break;
       }
     },
+
+    //编辑按钮
     intoCreateName() {
-      this.$router.push({ name: "createName" });
+      this.$router.push({
+        name: "createName",
+        params: {
+          managementEdit: '1'
+        }
+      });
     },
+
+    // 删除按钮
     deleteName() {}
   }
 };

@@ -148,7 +148,14 @@ export default {
       remarkTxt: "" //备注输入内容
     };
   },
-  mounted() {},
+  mounted() {
+    const a = this.$route.params.managementEdit;
+    if (a == "0") {
+      // 从加号过来的
+    } else if (a == "1") {
+      //从编辑过来的，还需要给我是哪个id，我在这个页面按照id去后端查询
+    }
+  },
   methods: {
     // 返回
     returnPage() {

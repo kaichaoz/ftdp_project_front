@@ -151,7 +151,12 @@ export default {
 
     // 加号：跳转添加页面输入信息
     plusNum(index) {
-      this.$router.push({ name: "createName" });
+      this.$router.push({
+        name: "createName",
+        params: {
+          managementEdit: "0"
+        }
+      });
     }
   }
 };

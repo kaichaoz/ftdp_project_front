@@ -6,6 +6,8 @@ import router from '../router' //引用router，用于在某些错误情况下�
 //设置axios的基础url，用于标识项目的地址
 axios.defaults.baseURL = 'http://192.168.22.126:8118/integral-web'
 
+// axios.defaults.baseURL = process.env.VUE_APP_BACKEND_RUL
+
 /*
  * axios的请求拦截器
  */

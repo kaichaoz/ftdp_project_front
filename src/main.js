@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import Vuex from 'vuex'
 import axios from '../src/utils/dynamicAxios'
 import 'lib-flexible' // 引入 flexible用于适配不同屏幕移动端显示
 import changeFontSize from './setHtmlFontSize'
@@ -22,7 +23,7 @@ import { Overlay } from 'vant';  // 遮罩层
 import { ActionSheet } from 'vant';  // 上拉菜单
 import { DropdownMenu, DropdownItem } from 'vant';  // 下拉菜单
 
-Vue.use(css)
+Vue.use(Vuex)
 Vue.use(DropdownMenu);
 Vue.use(DropdownItem);
 Vue.use(ActionSheet);

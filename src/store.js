@@ -8,14 +8,47 @@ const store = new Vuex.Store({
   //要设置的全局访问的state对象
   state: {
     token: '',//用户token
-    managementDataList: [], // 模板管理management页面数据
-    createNameDataList: {}, // 创建模板一：createName页面数据
+    // managementDataList: [], // 模板管理management页面数据
+    // createNameDataList: {}, // 创建模板一：createName页面数据
+    makeFormDataList: [], // 创建模板二：makeForm编辑模板数据
+
+
+    // 模板管理management页面数据
+    managementDataList: [
+      {
+        activeNames: "1",
+        title: "公共项目",
+        comTitleList: ["仰卧起坐"]
+      },
+      { activeNames: "1", title: "男生项目", comTitleList: ["1000米"] },
+      { activeNames: "1", title: "女生项目", comTitleList: ["800米"] }
+    ],
+
+    // 创建模板一：createName页面数据
+    createNameDataList: {
+      managementNamevalue: "", // 模板名称输入框输入内容
+      groupValue: 0, // 分组选择后的分组value
+      personValue: 0, //人员选择后的value
+      // 所属分组
+      groupOption: [
+        { text: "公共项目", value: 0 },
+        { text: "男生项目", value: 1 },
+        { text: "女生项目", value: 2 }
+      ],
+      personOption: [{ text: "自己", value: 0 }], // 人员下拉框
+      remarkTxt: "" //备注输入内容
+
+    },
+
   },
   //用于监听state的变化的
   getters: {
 
   },
   mutations: {
+    setManagementDataList(state, managementDataList) {
+      state.managementDataList = managementDataList
+    },
 
     // 存储createName中的数据
     setCreateNameDataList(state, createNameDataList) {

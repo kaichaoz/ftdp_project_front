@@ -19,15 +19,25 @@
     </div>
 
     <div class="body">
-      <vuedraggable v-model="list" :options="options">
-        <div class="bodyDiv" v-for="(item ,index) in list ">
-          <van-collapse class="publicClassification" v-model="list[index].activeNames" accordion>
-            <van-collapse-item v-if="list" class="collapseOne" :title="list[index].title" name="1">
+      <!-- 拖动组件 -->
+      <vuedraggable v-model="managementDataList" :options="options">
+        <!-- 多个模板类型 -->
+        <div class="bodyDiv" v-for="(item ,index) in managementDataList ">
+          <!-- 整个下拉框 -->
+          <van-collapse
+            class="publicClassification"
+            v-model="managementDataList[index].activeNames"
+            accordion
+          >
+            <!-- 下拉框和具体内容 -->
+            <van-collapse-item
+              v-if="managementDataList"
+              class="collapseOne"
+              :title="managementDataList[index].title"
+              name="1"
+            >
               <!-- 具体模板 -->
-              <swipeCell></swipeCell>
-              <swipeCell></swipeCell>
-              <swipeCell></swipeCell>
-
+              <swipeCell :titleP="managementDataList[index].comTitleList"></swipeCell>
               <!-- 加号 -->
               <div>
                 <img @click="plusNum(index)" class="addBut" :src="plus" alt />
@@ -115,16 +125,9 @@ export default {
   },
   data() {
     return {
+      //  此页数据
       iocName: require("../../../assets/super/setting.png"), // 抬头右侧设置图片
-
       plus: require("../../../assets/super/plus.png"), // 底部加号图片
-
-      // 模板名称
-      list: [
-        { activeNames: "1", title: "公共项目" },
-        { activeNames: "1", title: "男生项目" },
-        { activeNames: "1", title: "女生项目" }
-      ],
 
       // 长按后拖动
       options: {
@@ -133,15 +136,36 @@ export default {
         delay: 500, //延时时长
         touchStartThreshold: 3, //防止某些手机过于敏感(3~5 效果最好)
         chosenClass: "chosen" //选中之后拖拽项添加的class名(用于选中时候添加样式)
-      }
+      },
+
+      // 初始化数据：
+      // 模板名称,activeNames默认必须为1，title：management页面模板类名字，comTitleList为具体模板名字
+      managementDataList: [
+        {
+          activeNames: "",
+          title: "",
+          comTitleList: [""]
+        },
+        { activeNames: "", title: "", comTitleList: [""] },
+        { activeNames: "", title: "", comTitleList: [""] }
+      ]
     };
   },
+
+  created() {},
   updated() {
-    // 数据更新后：
-    console.log(this.list);
+    // 存储当前数据
+    this.$store.commit("setManagementDataList", this.managementDataList);
   },
-  mounted() {},
+  mounted() {
+    this.start();
+  },
   methods: {
+    // 初始化
+    start() {
+      this.managementDataList = [];
+      this.managementDataList = this.$store.state.managementDataList;
+    },
     // 抬头左侧按钮跳转到组件管理
     intoModel() {
       this.$router.push({ name: "library" });

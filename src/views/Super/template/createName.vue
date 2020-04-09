@@ -56,6 +56,8 @@
     </div>
   </div>
 </template>
+
+
 <style scoped>
 .commonColor {
   background: #fecd2a;
@@ -132,6 +134,7 @@
   text-align: left;
 }
 </style>
+
 <script>
 import escape from "../../../api/escape"; // 导入转移符html
 import { ContactCard } from "vant";
@@ -141,15 +144,15 @@ export default {
       // 当前页面所有数据
       createNameDataList: {
         managementNamevalue: "", // 模板名称输入框输入内容
-        groupValue: 0, // 分组选择后的分组value
-        personValue: 0, //人员选择后的value
+        groupValue: "", // 分组选择后的分组value
+        personValue: "", //人员选择后的value
         // 所属分组
         groupOption: [
-          { text: "公共项目", value: 0 },
-          { text: "男生项目", value: 1 },
-          { text: "女生项目", value: 2 }
+          { text: "", value: "" },
+          { text: "", value: "" },
+          { text: "", value: "" }
         ],
-        personOption: [{ text: "自己", value: 0 }], // 人员下拉框
+        personOption: [{ text: "", value: "" }], // 人员下拉框
         remarkTxt: "" //备注输入内容
       }
     };
@@ -168,17 +171,18 @@ export default {
   },
   methods: {
     start() {
+      // 初始化从vuex读取，后改为后端
       this.createNameDataList = {};
       this.createNameDataList = this.$store.state.createNameDataList;
     },
     // 上一级页面跳转进来传参：
     jumpToPageLoading() {
       // 接收上一个页面传参内容
-      const a = this.$route.params.managementEdit;
+      const a = this.$route.params.managementEdit; // 接收判断从哪个按钮进入
+      const a1 = this.$route.params.title; // 接收从编辑进入的title名字
 
       //从任何地方过来都需要当前所有分组名字：公共项目、男生项目、女生项目等的集合
 
-      const b = ["公共项目", "男生项目", "女生项目"];
       if (a == "0") {
         // 从加号过来的
       } else if (a == "1") {

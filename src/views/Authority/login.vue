@@ -48,10 +48,27 @@ export default {
       correctPassData: "1"
     };
   },
+
+  created() {
+    this.enterLogin();
+  },
   mounted() {
     this.retrieveData();
   },
   methods: {
+    // 按下enter执行登陆
+    enterLogin() {
+      var _self = this;
+
+      // 获取按下按钮，13表示enter
+      document.onkeydown = function(e) {
+        var key = window.event.keyCode;
+        if (key == 13) {
+          _self.login();  // 执行登陆方法
+        }
+      };
+    },
+
     loginApi() {
       var vm = this;
       vm.$axios

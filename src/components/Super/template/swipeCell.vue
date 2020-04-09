@@ -8,30 +8,48 @@
 *@说明：-->
 <template>
   <div>
-    <van-swipe-cell :before-close="beforeClose">
-      <van-cell :border="false" :title="title" :value="value" />
-      <template slot="right">
-        <van-button @click="intoCreateName()" square type="primary" :text="text1" />
+    <!-- 左右滑动 -->
 
-        <van-button @click="deleteName()" square type="danger" :text="text2" />
-      </template>
-    </van-swipe-cell>
+    <div v-for="(item,i) in title">
+      <van-swipe-cell :before-close="beforeClose">
+        <!-- 显示内容 -->
+        <van-cell :border="false" :title="title[i]" :value="value" />
+        <!-- 右划内容 -->
+        <template slot="right">
+          <!-- 编辑按钮 -->
+          <van-button @click="intoCreateName(i)" square type="primary" :text="textEdit" />
+          <!-- 删除按钮 -->
+          <van-button @click="deleteName()" square type="danger" :text="textDelete" />
+        </template>
+      </van-swipe-cell>
+    </div>
   </div>
 </template>
 <style scoped>
 </style>
 <script>
 export default {
+  props: {
+    titleP: { default: "" }
+  },
   data() {
     return {
-      title: "500米",
+      // 左侧title--只读
+      title: [],
+      // 右侧内容（当前不显示）--只读
       value: "",
-      text1: "编辑",
-      text2: "删除"
+
+      textEdit: "编辑",
+      textDelete: "删除"
     };
   },
-  mounted() {},
+  mounted() {
+    this.start();
+  },
   methods: {
+    start() {
+      this.title = this.titleP;
+    },
     // position 为关闭时点击的位置
     // instance 为对应的 SwipeCell 实例
     beforeClose({ position, instance }) {
@@ -52,11 +70,12 @@ export default {
     },
 
     //编辑按钮
-    intoCreateName() {
+    intoCreateName(i) {
       this.$router.push({
         name: "createName",
         params: {
-          managementEdit: "1"
+          managementEdit: "1", // 表示从编辑进入
+          title: this.title[i]
         }
       });
     },

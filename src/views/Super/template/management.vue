@@ -25,6 +25,8 @@
             <van-collapse-item v-if="list" class="collapseOne" :title="list[index].title" name="1">
               <!-- 具体模板 -->
               <swipeCell></swipeCell>
+              <swipeCell></swipeCell>
+              <swipeCell></swipeCell>
 
               <!-- 加号 -->
               <div>

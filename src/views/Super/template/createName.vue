@@ -21,19 +21,25 @@
     <div class="body">
       <div class="managementName">
         <van-cell-group>
-          <van-field v-model="managementNamevalue" placeholder="请输入模板名称" />
+          <van-field v-model="createNameDataList.managementNamevalue" placeholder="请输入模板名称" />
         </van-cell-group>
       </div>
 
       <div class="managementName">
         <van-dropdown-menu active-color="#fecd2a">
-          <van-dropdown-item v-model="groupValue" :options="groupOption" />
+          <van-dropdown-item
+            v-model="createNameDataList.groupValue"
+            :options="createNameDataList.groupOption"
+          />
         </van-dropdown-menu>
       </div>
 
       <div class="managementName">
         <van-dropdown-menu active-color="#fecd2a">
-          <van-dropdown-item v-model="personValue" :options="personOption" />
+          <van-dropdown-item
+            v-model="createNameDataList.personValue"
+            :options="createNameDataList.personOption"
+          />
         </van-dropdown-menu>
       </div>
 
@@ -43,7 +49,7 @@
           id="editer"
           contenteditable="canEdit"
           class="remarkTxt"
-          v-text="remarkTxt"
+          v-text="createNameDataList.remarkTxt"
           @blur="changeText()"
         ></div>
       </div>
@@ -127,36 +133,58 @@
 }
 </style>
 <script>
-import escape from "../../../api/escape";
+import escape from "../../../api/escape"; // 导入转移符html
 import { ContactCard } from "vant";
 export default {
   data() {
     return {
-      // show: false,
-      managementNamevalue: "", // 模板名称输入框输入内容
-      groupValue: 0, // 分组选择后的分组value
-      personValue: 0, //人员选择后的value
-
-      // 所属分组
-      groupOption: [
-        { text: "公共项目", value: 0 },
-        { text: "男生项目", value: 1 },
-        { text: "女生项目", value: 2 }
-      ],
-      personOption: [{ text: "自己", value: 0 }], // 人员下拉框
-
-      remarkTxt: "" //备注输入内容
+      // 当前页面所有数据
+      createNameDataList: {
+        managementNamevalue: "", // 模板名称输入框输入内容
+        groupValue: 0, // 分组选择后的分组value
+        personValue: 0, //人员选择后的value
+        // 所属分组
+        groupOption: [
+          { text: "公共项目", value: 0 },
+          { text: "男生项目", value: 1 },
+          { text: "女生项目", value: 2 }
+        ],
+        personOption: [{ text: "自己", value: 0 }], // 人员下拉框
+        remarkTxt: "" //备注输入内容
+      }
     };
   },
   mounted() {
-    const a = this.$route.params.managementEdit;
-    if (a == "0") {
-      // 从加号过来的
-    } else if (a == "1") {
-      //从编辑过来的，还需要给我是哪个id，我在这个页面按照id去后端查询
-    }
+    // this.jumpToPageLoading();
+    this.start();
+  },
+
+  updated() {
+    // 存储到vuex
+    this.$store.commit("setCreateNameDataList", this.createNameDataList);
+
+    // 从vuex获取
+    // const a = this.$store.state.createNameDataList;
   },
   methods: {
+    start() {
+      this.createNameDataList = {};
+      this.createNameDataList = this.$store.state.createNameDataList;
+    },
+    // 上一级页面跳转进来传参：
+    jumpToPageLoading() {
+      // 接收上一个页面传参内容
+      const a = this.$route.params.managementEdit;
+
+      //从任何地方过来都需要当前所有分组名字：公共项目、男生项目、女生项目等的集合
+
+      const b = ["公共项目", "男生项目", "女生项目"];
+      if (a == "0") {
+        // 从加号过来的
+      } else if (a == "1") {
+        //从编辑过来的，还需要给我是哪个id，我在这个页面按照id去后端查询
+      }
+    },
     // 返回
     returnPage() {
       // window.history.go(-1); // windos的返回上一页

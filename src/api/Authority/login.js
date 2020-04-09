@@ -4,3 +4,4 @@ const fastDingLogin = process.env.VUE_APP_FAST_DING_lOGIN_URL
 export {
     login, fastDingLogin
 }
+  

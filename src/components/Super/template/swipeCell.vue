@@ -56,7 +56,7 @@ export default {
       this.$router.push({
         name: "createName",
         params: {
-          managementEdit: '1'
+          managementEdit: "1"
         }
       });
     },

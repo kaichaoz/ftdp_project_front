@@ -181,9 +181,13 @@ export default {
       siteInfoShowShow: false, // 显示InfoShow设置底部弹框
       isTrueInfoShowList: [], // siteInfoShow和infoShow需要显示的数组内容
 
-      // NumberIndex:kugou
+      // NumberIndex:
       siteNumberIndexShow: false, // 显示NumberIndex设置底部弹框
-      isTrueNumberIndexList: [] // siteNumberIndex和NumberIndex需要显示的数组内容
+      isTrueNumberIndexList: [], // siteNumberIndex和NumberIndex需要显示的数组内容
+
+      makeFormInitializationList: [], // 当前页面初始化需要加载的数据
+
+      makeFormDataList: [] // 当前页面需要加载的数据
     };
   },
   mounted() {
@@ -277,6 +281,8 @@ export default {
           infoNum: "及格分 >=10"
         }
       ];
+
+      this.makeFormInitializationList = this.$store.state.makeFormInitializationList;
     },
     // 返回按钮
     returnPage() {

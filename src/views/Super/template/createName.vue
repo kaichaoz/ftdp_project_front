@@ -138,6 +138,8 @@
 <script>
 import escape from "../../../api/escape"; // 导入转移符html
 import { ContactCard } from "vant";
+
+import modifyById from "../../../api/Super/template/createName";
 export default {
   data() {
     return {
@@ -170,6 +172,56 @@ export default {
     // const a = this.$store.state.createNameDataList;
   },
   methods: {
+    recallBackendGet() {
+      this.$axios
+        .get(
+          process.env.VUE_APP_THIREDBIND_verification_send +
+            this.phoneNUmber +
+            "&reSendTime=" +
+            this.reSendTime +
+            "&smsTemplateCode=" +
+            this.sMSTemplate +
+            "&validTime=" +
+            this.validTime
+        )
+        .then(res => {
+          if (res.data.code == "0000") {
+          } else {
+            vm.$toast({
+              message: "抱歉,登录失败,请联系管理员",
+              duration: 1000
+            });
+          }
+        })
+        .catch(function(error) {
+          // 请求出错则会执行的代码在这里写
+        });
+    },
+    recallBackendPost() {
+      const vm = this;
+      vm.$axios
+        .post(modifyById, {
+          isTurnAuto: localStorage.getItem("setting_checkedAutomatic"),
+          isShowWord: localStorage.getItem("setting_checkedDisplayWord"),
+
+          playNums: vm.viewsNow,
+          turnDelayTime: vm.delayedJumpNow,
+          studyNumber: vm.learningNumNow,
+          playInterval: vm.playIntervalNow,
+          pictureStayTime: vm.residenceTimeNow
+        })
+        .then(res => {
+          if (res.data.code == "0000") {
+            this.$toast({
+              message: "设置成功"
+            });
+          } else {
+            this.$toast({
+              message: "服务器跑路了，正在追~~"
+            });
+          }
+        });
+    },
     start() {
       // 初始化从vuex读取，后改为后端
       this.createNameDataList = {};

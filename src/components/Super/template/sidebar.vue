@@ -50,9 +50,6 @@ export default {
   },
   data() {
     return {
-      infoShow: require("../../../assets/super/library/infoShow.jpg"), // 信息展示图片
-      user: require("../../../assets/super/library/user.jpg"), // 信息展示图片
-      numberIndex: require("../../../assets/super/library/numberIndex.jpg"), // 信息展示图片
 
       infoNum: [
         require("../../../assets/super/library/user.jpg"),

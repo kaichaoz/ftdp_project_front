@@ -81,7 +81,7 @@ export default {
     infoShowListP(newVal) {
       this.isTrueList = [];
       this.isTrueList = newVal;
-      // this.swapPosition();
+      this.swapPosition();
     }
   },
   mounted() {
@@ -94,18 +94,14 @@ export default {
     start() {
       this.isTrueList = [];
       this.isTrueList = this.infoShowListP;
-      // this.swapPosition();
+      this.swapPosition();
     },
 
     // 当前值如果和其他显示的框的值相同，则返回其他相同值的下标,否则返回-1
     swapPosition() {
       for (let index = 0; index < this.isTrueList.length; index++) {
         var a = document.getElementById("info" + index);
-
-        console.log(a);
-        console.log(this.isTrueList);
         if (this.isTrueList[index].isTrue == false) {
-          console.log(this.isTrueList[index].isTrue);
           a.style.display = "none";
         }
       }

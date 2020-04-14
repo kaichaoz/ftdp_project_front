@@ -6,8 +6,6 @@
 *@最后修改人:herry
 *@LastEditTime:2020年3月25日16:49:15
 *@说明：
-1. 还需要分别添加两个相同的如何记录， 
-2. 页面已经存在时和当当拖拽过来如何判断
 -->
 
 <template>
@@ -23,51 +21,55 @@
     <div id="addTemplate" class="allTemplate" v-touch:right="eventFun">
       <div v-for="(item ,i) in templateList ">
         <!-- user组件 -->
-        <div :id="'userComDiv' + i" v-if="templateList[i] =='0'">
+        <div :id="'userComDiv' + i" v-if="templateList[i].templateId =='0'">
           <img @click="spliceList(i)" :src="cross" alt />
-          <div @click="showUser()">
-            <user :isTrueList="isTrueUserList" class="publicAll user"></user>
+          <div @click="isTrue(i)">
+            <user :isTrueList="templateList[i].templateArray" class="publicAll user"></user>
           </div>
+
+          <!-- 修改user页面底部弹框 -->
+          <siteUser
+            :siteUserShowP="templateList[i].isTrue"
+            :isTrueListP="templateList[i].templateArray"
+            @listenUserToMakeForm="listenUser"
+          ></siteUser>
         </div>
 
         <!-- infoShow组件 -->
-        <div :id="'infoShowComDiv' + i" v-if="templateList[i] =='1'">
+        <div :id="'infoShowComDiv' + i" v-if="templateList[i].templateId =='1'">
           <img @click="spliceList(i)" :src="cross" alt />
-          <div @click="showInfoShow()">
-            <infoShow :infoShowListP="isTrueInfoShowList" class="publicAll infoShow"></infoShow>
+          <div @click="isTrue(i)">
+            <infoShow :infoShowListP="templateList[i].templateArray" class="publicAll infoShow"></infoShow>
           </div>
+          <!-- 修改infoShow页面底部弹框 -->
+          <siteInfoShow
+            :siteInfoShowIndexP="i"
+            :siteInfoShowShowP="templateList[i].isTrue"
+            :siteInfoShowListP="templateList[i].templateArray"
+            @listenSiteInfoShowToMakeForm="listenSiteInfoShow"
+          ></siteInfoShow>
         </div>
 
         <!-- numberIndex组件 -->
-        <div :id="'numberIndexComDiv' + i" v-if="templateList[i] =='2'">
+        <div :id="'numberIndexComDiv' + i" v-if="templateList[i].templateId =='2'">
           <img @click="spliceList(i)" :src="cross" alt />
-          <div @click="showNumberIndex()">
-            <numberIndex :numuberIndexListP="isTrueNumberIndexList" class="publicAll numberIndex"></numberIndex>
+          <div @click="isTrue(i)">
+            <numberIndex
+              :numuberIndexListP="templateList[i].templateArray"
+              class="publicAll numberIndex"
+            ></numberIndex>
           </div>
+          <!-- 修改NumberIndex页面底部弹框 -->
+          <siteNumberIndex
+            :siteNumberIndexShowP="templateList[i].isTrue"
+            :siteNumberIndexListP="templateList[i].templateArray"
+            @listenSiteNumberIndexToMakeForm="listenSiteNumberIndex"
+          ></siteNumberIndex>
         </div>
       </div>
     </div>
 
-    <!-- 修改user页面底部弹框 -->
-    <siteUser
-      :siteUserShowP="siteUserShow"
-      :isTrueListP="isTrueUserList"
-      @listenUserToMakeForm="listenUser"
-    ></siteUser>
-
-    <!-- 修改infoShow页面底部弹框 -->
-    <siteInfoShow
-      :siteInfoShowShowP="siteInfoShowShow"
-      :siteInfoShowListP="isTrueInfoShowList"
-      @listenSiteInfoShowToMakeForm="listenSiteInfoShow"
-    ></siteInfoShow>
-
-    <!-- 修改NumberIndex页面底部弹框 -->
-    <siteNumberIndex
-      :siteNumberIndexShowP="siteNumberIndexShow"
-      :siteNumberIndexListP="isTrueNumberIndexList"
-      @listenSiteNumberIndexToMakeForm="listenSiteNumberIndex"
-    ></siteNumberIndex>
+    <div></div>
 
     <!-- 左滑弹出框 -->
     <van-popup v-model="showPopup" position="left" :style="{ height: '100%' }">
@@ -170,24 +172,10 @@ export default {
   data() {
     return {
       showPopup: false, // 遮罩层弹出
-      templateList: [], // 存放当前页面显示的几个页面数据，012分别为三个组件
+      templateList: [{ templateId: "", isTrue: false, templateArray: [] }], // 存放当前页面显示的几个页面数据，012分别为三个组件
       cross: require("../../../assets/super/template/cross.png"), // 取消（叉号）
 
-      // user:
-      siteUserShow: false, // 显示userSite设置底部弹框
-      isTrueUserList: [], // userSite和user需要显示的数组内容
-
-      // infoShow:
-      siteInfoShowShow: false, // 显示InfoShow设置底部弹框
-      isTrueInfoShowList: [], // siteInfoShow和infoShow需要显示的数组内容
-
-      // NumberIndex:
-      siteNumberIndexShow: false, // 显示NumberIndex设置底部弹框
-      isTrueNumberIndexList: [], // siteNumberIndex和NumberIndex需要显示的数组内容
-
-      makeFormInitializationList: [], // 当前页面初始化需要加载的数据
-
-      makeFormDataList: [] // 当前页面需要加载的数据
+      templateListIndex: "" // 临时存档当前的I值
     };
   },
   mounted() {
@@ -196,44 +184,39 @@ export default {
   methods: {
     // ====================底部设置弹框========================
 
-    // ----------------user-------------------
+    // 点击页面内容对应弹出底部弹框
+    isTrue(i) {
+      this.templateListIndex = i;
+      this.templateList[i].isTrue = true;
+      // console.log(i);
+      // console.log(this.makeFormInitializationList[i]);
+      // console.log(this.templateList[i].templateArray);
+    },
 
     // 接收user子组件 底部弹框数据
     listenUser(siteuserShow, istrueUserList) {
-      this.siteUserShow = siteuserShow; // 关闭底部弹框
-      this.isTrueUserList = []; // 清空userSite需要显示的数组内容
+      const i = this.templateListIndex;
+      this.templateList[i].isTrue = siteuserShow;
+      this.templateList[i].templateArray = [];
       for (let index = 0; index < istrueUserList.length; index++) {
-        this.isTrueUserList.push(istrueUserList[index].isTrue);
+        this.templateList[i].templateArray.push(istrueUserList[index].isTrue);
       }
-    },
-    // 点击user内容弹出底部弹框
-    showUser() {
-      this.siteUserShow = true; // 显示userSite底部弹框
-    },
-    // ----------------infoShow-------------------
-
-    showInfoShow() {
-      this.siteInfoShowShow = true; // 显示infoShow底部弹框
     },
 
     // 接收siteInfoShow改变后的值
     listenSiteInfoShow(siteInfoShowShow, istrueUserList) {
-      this.siteInfoShowShow = siteInfoShowShow; // 关闭底部弹框
-      this.isTrueInfoShowList = []; // 清空userSite需要显示的数组内容
-      this.isTrueInfoShowList = istrueUserList; //将接收修改后的值赋值
-    },
-
-    // ----------------NumberIndex-------------------
-
-    showNumberIndex() {
-      this.siteNumberIndexShow = true; // 显示infoShow底部弹框
+      const i = this.templateListIndex;
+      this.templateList[i].isTrue = siteInfoShowShow;
+      this.templateList[i].templateArray = [];
+      this.templateList[i].templateArray = istrueUserList;
     },
 
     // 接收siteNumberIndex改变后的值
     listenSiteNumberIndex(siteNumberIndexShow, istrueNumberIndexList) {
-      this.siteNumberIndexShow = siteNumberIndexShow; // 关闭底部弹框
-      this.isTrueNumberIndexList = []; // 清空userSite需要显示的数组内容
-      this.isTrueNumberIndexList = istrueNumberIndexList; //将接收修改后的值赋值
+      const i = this.templateListIndex;
+      this.templateList[i].isTrue = siteNumberIndexShow;
+      this.templateList[i].templateArray = [];
+      this.templateList[i].templateArray = istrueNumberIndexList;
     },
 
     // =================页面加载和抬头按钮部分=====================
@@ -242,46 +225,6 @@ export default {
     start() {
       // 当前页面内容：
       this.templateList = []; // 初始化页面有谁：012:表示三个从上排列下去
-
-      // 控制site等子页面为true内容：
-      this.showPopup = false; // 左滑不显示
-      this.siteUserShow = false; // userSite底部弹框不显示
-      this.siteInfoShowShow = false; // infoShow底部弹框不显示
-      this.siteNumberIndexShow = false; // NumberIndex底部弹框不显示
-
-      // 控制给子页面传递数据，后端数据来源：
-      this.isTrueUserList = [true, true, true, true, true, true, true]; //初始化加载：控制userSite和user中user7个显示数据应从库里获取
-
-      // 初始化结合后端传递给site的infoShow页面数据
-      this.isTrueInfoShowList = [
-        {
-          isTrue: true,
-          infoTitle: "某某得分",
-          infoNum: "110",
-          infoList: ["某某得分", "某某信息", "评分"]
-        },
-        {
-          isTrue: true,
-          infoTitle: "某某信息",
-          infoNum: "119",
-          infoList: ["某某得分", "某某信息", "评分"]
-        },
-        {
-          isTrue: true,
-          infoTitle: "评分",
-          infoNum: "120",
-          infoList: ["某某得分", "某某信息", "评分"]
-        }
-      ];
-      this.isTrueNumberIndexList = [
-        {
-          infoNum: "请输入成就 单位"
-        },
-        {
-          infoNum: "及格分 >=10"
-        }
-      ];
-
       this.makeFormInitializationList = this.$store.state.makeFormInitializationList;
     },
     // 返回按钮
@@ -300,8 +243,89 @@ export default {
 
     // 子组件sidebar返回事件，返回是哪个组件
     listenToMakeForm(newVal1) {
+      // const makeList = [
+      //   [true, true, true, true, true, true, true],
+      //   [
+      //     {
+      //       isTrue: true,
+      //       infoTitle: "某某得分",
+      //       infoNum: "110",
+      //       infoList: ["某某得分", "某某信息", "评分"]
+      //     },
+      //     {
+      //       isTrue: true,
+      //       infoTitle: "某某信息",
+      //       infoNum: "119",
+      //       infoList: ["某某得分", "某某信息", "评分"]
+      //     },
+      //     {
+      //       isTrue: true,
+      //       infoTitle: "评分",
+      //       infoNum: "120",
+      //       infoList: ["某某得分", "某某信息", "评分"]
+      //     }
+      //   ],
+      //   [
+      //     {
+      //       infoNum: "请输入成就 单位"
+      //     },
+      //     {
+      //       infoNum: "及格分 >=10"
+      //     }
+      //   ]
+      // ];
+
+      const makeList = [
+        [
+          {
+            componentId: "",
+            data: [
+              { isTrue: true },
+              { isTrue: true },
+              { isTrue: true },
+              { isTrue: true },
+              { isTrue: true },
+              { isTrue: true }
+            ]
+          }
+        ],
+        [
+          {
+            isTrue: true,
+            infoTitle: "某某得分",
+            infoNum: "110",
+            infoList: ["某某得分", "某某信息", "评分"]
+          },
+          {
+            isTrue: true,
+            infoTitle: "某某信息",
+            infoNum: "119",
+            infoList: ["某某得分", "某某信息", "评分"]
+          },
+          {
+            isTrue: true,
+            infoTitle: "评分",
+            infoNum: "120",
+            infoList: ["某某得分", "某某信息", "评分"]
+          }
+        ],
+        [
+          {
+            infoNum: "请输入成就 单位"
+          },
+          {
+            infoNum: "及格分 >=10"
+          }
+        ]
+      ];
+      // 关闭标签
       this.showPopup = false;
-      this.templateList.push(newVal1); // 添加一个组件
+      // 添加一个组件
+      this.templateList.push({
+        templateId: newVal1,
+        isTrue: false,
+        templateArray: makeList[newVal1]
+      });
     },
 
     // 删除第i个组件

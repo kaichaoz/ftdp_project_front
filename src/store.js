@@ -13,38 +13,70 @@ const store = new Vuex.Store({
     makeFormDataList: [], // 创建模板二：makeForm编辑模板数据
     // makeFormInitializationList: [], // 创建模板二：makeForm编辑模板初始化数据
 
+
     // 创建模板二：makeForm编辑模板初始化数据
-    makeFormInitializationList: {
-      isTrueUserList: [true, true, true, true, true, true, true],
-      isTrueInfoShowList: [
-        {
-          isTrue: true,
-          infoTitle: "某某得分",
-          infoNum: "110",
-          infoList: ["某某得分", "某某信息", "评分"]
-        },
-        {
-          isTrue: true,
-          infoTitle: "某某信息",
-          infoNum: "119",
-          infoList: ["某某得分", "某某信息", "评分"]
-        },
-        {
-          isTrue: true,
-          infoTitle: "评分",
-          infoNum: "120",
-          infoList: ["某某得分", "某某信息", "评分"]
-        }
+    // makeFormInitializationList: {
+    //   isTrueUserList: [true, true, true, true, true, true, true],
+    //   isTrueInfoShowList: [
+    //     {
+    //       isTrue: true,
+    //       infoTitle: "某某得分",
+    //       infoNum: "110",
+    //       infoList: ["某某得分", "某某信息", "评分"]
+    //     },
+    //     {
+    //       isTrue: true,
+    //       infoTitle: "某某信息",
+    //       infoNum: "119",
+    //       infoList: ["某某得分", "某某信息", "评分"]
+    //     },
+    //     {
+    //       isTrue: true,
+    //       infoTitle: "评分",
+    //       infoNum: "120",
+    //       infoList: ["某某得分", "某某信息", "评分"]
+    //     }
+    //   ],
+    //   isTrueNumberIndexList: [
+    //     {
+    //       infoNum: "请输入成就 单位"
+    //     },
+    //     {
+    //       infoNum: "及格分 >=10"
+    //     }
+    //   ]
+    // },
+    // 创建模板二：makeForm编辑模板初始化数据
+    makeFormInitializationList: [
+      [true, true, true, true, true, true, true],
+      [{
+        isTrue: true,
+        infoTitle: "某某得分",
+        infoNum: "110",
+        infoList: ["某某得分", "某某信息", "评分"]
+      },
+      {
+        isTrue: true,
+        infoTitle: "某某信息",
+        infoNum: "119",
+        infoList: ["某某得分", "某某信息", "评分"]
+      },
+      {
+        isTrue: true,
+        infoTitle: "评分",
+        infoNum: "120",
+        infoList: ["某某得分", "某某信息", "评分"]
+      }
       ],
-      isTrueNumberIndexList: [
+      [
         {
           infoNum: "请输入成就 单位"
         },
         {
           infoNum: "及格分 >=10"
         }
-      ]
-    },
+      ]],
+
 
     // 模板管理management页面数据
     managementDataList: [

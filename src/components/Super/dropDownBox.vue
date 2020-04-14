@@ -39,7 +39,7 @@
               <tr>
                 <td @click="onNameShow(i,index)" v-text="dropDownBoxList[index].infoList[i]"></td>
               </tr>
-              <hr />
+              <hr style="display:inline-block" />
             </tbody>
           </table>
         </div>
@@ -109,27 +109,30 @@ export default {
   },
   data() {
     return {
-      showName: "", // 下拉框选择后显示的内容
-      tbodyList: [], // 底部下拉框显示的内容排序
-
-      dropDownBoxList: []
+      dropDownBoxList: [] // 页面所有数据
     };
   },
   watch: {
+    // 监听传递过来的当前页面所有数据，如果变化则全部重新赋值
     siteInfoShowListP(newVal) {
       this.dropDownBoxList = [];
       this.dropDownBoxList = newVal;
     }
   },
+
+  // 挂载完毕
   mounted() {
-    this.start();
+    this.start(); // 初始化
   },
 
+  // 数据更新
   updated() {
+    // 数据变更时则返回父页面数据
     this.$emit("litenDropDownBox", this.dropDownBoxList);
     // console.log(this.dropDownBoxList);
   },
 
+  // 页面即将销毁
   beforeDestroy() {
     // 关闭所有的下拉框
     this.closeAlldropDownbox();
@@ -137,16 +140,15 @@ export default {
   methods: {
     // 初始化内容
     start() {
-      this.showName = this.dropDownShowP; // 下拉框显示内容
+      // 接收传递过来的数据
       this.dropDownBoxList = [];
       this.dropDownBoxList = this.siteInfoShowListP;
-
-      // for (let index = 0; index < this.dropDownListP.length; index++) {
-      //   this.tbodyList.push(this.dropDownListP[index].infoTitle);
-      // }
     },
     // 点击抬头是否显示下拉框
     onDropDown(index) {
+      // console.log(index);
+      console.log(this.dropDownBoxList[index]);
+
       if (this.dropDownBoxList[index].isTrue == false) {
         return;
       }
@@ -162,6 +164,8 @@ export default {
 
     // 显示当前抬头内容: i为当前下拉框选择的内容位置，ind为当前显示的内容位置
     onNameShow(i, ind) {
+      // console.log(i);
+      // console.log(ind);
       // 记录当前的值
       const c = this.dropDownBoxList[ind].infoTitle;
 

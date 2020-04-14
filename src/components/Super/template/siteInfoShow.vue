@@ -11,12 +11,74 @@
   <div>
     <van-action-sheet v-model="siteInfoShow" title="图片信息">
       <div class="siteInfoShowbody">
-        <dropDownBox :siteInfoShowListP="toDropDownBoxList" @litenDropDownBox="litenDropDownBox"></dropDownBox>
+        <!-- 下拉框和是否为true当个组件 -->
+        <div v-for="(item,index) in dropDownBoxList" class="dropDownBoxBody">
+          <!-- 下拉框组件 -->
+          <div class="displayDiv">
+            <!-- 下拉框显示部分 -->
+            <div
+              :id="'dropDownShow' + index"
+              class="dropDownShow"
+              v-text="dropDownBoxList[index].infoTitle"
+              @click="onDropDown(index)"
+            ></div>
+            <!-- 下拉框部分 -->
+            <div :id="'dropDown' +siteInfoShowIndex+ +index" class="dropDown">
+              <!-- 粗线 -->
+              <div style="border:2px solid #d4d4d4 ; margin-bottom:5px"></div>
+              <!-- 下拉框数据 -->
+              <table
+                class="dropTable"
+                height="30"
+                width="220"
+                border="0"
+                cellspacing="0"
+                cellpadding="0"
+                align="center"
+              >
+                <tbody v-for="(item,i) in dropDownBoxList[index].infoList">
+                  <tr>
+                    <td @click="onNameShow(i,index)" v-text="dropDownBoxList[index].infoList[i]"></td>
+                  </tr>
+                  <hr style="display:inline-block" />
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </van-action-sheet>
   </div>
 </template>
 <style scoped>
+.dropDownBoxBody {
+  margin-top: 20px;
+}
+.displayDiv {
+  display: inline-block;
+}
+.trueDiv {
+  float: right;
+  margin-top: 2px;
+  margin-right: 15px;
+  margin-left: 15px;
+}
+.dropDownShow {
+  font-size: 20px;
+  text-align: center;
+  width: 200px;
+  height: 30px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+.dropDown {
+  margin-top: 10px;
+  width: 200px;
+  border: 1px solid #d4d4d4;
+  border-radius: 5px;
+  display: none;
+}
+
 .dropDownDiv {
   margin-left: -50px;
   width: 150px;
@@ -43,12 +105,9 @@
 }
 </style>
 <script>
-import dropDownBox from "../dropDownBox.vue";
 export default {
-  components: {
-    dropDownBox
-  },
   props: {
+    siteInfoShowIndexP: "",
     siteInfoShowShowP: { default: false }, // 接收父页面makeForm传递过来: 显示底部弹框
     // 接收父页面makeForm传递过来: 显示底部数据
     siteInfoShowListP: {
@@ -56,31 +115,32 @@ export default {
       default: () => [
         {
           isTrue: true,
-          infoTitle: "某某得分",
-          infoNum: "110",
-          infoList: ["某某得分", "某某信息", "评分"]
+          infoTitle: "",
+          infoNum: "",
+          infoList: []
         },
         {
           isTrue: true,
-          infoTitle: "某某信息",
-          infoNum: "119",
-          infoList: ["某某得分", "某某信息", "评分"]
+          infoTitle: "",
+          infoNum: "",
+          infoList: []
         },
         {
           isTrue: true,
-          infoTitle: "评分",
-          infoNum: "120",
-          infoList: ["某某得分", "某某信息", "评分"]
+          infoTitle: "",
+          infoNum: "",
+          infoList: ["", "", ""]
         }
       ]
     }
   },
   data() {
     return {
+      siteInfoShowIndex: "",
       siteInfoShow: false, //底部弹框是否显示,
       // 底部弹框显示内容和是否显示
 
-      toDropDownBoxList: [] // 与dropDownBox同步的数据
+      dropDownBoxList: [] // 与dropDownBox同步的数据
     };
   },
   watch: {
@@ -93,18 +153,17 @@ export default {
 
     // 监听父页面传来数据：底部弹框数组内容
     siteInfoShowListP(newVal) {
-      this.toDropDownBoxList = [];
-      this.toDropDownBoxList = newVal;
+      this.dropDownBoxList = [];
+      this.dropDownBoxList = newVal;
     },
 
     // 父组件makeForm中isTrue改变值后：返回给父页面makeForm数据（打开和关闭都传值）
     siteInfoShow(newVal) {
-      this.$emit(
-        "listenSiteInfoShowToMakeForm",
-        newVal,
-        this.toDropDownBoxList
-      );
+      this.$emit("listenSiteInfoShowToMakeForm", newVal, this.dropDownBoxList);
     }
+  },
+  created() {
+    this.siteInfoShowIndex = this.siteInfoShowIndexP;
   },
   mounted() {
     this.start();
@@ -112,15 +171,76 @@ export default {
   methods: {
     // 初始化
     start() {
-      this.toDropDownBoxList = [];
-      this.toDropDownBoxList = this.siteInfoShowListP;
+      this.dropDownBoxList = [];
+      this.dropDownBoxList = this.siteInfoShowListP;
     },
 
-    // 接收子组件dropDownBox返回的数据
-    litenDropDownBox(newVal) {
-      this.toDropDownBoxList = [];
-      this.toDropDownBoxList = newVal;
+    // 点击抬头是否显示下拉框
+    onDropDown(index) {
+      if (this.dropDownBoxList[index].isTrue == false) {
+        return;
+      }
+      // 获取当前的ID
+      const dropdown = document.getElementById(
+        "dropDown" + this.siteInfoShowIndex + index
+      );
+
+      console.log(dropdown);
+      // 获取当前Id的css属性display
+      const dropdownDisplay = dropdown.style.display;
+
+      // 点击打开/关闭下拉框
+      const ta = drop(dropdownDisplay);
+      dropdown.style.display = ta;
+    },
+
+    // 显示当前抬头内容: i为当前下拉框选择的内容位置，ind为当前显示的内容位置
+    onNameShow(i, ind) {
+      // 记录当前的值
+      const c = this.dropDownBoxList[ind].infoTitle;
+      // 将当前勾选的内容显示到上面
+      this.dropDownBoxList[ind].infoTitle = this.dropDownBoxList[ind].infoList[
+        i
+      ];
+      // 判断当前值是否有相同的，相同给的则置换
+      const b = this.swapPosition(this.dropDownBoxList[ind].infoTitle);
+      if (b != -1) {
+        this.dropDownBoxList[b].infoTitle = c;
+      }
+      // 关闭所有的下拉框
+      this.closeAlldropDownbox();
+    },
+
+    // 关闭所有的下拉框
+    closeAlldropDownbox() {
+      for (let index = 0; index < this.dropDownBoxList.length; index++) {
+        let dropdown = document.getElementById(
+          "dropDown" + this.siteInfoShowIndex + index
+        );
+        dropdown.style.display = "none";
+      }
+    },
+
+    // 当前值如果和其他显示的框的值相同，则返回其他相同值的下标,否则返回-1
+    swapPosition(value) {
+      for (let index = 0; index < this.dropDownBoxList.length; index++) {
+        const a = document.getElementById("dropDownShow" + index).innerText;
+        if (value == a) {
+          return index;
+        }
+      }
+      return -1;
     }
   }
 };
+
+// 替换的switch，根据左边数据返回右边数据
+function drop(name) {
+  let names = {
+    none: "block",
+    block: "none",
+    "": "block"
+  };
+  return names[name] || names["default"];
+}
 </script>

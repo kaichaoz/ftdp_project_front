@@ -115,7 +115,12 @@ import user from "../../../components/Super/library/userInfo/user";
 import infoShow from "../../../components/Super/library/theMessageStates/infoShow";
 import numberIndex from "../../../components/Super/library/enterInformation/numberIndex";
 import swipeCell from "../../../components/Super/template/swipeCell";
+
+import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量
 export default {
+  computed: {
+    ...mapState(["managementDataListStore"]) // 映射store变量managementDataListStore为当前页面变量，直接使用this即可
+  },
   components: {
     user,
     infoShow,
@@ -158,13 +163,15 @@ export default {
     this.$store.commit("setManagementDataList", this.managementDataList);
   },
   mounted() {
+    console.log(this.managementDataListStore);
     this.start();
   },
   methods: {
     // 初始化
     start() {
-      this.managementDataList = [];
-      this.managementDataList = this.$store.state.managementDataList;
+      this.managementDataList = []; // 当前有页面所有数据置空
+      // this.managementDataList = this.$store.state.managementDataListStore;
+      this.managementDataList = this.managementDataListStore; // 将全局变量数据赋值过来
     },
     // 抬头左侧按钮跳转到组件管理
     intoModel() {

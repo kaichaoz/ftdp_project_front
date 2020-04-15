@@ -79,7 +79,7 @@ const store = new Vuex.Store({
 
 
     // 模板管理management页面数据
-    managementDataList: [
+    managementDataListStore: [
       {
         activeNames: "1",
         title: "公共项目",

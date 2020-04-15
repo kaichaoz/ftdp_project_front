@@ -37,7 +37,7 @@
               name="1"
             >
               <!-- 具体模板 -->
-              <swipeCell :titleP="managementDataList[index].comTitleList"></swipeCell>
+              <swipeCell :groupIndexP="index" :titleP="managementDataList[index].comTitleList"></swipeCell>
               <!-- 加号 -->
               <div>
                 <img @click="plusNum(index)" class="addBut" :src="plus" alt />
@@ -119,7 +119,8 @@ import swipeCell from "../../../components/Super/template/swipeCell";
 import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量
 export default {
   computed: {
-    ...mapState(["managementDataListStore"]) // 映射store变量managementDataListStore为当前页面变量，直接使用this即可
+    ...mapState(["managementDataListStore"]), // 映射store变量managementDataListStore为当前页面变量，直接使用this即可
+    ...mapState(["management_groupName_List"])
   },
   components: {
     user,
@@ -163,8 +164,10 @@ export default {
     this.$store.commit("setManagementDataList", this.managementDataList);
   },
   mounted() {
-    console.log(this.managementDataListStore);
+    // console.log(this.managementDataListStore);
     this.start();
+
+    this.startList();
   },
   methods: {
     // 初始化
@@ -189,8 +192,8 @@ export default {
         name: "createName",
         params: {
           managementEdit: "0", // 0表示点击加号进入
-          groupName: this.managementDataList[index].title, // 当前分组名字，如index=0表示公共项目
-          groupNameList: groupNameList // 当前所有分组名字集合
+          groupNamePlus: index, // 当前分组名字，如index=0表示公共项目
+          groupNameListPlus: groupNameList // 当前所有分组名字集合
         }
       });
     },
@@ -204,6 +207,17 @@ export default {
       }
 
       return groupNameList;
+    },
+
+    startList() {
+      // 将当前页面的所有分组名字存储
+      let groupNameList = [];
+      for (let i = 0; i < this.managementDataList.length; i++) {
+        // const element = array[i];
+        groupNameList.push(this.managementDataList[i].title);
+      }
+
+      this.$store.commit("setManagementGroupNameList", groupNameList);
     }
   }
 };

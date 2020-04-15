@@ -30,6 +30,7 @@
 <script>
 export default {
   props: {
+    groupIndexP: { default: "" },
     titleP: { default: "" }
   },
   data() {
@@ -43,6 +44,7 @@ export default {
       textDelete: "删除"
     };
   },
+
   mounted() {
     this.start();
   },
@@ -75,7 +77,7 @@ export default {
         name: "createName",
         params: {
           managementEdit: "1", // 表示从编辑进入
-          title: this.title[i]
+          title: this.groupIndexP
         }
       });
     },

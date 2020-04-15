@@ -105,12 +105,20 @@ const store = new Vuex.Store({
 
     },
 
+    management_groupName_List:[]  // 存储模板管理页的group分组
+
   },
   //用于监听state的变化的
   getters: {
 
   },
   mutations: {
+
+      //存储模板管理页的group分组名字
+    setManagementGroupNameList(state, managementDataList){
+      state.management_groupName_List = managementDataList
+    },
+
     setManagementDataList(state, managementDataList) {
       state.managementDataList = managementDataList
     },

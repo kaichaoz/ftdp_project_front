@@ -7,7 +7,7 @@
 *@LastEditTime:2020年3月28日08:22:14
 *@说明：
 
-  解决刷新没有数据问题，进入页面前将数据存储到local里面
+进入页面前将数据存储到local里面
 -->
 <template>
   <div>
@@ -123,6 +123,8 @@ export default {
         }
       });
     },
+
+    // 点击具体规则进入编辑模板
     toRuleTemplate() {
       this.$router.push({
         name: "ruleTemplate",

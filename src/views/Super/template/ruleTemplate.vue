@@ -18,7 +18,7 @@
 
     <!-- 内容 -->
     <div class="ruleTemplateBody">
-      <!-- 下拉框 -->
+      <!-- 组件下拉框 -->
       <div>
         <div class="managementName">
           <van-dropdown-menu active-color="#fecd2a">
@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <!-- 下拉框 -->
+      <!-- 年级和性别下拉框 -->
       <div v-for="(item,i) in dropDownOptionList">
         <div class="managementName">
           <van-dropdown-menu active-color="#fecd2a">
@@ -144,7 +144,7 @@
 export default {
   data() {
     return {
-      // 组件下拉框当前值，默认显示第一个
+      // 组件下拉框当前值，默认显示在第一个，第二种情况不显示
       dropDownComponent: 0,
 
       // 本页面：下拉框显示绑定的三个值
@@ -165,23 +165,23 @@ export default {
       ],
 
       //输入框渲染数据
-      fieldValue: [
-        { isTrue: true, textValue: "3200" },
-        { isTrue: true, textValue: "4000" },
-        { isTrue: true, textValue: "30" },
-        { isTrue: true, textValue: "30" },
-        { isTrue: true, textValue: "优秀" }
-      ],
-
-      // 需要传入或更改：--------------
-
-      //输入框渲染数据
       fieldText: [
         { textName: "开始范围" },
         { textName: "结束范围" },
         { textName: "原始得分" },
         { textName: "权重" },
         { textName: "评级" }
+      ],
+
+      // 需要传入或更改：--------------
+
+      //输入框渲染数据
+      fieldValue: [
+        { isTrue: true, textValue: "3200" },
+        { isTrue: true, textValue: "4000" },
+        { isTrue: true, textValue: "30" }, // 变为false，则不显示原始得分
+        { isTrue: true, textValue: "30" },
+        { isTrue: true, textValue: "优秀" }
       ],
 
       // 组件下拉框
@@ -209,13 +209,15 @@ export default {
     // this.fieldTextList = this.$route.params.fieldTextList;
   },
   methods: {
-    // 抬头左侧按钮跳转到组件管理
+    // 抬头左侧按钮跳转到组件管理：需要做判断，如果更改了则提示是否保存
     returnPage() {
       this.$router.push({ name: "ruleSetting" });
     },
 
     // 抬头右侧按钮保存页面数据
     savePage() {},
+
+    // 默认不需要更改
     onConfirm() {
       this.$refs.item.toggle();
     }

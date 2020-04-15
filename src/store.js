@@ -81,11 +81,11 @@ const store = new Vuex.Store({
     // 模板管理management页面数据
     managementDataListStore: [
       {
-        activeNames: "1",
+        activeNames: "1", // 默认值，不需要更改
         title: "公共项目",
         comTitleList: ["仰卧起坐"]
       },
-      { activeNames: "1", title: "男生项目", comTitleList: ["1000米"] },
+      { activeNames: "1", title: "男生项目", comTitleList: ["1000米","体前屈"] },
       { activeNames: "1", title: "女生项目", comTitleList: ["800米"] }
     ],
 

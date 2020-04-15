@@ -160,7 +160,7 @@ export default {
     };
   },
   mounted() {
-    // this.jumpToPageLoading();
+    this.jumpToPageLoading();
     this.start();
   },
 
@@ -232,6 +232,11 @@ export default {
       // 接收上一个页面传参内容
       const a = this.$route.params.managementEdit; // 接收判断从哪个按钮进入
       const a1 = this.$route.params.title; // 接收从编辑进入的title名字
+
+      const b = this.$route.params.groupName;
+      console.log(b);
+      const b1 = this.$route.params.groupNameList;
+      console.log(b1);
 
       //从任何地方过来都需要当前所有分组名字：公共项目、男生项目、女生项目等的集合
 

@@ -184,12 +184,26 @@ export default {
 
     // 加号：跳转添加页面输入信息
     plusNum(index) {
+      const groupNameList = this.pushGroupNameList();
       this.$router.push({
         name: "createName",
         params: {
-          managementEdit: "0"
+          managementEdit: "0", // 0表示点击加号进入
+          groupName: this.managementDataList[index].title, // 当前分组名字，如index=0表示公共项目
+          groupNameList: groupNameList // 当前所有分组名字集合
         }
       });
+    },
+
+    pushGroupNameList() {
+      // 将当前页面的所有分组名字存储
+      let groupNameList = [];
+      for (let i = 0; i < this.managementDataList.length; i++) {
+        // const element = array[i];
+        groupNameList.push(this.managementDataList[i].title);
+      }
+
+      return groupNameList;
     }
   }
 };

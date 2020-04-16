@@ -141,7 +141,12 @@ import escape from "../../../api/escape"; // 导入转移符html
 import { ContactCard } from "vant";
 
 import modifyById from "../../../api/Super/template/createName";
+import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量
+
 export default {
+  computed: {
+    ...mapState(["management_groupName_List"])
+  },
   data() {
     return {
       // 当前页面所有数据
@@ -162,7 +167,6 @@ export default {
   },
   mounted() {
     this.start();
-
     this.jumpToPageLoading();
   },
 
@@ -232,30 +236,26 @@ export default {
     // 上一级页面跳转进来传参：
     jumpToPageLoading() {
       // 接收上一个页面传参内容
-      const judgment = this.$route.params.managementEdit; // 接收判断从哪个按钮进入:0表示从加号进，1表示从编辑进
-      const a1 = this.$route.params.title; // 接收从 编辑 进入的title名字
+      const a = this.$route.params.managementEdit; // 接收判断从哪个按钮进入
 
-      // 接收从0加号进入分组名和分组list:
-      const groupName = this.$route.params.groupName; // 接收当前所在分组
-      let groupNameList = [];
-      groupNameList = this.$route.params.groupNameList; // 接收所有分组
-      console.log(groupName);
-
-      this.createNameDataList.groupValue = groupName;
-      this.createNameDataList.groupOption = [];
-      for (let index = 0; index < groupNameList.length; index++) {
-        this.createNameDataList.groupOption.push({
-          text: groupNameList[index],
-          value: index
-        });
-      }
+      const a1 = this.$route.params.title; // 接收从编辑进入的title名字
+      console.log(a1);
+      console.log(this.management_groupName_List);
 
       //从任何地方过来都需要当前所有分组名字：公共项目、男生项目、女生项目等的集合
 
-      if (judgment == "0") {
+      if (a == "0") {
         // 从加号过来的
-      } else if (judgment == "1") {
+        const b = this.$route.params.groupNamePlus;
+        console.log(b);
+        const b1 = this.$route.params.groupNameListPlus;
+        console.log(b1);
+      } else if (a == "1") {
         //从编辑过来的，还需要给我是哪个id，我在这个页面按照id去后端查询
+        const e = this.$route.params.groupNameEdit;
+        console.log(e);
+        const e1 = this.$route.params.groupNameListEdit;
+        console.log(e1);
       }
     },
     // 返回

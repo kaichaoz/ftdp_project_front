@@ -5,10 +5,10 @@
       <div class="title">{{title}}</div>
       <div>
         <van-field
-          oninput="value=value.replace(/[^\d]/g, '')"
+          oninput="value=value.replace(/[^\w\u4E00-\u9FA5]/g, '')"
           class="txtstyle"
           focus="1"
-          maxlength="3"
+          maxlength="15"
           v-model="inputInfo"
           :placeholder="placeholder"
         ></van-field>
@@ -27,14 +27,15 @@ export default {
   props: {
     boolean: { default: false },
     projectInfo: { default: "请修改内容" },
-    projectIndex:{default: "0"}
+    projectIndex: {default: "0"},
+    
   },
   data() {
     return {
       active: 0,
       //弹出框
       bulletoxShow: false, // 弹出框是否显示
-      inputInfo: "", // 输入的学习数量
+      inputInfo: " ", // 输入的学习数量
       placeholder: "请修改内容",
       title: "请输入修改内容"
     };
@@ -59,6 +60,7 @@ export default {
     //弹出框取消按钮
     cancel() {
       this.bulletoxShow = false;
+      
     },
     //弹出框确定按钮
     determine() {

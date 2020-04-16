@@ -19,7 +19,10 @@
       <div class="nameNum">
         <vuedraggable v-model="projectName" :options="options">
           <div class="project" v-for="(item,index) in projectName">
-            <div @click="popupInput(index)" class="projectName">{{projectName[index]}}</div>
+            <div
+              @click="popupInput(index)"
+              class="projectName"
+            >{{projectName[index].templateGroupName}}</div>
             <!-- <div class="projectBut"> -->
             <img @click="lessNum(index)" class="projectBut" :src="less" alt />
             <!-- </div> -->
@@ -128,7 +131,18 @@ export default {
 
       less: require("../../../assets/super/Less.png"),
       plus: require("../../../assets/super/plus.png"),
-      projectName: ["公共项目", "男生项目", "女生项目"],
+      // projectName: [
+      //   { id:"", templateGroupname:"公共项目"},
+      //   { id:"", templateGroupname:"男生项目"},
+      //   { id:"", templateGroupname:"女生项目"}
+      //   ],
+      // projectName: {
+      //    id:"",
+      //    templateGroupname:"",
+      // },
+      projectName: [
+        { id: "", templateGroupName: "", isUsable: "", groupSequence: "" }
+      ],
 
       boolean: "", // 弹出框输入是否可见
       projectInfo: "", // 传递给弹出框名字信息
@@ -146,9 +160,80 @@ export default {
 
   watch: {},
 
+  // 销毁前（退出界面）
+  beforeDestroy() {
+    this.modifyTemplateGroupPost();
+  },
+
   updated() {},
-  mounted() {},
+
+  mounted() {
+    this.queryTemplateGroupGet();
+    // this.modifyTemplateGroupPost();
+  },
   methods: {
+    queryTemplateGroupGet() {
+      this.projectName = [];
+      const vm = this;
+      const componentUrl =
+        "http://127.0.0.1:8091/ftdp-web/TemplateGroup/queryTemplateGroup";
+      vm.$axios.get(componentUrl).then(res => {
+        if (res.data.code == "0000") {
+          // console.log(res.data.data,"get")
+          for (let i = 0; i < res.data.data.length; i++) {
+            // const element = array[i];
+            this.projectName.push({
+              id: res.data.data[i].id,
+              templateGroupName: res.data.data[i].templateGroupName,
+              isUsable: res.data.data[i].isUsable,
+              groupSequence: res.data.data[i].groupSequence
+            });
+          }
+          // this.projectName = res.data.data
+          // console.log(this.projectName,"gett")
+        } else {
+          this.$router.push({ name: "login" });
+        }
+      });
+    },
+    modifyTemplateGroupPost() {
+      this.changeLocation();
+
+      const resData = [];
+
+      for (let i = 0; i < this.projectName.length; i++) {
+        resData.push({
+          id: this.projectName[i].id,
+          templateGroupName: this.projectName[i].templateGroupName,
+          isUsable: this.projectName[i].isUsable,
+          groupSequence: this.projectName[i].groupSequence
+        });
+      }
+      const vm = this;
+      const componentUrl =
+        "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
+      vm.$axios.post(componentUrl, resData).then(res => {
+        if (res.data.code == "0000") {
+          // console.log(res.data.data, "ghgh");
+          this.$toast({
+            message: "修改成功"
+          });
+        } else {
+          vm.$toast({
+            message: "抱歉，，，",
+            duration: 1000
+          });
+        }
+      });
+    },
+
+    // 修改classList数组中位置，随着位置改变，数据改变
+    changeLocation() {
+      for (let i = 0; i < this.projectName.length; i++) {
+        this.projectName[i].groupSequence = i;
+      }
+    },
+
     // 点击抬头左侧按钮
     intoModel() {
       this.$router.push({ name: "management" });
@@ -157,29 +242,38 @@ export default {
     // 删除内容
     lessNum(i) {
       this.projectName.splice(i, 1);
+      console.log(this.projectName)
+      
     },
 
     // 增加内容
     plusNum() {
-      this.projectName.push("请输入信息");
+      this.projectName.push({
+        templateGroupName:"请输入信息",
+        id:"",
+        isUsable:"",
+        groupSequence:""
+        });
     },
 
     // 点击每个名字进弹框修改
     popupInput(i) {
-      // alert("我是白爱民"+i)
+      //alert("我是白爱民"+i)
       this.boolean = true;
-      this.projectInfo = this.projectName[i];
+      // console.log(this.projectName[i]);
+      this.projectInfo = this.projectName[i].templateGroupName;
       this.projectIndex = i;
     },
 
     //接收弹出框页面是否可见的boolean值
     receivePopup(newVal) {
+      // console.log(newVal, "newVal");
       this.boolean = newVal;
     },
 
     // 接收输入弹框中修改的内容
     receivePopupInfo(newInfo, newI) {
-      this.projectName[newI] = newInfo;
+      this.projectName[newI].templateGroupName = newInfo;
     }
   }
 };

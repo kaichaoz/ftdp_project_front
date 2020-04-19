@@ -22,19 +22,20 @@
           :userInfoListP="componentInvalidTouserInfoList[0].isTrue"
           @listenUserInfoToLibrary="listenUserInfo"
           :titleP="classList[index].title"
-          v-if="classList[index].isTrue && classList[index].position == 0"
+          v-if="classList[index].isTrue && classList[index].groupId == '5856212'"
         ></userInfo>
         <theMessageStates
           :theMessageStatesListP="componentInvalidToTheMessageStatesList[0].isTrue"
           @listenTheMessageStatesToLibrary="listenTheMessageStates"
           :titleP="classList[index].title"
-          v-if="classList[index].isTrue && classList[index].position == 1 "
+          v-if="classList[index].isTrue
+          && classList[index].groupId == '8706797' "
         ></theMessageStates>
         <enterInformation
           :enterInfomationListP="componentInvalidToEnterInfomationList[0].isTrue"
           @listenEnterInfomationToLibrary="listenEnterInfomation"
           :titleP="classList[index].title"
-          v-if="classList[index].isTrue && classList[index].position == 2"
+          v-if="classList[index].isTrue && classList[index].groupId == '0342524'"
         ></enterInformation>
 
         <invalidComponents
@@ -45,7 +46,7 @@
           :theMessageStatesListP="componentTheMessageStatesToInvalidList[0].isTrue"
           :enterInfomationListP="componentEnterInfomationToInvalidList[0].isTrue"
           :titleP="classList[index].title"
-          v-if="classList[index].isTrue && classList[index].position == 'Invalid'"
+          v-if="classList[index].isTrue && classList[index].groupId == '1111111'"
         ></invalidComponents>
       </div>
     </vuedraggable>
@@ -102,6 +103,8 @@ import vuedraggable from "vuedraggable"; //拖动
 import invalidComponents from "../../../components/Super/library/invalidComponents"; // 无效组件
 import swipeCell from "../../../components/Super/template/swipeCell"; // 左右滑动
 
+import { modifyById } from "../../../api/Super/library/library";
+import { responseCode } from "../../../utils/responseCode";
 export default {
   components: {
     userInfo,
@@ -118,6 +121,12 @@ export default {
       componentTheMessageStatesToInvalidList: [{ isTrue: false, position: 0 }],
       componentEnterInfomationToInvalidList: [{ isTrue: false, position: 0 }],
 
+      // componentList: [
+      //   [{ isTrue: false, position: 0 }],
+      //   [{ isTrue: false, position: 0 }],
+      //   [{ isTrue: false, position: 0 }]
+      // ],
+
       // 由invalidComponents传递过来，并传送给各自组件类
       componentInvalidTouserInfoList: [{ isTrue: true, position: 0 }],
       componentInvalidToTheMessageStatesList: [{ isTrue: true, position: 0 }],
@@ -125,11 +134,32 @@ export default {
 
       //渲染当前library页面数据
       classList: [
-        { title: "用户信息组件", isTrue: true, position: 0 },
-        { title: "信息显示组件", isTrue: true, position: 1 },
-        { title: "数组输入组件", isTrue: true, position: 2 },
-        { title: "无效组件", isTrue: true, position: "Invalid" }
+        {
+          groupId: "000",
+          title: "用户信息组件",
+          isTrue: true,
+          position: 0
+        },
+        {
+          groupId: "111",
+          title: "信息显示组件",
+          isTrue: true,
+          position: 1
+        },
+        {
+          groupId: "222",
+          title: "数组输入组件",
+          isTrue: true,
+          position: 2
+        },
+        {
+          groupId: "999",
+          title: "无效组件",
+          isTrue: true,
+          position: 3
+        }
       ],
+      // classList: [],
 
       // 拖动长按拖动长按
       options: {
@@ -141,12 +171,76 @@ export default {
       }
     };
   },
-  updated() {},
+  // 初始化注入校验后，在el挂载前
+  created() {
+    this.getQueryComponent(); // 接收后端数据
+  },
+  // 虚拟DOM重新渲染并应用更新前
+  beforeUpdate() {},
+  // 虚拟DOM重新渲染并应用更新后：
+  updated() {
+    // console.log(this.classList);
+  },
+
+  // 解除绑定销毁子组件以及事件监听器之前：
+  beforeDestroy() {
+    this.changeLocation(); //离开页面前，修改classList数组中位置
+    // 调取后端接口
+  },
+
   mounted() {
     // this.start();
+    this.getQueryComponent();
   },
   methods: {
-    start() {},
+    // 修改classList数组中位置，随着位置改变，数据改变
+    changeLocation() {
+      for (let i = 0; i < this.classList.length; i++) {
+        this.classList[i].position = i;
+      }
+    },
+
+    // 初始化查询接口
+    getQueryComponent() {
+      this.classList = []; // 清空数据
+      console.log(modifyById);
+
+      // 请求后端地址路径：需要封装
+      const componentURl =
+        "http://localhost:8090/ftdp-web/Componentlibrary/queryComponent";
+      // 请求方法
+      this.$axios.get(modifyById).then(res => {
+        console.log(modifyById);
+
+        if (res.data.code == responseCode.SUCCESSCODE) {
+          for (let i = 0; i < res.data.data.length; i++) {
+
+            // 将后端数据存放到数组中
+            this.classList.push({
+              componentId: res.data.data[i].componentId,
+              groupId: res.data.data[i].groupId,
+              title: res.data.data[i].groupName,
+              isTrue: res.data.data[i].isUsable,
+              position: res.data.data[i].groupSequence
+            });
+          }
+
+          // 替换后端的01分别改为true和false
+          for (let index = 0; index < this.classList.length; index++) {
+            if (this.classList[index].isTrue == 0) {
+              this.classList[index].isTrue = true;
+            } else if (this.classList[index].isTrue == 1) {
+              this.classList[index].isTrue = false;
+            }
+          }
+          console.log(this.classList);
+        }
+      });
+    },
+    start() {
+      this.getQueryComponent();
+    },
+
     // 抬头左侧点击模板管理跳转
     intoManagement() {
       this.$router.push({ name: "management" });

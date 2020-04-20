@@ -3,9 +3,10 @@
 *@版本:V1.0
 *@作者:白爱民
 *@Date:2019年12月11日20:16:26
-*@最后修改人:herry
-*@LastEditTime:2019年12月11日20:16:31
-*@说明：-->
+*@最后修改人:付媛媛
+*@LastEditTime:2020年4月20日20:21:08
+*@说明： 
+-->
 <template>
   <div>
     <div class="title commonColor">
@@ -115,12 +116,13 @@ import user from "../../../components/Super/library/userInfo/user";
 import infoShow from "../../../components/Super/library/theMessageStates/infoShow";
 import numberIndex from "../../../components/Super/library/enterInformation/numberIndex";
 import swipeCell from "../../../components/Super/template/swipeCell";
-
+import { queryByIsUsable } from "../../../api/Super/template/management"; //引入根据isUsable查询模板接口的后端地址
+import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量
 export default {
   computed: {
     ...mapState(["managementDataListStore"]), // 映射store变量managementDataListStore为当前页面变量，直接使用this即可
-    ...mapState(["management_groupName_List"])
+    ...mapState(["management_groupName_List"]) //映射store变量management_groupName_List为当前页面存储页面的分组项目变量，直接使用this即可
   },
   components: {
     user,
@@ -164,17 +166,56 @@ export default {
     this.$store.commit("setManagementDataList", this.managementDataList);
   },
   mounted() {
-    // console.log(this.managementDataListStore);
     this.start();
 
     this.startList();
+
+    this.queryGroup();
   },
   methods: {
+    /**
+     * @description: 加载当前页面，根据isUsable查询模板
+     * @param 无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date: 2020年4月20日20:06:20
+     */
+    queryGroup() {
+      let vm = this;
+      vm.$axios.get(queryByIsUsable + "/0").then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
+          //遍历当前页面所有分组
+          for (let index = 0; index < res.data.data.length; index++) {
+            //加载当前页面的所有分组项目
+            vm.managementDataList.push({
+              activeNames: "1", //默认为 1
+              title: res.data.data[index].templateGroupName, //所有分组项目名称
+              comTitleList: [] //存放各分组项目下的项目数组
+            });
+            for (let i = 0;i < res.data.data[index].tempByIsUsableData.length;i++) {
+              //加载当前页面的所有分组项目下的项目名称
+              vm.managementDataList[index].comTitleList.push(
+                res.data.data[index].tempByIsUsableData[i].tempalteName //所有分组项目下的项目名称
+              );
+            }
+          }
+        } else if (res.data.code == responseCode.NULLCODE) {
+          vm.$toast({
+            message: "暂无数据",
+            duration: 1000
+          });
+        } else {
+          vm.$toast({
+            message: "加载失败",
+            duration: 1000
+          });
+        }
+      });
+    },
+
     // 初始化
     start() {
       this.managementDataList = []; // 当前有页面所有数据置空
-      // this.managementDataList = this.$store.state.managementDataListStore;
-      this.managementDataList = this.managementDataListStore; // 将全局变量数据赋值过来
     },
     // 抬头左侧按钮跳转到组件管理
     intoModel() {
@@ -185,7 +226,13 @@ export default {
       this.$router.push({ name: "setting" });
     },
 
-    // 加号：跳转添加页面输入信息
+    /**
+     * @description: 加号：跳转添加页面输入信息
+     * @param {index:分组索引}
+     * @return: 无
+     * @author: 付媛媛
+     * @Date: 2020年4月20日19:47:27
+     */
     plusNum(index) {
       const groupNameList = this.pushGroupNameList();
       this.$router.push({
@@ -198,25 +245,36 @@ export default {
       });
     },
 
+    /**
+     * @description: 点击加号存储模板管理页所有分组
+     * @param ：无
+     * @return: 当前页面所有分组
+     * @author: 付媛媛
+     * @Date: 2020年4月20日19:57:00
+     */
     pushGroupNameList() {
-      // 将当前页面的所有分组名字存储
       let groupNameList = [];
       for (let i = 0; i < this.managementDataList.length; i++) {
-        // const element = array[i];
+        //将当前页面所有分组名字添加到数组
         groupNameList.push(this.managementDataList[i].title);
       }
-
       return groupNameList;
     },
 
+    /**
+     * @description: 进入模板管理页面存储模板管理页所有分组
+     * @param ：无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date: 2020年4月20日19:59:05
+     */
     startList() {
-      // 将当前页面的所有分组名字存储
       let groupNameList = [];
       for (let i = 0; i < this.managementDataList.length; i++) {
-        // const element = array[i];
+        //将当前页面所有分组名字添加到数组
         groupNameList.push(this.managementDataList[i].title);
       }
-
+      // 存储当前页面的所有分组名字
       this.$store.commit("setManagementGroupNameList", groupNameList);
     }
   }

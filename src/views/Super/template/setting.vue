@@ -116,13 +116,18 @@
 }
 </style>
 <script>
-import popup from "../../../components/Super/popup";
+import popup from "../../../../src/components/Super/popup";
 import vuedraggable from "vuedraggable";
+
+import {queryTemplateGroupd} from "../../../../src/api/Super/template/setting";
+import {modifyTemplateGroup} from "../../../../src/api/Super/template/setting";
+import {responseCode} from "../../../../src/utils/responseCode";
 
 export default {
   components: {
     popup,
-    vuedraggable
+    vuedraggable,
+    responseCode
   },
   data() {
     return {
@@ -172,12 +177,15 @@ export default {
     queryTemplateGroupGet() {
       this.projectName = [];
       const vm = this;
-      const componentUrl =
-        "http://127.0.0.1:8091/ftdp-web/TemplateGroup/queryTemplateGroup";
-      vm.$axios.get(componentUrl).then(res => {
-        if (res.data.code == "0000") {
+
+      // const componentUrl =
+      //   "http://127.0.0.1:8091/ftdp-web/TemplateGroup/queryTemplateGroup";
+      // 请求方法
+      vm.$axios.get(queryTemplateGroupd).then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
           for (let i = 0; i < res.data.data.length; i++) {
             // const element = array[i];
+            // 将后端数据存放到数组中
             this.projectName.push({
               id: res.data.data[i].id,
               templateGroupName: res.data.data[i].templateGroupName,
@@ -201,19 +209,26 @@ export default {
 
       const resData = [];
       for (let i = 0; i < projectNamePosition.length; i++) {
+
         resData.push({
           id: projectNamePosition[i].id,
           templateGroupName: projectNamePosition[i].templateGroupName,
           isUsable: projectNamePosition[i].isUsable,
           groupSequence: projectNamePosition[i].groupSequence
         });
+        // console.log(projectNamePosition, "zzz");
       }
 
+      console.log(resData);
+      
+    //  console.log(this.projectNamePosition[i].isUsable, "zzz");
+
       const vm = this;
-      const componentUrl =
-        "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
-      vm.$axios.post(componentUrl, resData).then(res => {
-        if (res.data.code == "0000") {
+      // const componentUrl =
+      //   "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
+      // 请求方法  
+      vm.$axios.post(modifyTemplateGroup, resData).then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
           this.$toast({
             message: "修改成功"
           });
@@ -238,10 +253,10 @@ export default {
       // console.log(this.projectName[i].isUsable, "zzz");
 
       const vm = this;
-      const componentUrl =
-        "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
-      vm.$axios.post(componentUrl, resData).then(res => {
-        if (res.data.code == "0000") {
+      // const componentUrl =
+      //   "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
+      vm.$axios.post(modifyTemplateGroup, resData).then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
           this.$toast({
             message: "删除成功"
           });
@@ -294,6 +309,7 @@ export default {
       } else if (this.projectName[i].isUsable == 1) {
         this.projectName[i].isUsable = 0;
       }
+      // console.log(projectName,"修改")
     },
 
     // 点击抬头左侧按钮
@@ -307,6 +323,7 @@ export default {
       // this.projectName[i].isUsable = 1;
       this.addDeleteRecord(i);
       this.projectName.splice(i, 1);
+      // console.log(projectName,"删除")
     },
 
     // 增加内容
@@ -314,7 +331,7 @@ export default {
       this.projectName.push({
         templateGroupName: "请输入信息",
         id: "",
-        isUsable: "",
+        isUsable: "0",
         groupSequence: ""
       });
     },

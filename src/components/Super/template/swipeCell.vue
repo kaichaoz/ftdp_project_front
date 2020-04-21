@@ -13,13 +13,13 @@
     <div v-for="(item,i) in title">
       <van-swipe-cell :before-close="beforeClose">
         <!-- 显示内容 -->
-        <van-cell :border="false" :title="title[i]" :value="value" />
+        <van-cell :border="false" :title="title[i].templateName" :value="value" />
         <!-- 右划内容 -->
         <template slot="right">
           <!-- 编辑按钮 -->
           <van-button @click="intoCreateName(i)" square type="primary" :text="textEdit" />
           <!-- 删除按钮 -->
-          <van-button @click="deleteName()" square type="danger" :text="textDelete" />
+          <van-button @click="deleteName(i)" square type="danger" :text="textDelete" />
         </template>
       </van-swipe-cell>
     </div>
@@ -44,6 +44,8 @@ export default {
       textDelete: "删除"
     };
   },
+
+  created() {},
 
   mounted() {
     this.start();
@@ -83,7 +85,9 @@ export default {
     },
 
     // 删除按钮
-    deleteName() {}
+    deleteName(i) {
+      this.$emit("listenSwipeCellToManagement", i, this.groupIndexP);
+    }
   }
 };
 </script>

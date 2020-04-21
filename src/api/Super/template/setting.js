@@ -1,5 +1,5 @@
-const queryTemplateGroupd = 'TemplateGroup/queryTemplateGroup'
-const modifyTemplateGroup = 'TemplateGroup/modifyTemplateGroup'
+const queryTemplateGroupd = 'templateGroup/queryTemplateGroup'
+const modifyTemplateGroup = 'templateGroup/modifyTemplateGroup'
 export{
     queryTemplateGroupd,
     modifyTemplateGroup

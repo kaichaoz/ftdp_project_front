@@ -1,4 +1,5 @@
-const modifyById = 'Componentlibrary/queryComponent'
+const queryComponent = 'Componentlibrary/queryComponent' // 初始化
+const updateComponent = 'Componentlibrary/updateComponent' // 更新
 export {
-    modifyById
+    queryComponent, updateComponent
 }

@@ -38,7 +38,11 @@
               name="1"
             >
               <!-- 具体模板 -->
-              <swipeCell :groupIndexP="index" :titleP="managementDataList[index].comTitleList"></swipeCell>
+              <swipeCell
+                @listenSwipeCellToManagement="deleteTemplateName"
+                :groupIndexP="index"
+                :titleP="managementDataList[index].comTitleList"
+              ></swipeCell>
               <!-- 加号 -->
               <div>
                 <img @click="plusNum(index)" class="addBut" :src="plus" alt />
@@ -116,7 +120,11 @@ import user from "../../../components/Super/library/userInfo/user";
 import infoShow from "../../../components/Super/library/theMessageStates/infoShow";
 import numberIndex from "../../../components/Super/library/enterInformation/numberIndex";
 import swipeCell from "../../../components/Super/template/swipeCell";
-import { queryByIsUsable } from "../../../api/Super/template/management"; //引入根据isUsable查询模板接口的后端地址
+import {
+  queryByIsUsable,
+  deleteTemplate,
+  modifyTemplateGroup
+} from "../../../api/Super/template/management"; //引入根据isUsable查询模板接口的后端地址
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量
 export default {
@@ -150,9 +158,10 @@ export default {
       // 模板名称,activeNames默认必须为1，title：management页面模板类名字，comTitleList为具体模板名字
       managementDataList: [
         {
+          groupID: "",
           activeNames: "",
           title: "",
-          comTitleList: [""]
+          comTitleList: [{ templateId: "", isUsable: "", templateName: "" }]
         },
         { activeNames: "", title: "", comTitleList: [""] },
         { activeNames: "", title: "", comTitleList: [""] }
@@ -172,7 +181,42 @@ export default {
 
     this.queryGroup();
   },
+  beforeDestroy() {
+    this.modifyTemplateGroup();
+  },
   methods: {
+    /**
+     * @description: 模板管理页面退出保存当前分组模板位置
+     * @param 无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date: 2020年4月21日11:39:28
+     */
+    modifyTemplateGroup() {
+      let vm = this;
+      const modelData = [];
+      for (let i = 0; i < this.managementDataList.length; i++) {
+        modelData.push({
+          groupSequence: i, //分组模板位置序号
+          id: this.managementDataList[i].groupID, //分组模板id
+          isUsable: "0", //是否可用，默认为0
+          templateGroupName: this.managementDataList[i].title //分组模板名称
+        });
+      }
+      console.log("woshiModelData");
+      
+      console.log(modelData);
+
+      this.$axios.post(modifyTemplateGroup,modelData).then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
+          vm.$toast({
+            message: "保存当前页面成功！",
+            duration: 1000
+          });
+        }
+      });
+    },
+
     /**
      * @description: 加载当前页面，根据isUsable查询模板
      * @param 无
@@ -182,20 +226,32 @@ export default {
      */
     queryGroup() {
       let vm = this;
-      vm.$axios.get(queryByIsUsable + "/0").then(res => {
+      vm.managementDataList = [];
+      vm.$axios.get(queryByIsUsable).then(res => {
         if (res.data.code == responseCode.SUCCESSCODE) {
-          //遍历当前页面所有分组
+          //遍历当前页面所有分组模板
           for (let index = 0; index < res.data.data.length; index++) {
-            //加载当前页面的所有分组项目
+            //加载当前页面的所有分组模板
             vm.managementDataList.push({
+              groupID: res.data.data[index].templateGroupId, //分组模板Id
               activeNames: "1", //默认为 1
-              title: res.data.data[index].templateGroupName, //所有分组项目名称
-              comTitleList: [] //存放各分组项目下的项目数组
+              title: res.data.data[index].templateGroupName, //所有分组模板名称
+              comTitleList: [] //存放各分组模板的具体模板的数组
             });
-            for (let i = 0;i < res.data.data[index].tempByIsUsableData.length;i++) {
-              //加载当前页面的所有分组项目下的项目名称
+            for (
+              let i = 0;
+              i < res.data.data[index].tempByIsUsableData.length;
+              i++
+            ) {
+              //加载当前页面的所有分组模板的具体模板
               vm.managementDataList[index].comTitleList.push(
-                res.data.data[index].tempByIsUsableData[i].tempalteName //所有分组项目下的项目名称
+                {
+                  templateName:
+                    res.data.data[index].tempByIsUsableData[i].tempalteName,
+                  templateId:
+                    res.data.data[index].tempByIsUsableData[i].templateId,
+                  isUsable: res.data.data[index].tempByIsUsableData[i].isUsable
+                } //所有分组模板的具体模板名称/id/是否可用
               );
             }
           }
@@ -228,7 +284,7 @@ export default {
 
     /**
      * @description: 加号：跳转添加页面输入信息
-     * @param {index:分组索引}
+     * @param :{index:分组索引}
      * @return: 无
      * @author: 付媛媛
      * @Date: 2020年4月20日19:47:27
@@ -246,9 +302,9 @@ export default {
     },
 
     /**
-     * @description: 点击加号存储模板管理页所有分组
+     * @description: 点击加号存储模板管理页所有分组模板
      * @param ：无
-     * @return: 当前页面所有分组
+     * @return: 当前页面所有分组模板
      * @author: 付媛媛
      * @Date: 2020年4月20日19:57:00
      */
@@ -262,7 +318,7 @@ export default {
     },
 
     /**
-     * @description: 进入模板管理页面存储模板管理页所有分组
+     * @description: 进入模板管理页面存储模板管理页所有分组模板
      * @param ：无
      * @return: 无
      * @author: 付媛媛
@@ -271,11 +327,48 @@ export default {
     startList() {
       let groupNameList = [];
       for (let i = 0; i < this.managementDataList.length; i++) {
-        //将当前页面所有分组名字添加到数组
+        //将当前页面所有分组模板名字添加到数组
         groupNameList.push(this.managementDataList[i].title);
       }
-      // 存储当前页面的所有分组名字
+      // 存储当前页面的所有分组模板名字
       this.$store.commit("setManagementGroupNameList", groupNameList);
+    },
+
+    /**
+     * @description: 删除具体模板
+     * @param ：{i:子页面传递过来的具体模板索引,index:子页面传递过来的分组模板索引}
+     * @return: 无
+     * @author: 付媛媛
+     * @Date: 2020年4月21日10:03:20
+     */
+    deleteTemplateName(i, index) {
+      // console.log(this.managementDataList[index].comTitleList[i].templateId);
+
+      let vm = this;
+      vm.$axios
+        .post(
+          deleteTemplate +
+            "/" +
+            this.managementDataList[index].comTitleList[i].templateId
+        )
+        .then(res => {
+          // console.log(tempId);
+          if (res.data.code == responseCode.SUCCESSCODE) {
+            vm.$toast({
+              message: "删除成功",
+              duration: 1000
+            });
+          } else {
+            vm.$toast({
+              message: "删除失败",
+              duration: 1000
+            });
+          }
+        });
+      this.managementDataList[index].comTitleList.splice(i, 1);
+
+      console.log(this.managementDataList);
+      
     }
   }
 };

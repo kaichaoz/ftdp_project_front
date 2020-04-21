@@ -37,13 +37,11 @@
 .componentBody {
   margin-bottom: 20px;
 }
-
 /* 左滑 */
 .goods-card {
   margin: 0;
   background-color: @white;
 }
-
 .delete-button {
   height: 100%;
 }
@@ -51,7 +49,6 @@
 <script>
 import user from "./user"; // 引入user组件
 import swipeCell from "../../template/swipeCell"; // 左右滑动
-
 export default {
   components: {
     user,
@@ -83,7 +80,13 @@ export default {
     this.componentList[0].isTrue = this.userInfoListP;
   },
   methods: {
-    // 组件右划停用按钮操作
+    /**
+     * @description: 组件右划停用按钮操作
+     * @param {index:组件所在位置}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2019年11月8日10:25:19
+     */
     disableComponent(index) {
       this.componentList[index].isTrue = false; // 不显示此组件
       this.$emit("listenUserInfoToLibrary", index); // 向library通知消息

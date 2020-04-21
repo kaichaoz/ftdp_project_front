@@ -3,8 +3,8 @@
 *@版本:V1.0
 *@作者:白爱民
 *@Date:2019年12月11日20:16:26
-*@最后修改人:herry
-*@LastEditTime:2019年12月11日20:16:31
+*@最后修改人:付媛媛
+*@LastEditTime:2020年4月21日19:24:33
 *@说明：-->
 <template>
   <div>
@@ -19,7 +19,7 @@
           <!-- 编辑按钮 -->
           <van-button @click="intoCreateName(i)" square type="primary" :text="textEdit" />
           <!-- 删除按钮 -->
-          <van-button @click="deleteName(i,index)" square type="danger" :text="textDelete" />
+          <van-button @click="deleteName(i)" square type="danger" :text="textDelete" />
         </template>
       </van-swipe-cell>
     </div>
@@ -73,7 +73,13 @@ export default {
       }
     },
 
-    //编辑按钮
+    /**
+     * @description: 具体模板左滑编辑按钮
+     * @param ：{i:具体模板索引}
+     * @return: 无
+     * @author: 付媛媛
+     * @Date:2020-4-21 19:24:12
+     */
     intoCreateName(i) {
       this.$router.push({
         name: "createName",
@@ -84,8 +90,14 @@ export default {
       });
     },
 
-    // 删除按钮
-    deleteName(i,index) {
+    /**
+     * @description: 删除具体模板
+     * @param ：{i:具体模板索引}
+     * @return: 无
+     * @author: 付媛媛
+     * @Date:2020年4月21日19:23:33
+     */
+    deleteName(i) {
       this.$emit("listenSwipeCellToManagement", i, this.groupIndexP);
     }
   }

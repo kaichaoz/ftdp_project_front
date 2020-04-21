@@ -4,7 +4,7 @@
 *@作者:白爱民
 *@Date:2019年12月11日20:16:26
 *@最后修改人:付媛媛
-*@LastEditTime:2020年4月20日20:21:08
+*@LastEditTime:2020年4月21日19:24:54
 *@说明： 
 -->
 <template>
@@ -124,7 +124,7 @@ import {
   queryByIsUsable,
   deleteTemplate,
   modifyTemplateGroup
-} from "../../../api/Super/template/management"; //引入根据isUsable查询模板接口的后端地址
+} from "../../../api/Super/template/management"; //引入{根据isUsable查询模板，删除模板，修改模板分组}接口的后端地址
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量
 export default {
@@ -162,9 +162,7 @@ export default {
           activeNames: "",
           title: "",
           comTitleList: [{ templateId: "", isUsable: "", templateName: "" }]
-        },
-        { activeNames: "", title: "", comTitleList: [""] },
-        { activeNames: "", title: "", comTitleList: [""] }
+        }
       ]
     };
   },
@@ -175,100 +173,14 @@ export default {
     this.$store.commit("setManagementDataList", this.managementDataList);
   },
   mounted() {
-    this.start();
-
-    this.startList();
-
+    //初始化页面加载
     this.queryGroup();
   },
   beforeDestroy() {
+    //退出页面保存当前分组模板位置
     this.modifyTemplateGroup();
   },
   methods: {
-    /**
-     * @description: 模板管理页面退出保存当前分组模板位置
-     * @param 无
-     * @return: 无
-     * @author: 付媛媛
-     * @Date: 2020年4月21日11:39:28
-     */
-    modifyTemplateGroup() {
-      let vm = this;
-      const modelData = [];
-      for (let i = 0; i < this.managementDataList.length; i++) {
-        modelData.push({
-          groupSequence: i, //分组模板位置序号
-          id: this.managementDataList[i].groupID, //分组模板id
-          isUsable: "0", //是否可用，默认为0
-          templateGroupName: this.managementDataList[i].title //分组模板名称
-        });
-      }
-      console.log("woshiModelData");
-      
-      console.log(modelData);
-
-      this.$axios.post(modifyTemplateGroup,modelData).then(res => {
-        if (res.data.code == responseCode.SUCCESSCODE) {
-          vm.$toast({
-            message: "保存当前页面成功！",
-            duration: 1000
-          });
-        }
-      });
-    },
-
-    /**
-     * @description: 加载当前页面，根据isUsable查询模板
-     * @param 无
-     * @return: 无
-     * @author: 付媛媛
-     * @Date: 2020年4月20日20:06:20
-     */
-    queryGroup() {
-      let vm = this;
-      vm.managementDataList = [];
-      vm.$axios.get(queryByIsUsable).then(res => {
-        if (res.data.code == responseCode.SUCCESSCODE) {
-          //遍历当前页面所有分组模板
-          for (let index = 0; index < res.data.data.length; index++) {
-            //加载当前页面的所有分组模板
-            vm.managementDataList.push({
-              groupID: res.data.data[index].templateGroupId, //分组模板Id
-              activeNames: "1", //默认为 1
-              title: res.data.data[index].templateGroupName, //所有分组模板名称
-              comTitleList: [] //存放各分组模板的具体模板的数组
-            });
-            for (
-              let i = 0;
-              i < res.data.data[index].tempByIsUsableData.length;
-              i++
-            ) {
-              //加载当前页面的所有分组模板的具体模板
-              vm.managementDataList[index].comTitleList.push(
-                {
-                  templateName:
-                    res.data.data[index].tempByIsUsableData[i].tempalteName,
-                  templateId:
-                    res.data.data[index].tempByIsUsableData[i].templateId,
-                  isUsable: res.data.data[index].tempByIsUsableData[i].isUsable
-                } //所有分组模板的具体模板名称/id/是否可用
-              );
-            }
-          }
-        } else if (res.data.code == responseCode.NULLCODE) {
-          vm.$toast({
-            message: "暂无数据",
-            duration: 1000
-          });
-        } else {
-          vm.$toast({
-            message: "加载失败",
-            duration: 1000
-          });
-        }
-      });
-    },
-
     // 初始化
     start() {
       this.managementDataList = []; // 当前有页面所有数据置空
@@ -335,6 +247,79 @@ export default {
     },
 
     /**
+     * @description: 加载当前页面，根据isUsable查询模板
+     * @param 无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date: 2020年4月20日20:06:20
+     */
+    queryGroup() {
+      let vm = this;
+      vm.managementDataList = [];
+      vm.$axios.get(queryByIsUsable).then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
+          //遍历当前页面所有分组模板
+          for (let index = 0; index < res.data.data.length; index++) {
+            //加载当前页面的所有分组模板
+            vm.managementDataList.push({
+              groupID: res.data.data[index].templateGroupId, //分组模板Id
+              activeNames: "1", //默认为 1
+              title: res.data.data[index].templateGroupName, //所有分组模板名称
+              comTitleList: [] //存放各分组模板的具体模板的数组
+            });
+            for (
+              let i = 0;
+              i < res.data.data[index].tempByIsUsableData.length;
+              i++
+            ) {
+              //加载当前页面的所有分组模板的具体模板
+              vm.managementDataList[index].comTitleList.push(
+                {
+                  templateName:
+                    res.data.data[index].tempByIsUsableData[i].templateName,
+                  templateId:
+                    res.data.data[index].tempByIsUsableData[i].templateId,
+                  isUsable: res.data.data[index].tempByIsUsableData[i].isUsable
+                } //所有分组模板的具体模板名称/id/是否可用
+              );
+            }
+          }
+        } else if (res.data.code == responseCode.NULLCODE) {
+          vm.$toast({
+            message: "暂无数据",
+            duration: 1000
+          });
+        } else {
+          vm.$toast({
+            message: "加载失败",
+            duration: 1000
+          });
+        }
+      });
+    },
+
+    /**
+     * @description: 模板管理页面退出保存当前分组模板位置
+     * @param 无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date: 2020年4月21日11:39:28
+     */
+    modifyTemplateGroup() {
+      let vm = this;
+      const modelData = [];
+      for (let i = 0; i < this.managementDataList.length; i++) {
+        modelData.push({
+          groupSequence: i, //分组模板位置序号
+          id: this.managementDataList[i].groupID, //分组模板id
+          isUsable: "0", //是否可用，默认为0
+          templateGroupName: this.managementDataList[i].title //分组模板名称
+        });
+      }
+      this.$axios.post(modifyTemplateGroup, modelData);
+    },
+
+    /**
      * @description: 删除具体模板
      * @param ：{i:子页面传递过来的具体模板索引,index:子页面传递过来的分组模板索引}
      * @return: 无
@@ -342,8 +327,6 @@ export default {
      * @Date: 2020年4月21日10:03:20
      */
     deleteTemplateName(i, index) {
-      // console.log(this.managementDataList[index].comTitleList[i].templateId);
-
       let vm = this;
       vm.$axios
         .post(
@@ -352,7 +335,6 @@ export default {
             this.managementDataList[index].comTitleList[i].templateId
         )
         .then(res => {
-          // console.log(tempId);
           if (res.data.code == responseCode.SUCCESSCODE) {
             vm.$toast({
               message: "删除成功",
@@ -366,9 +348,6 @@ export default {
           }
         });
       this.managementDataList[index].comTitleList.splice(i, 1);
-
-      console.log(this.managementDataList);
-      
     }
   }
 };

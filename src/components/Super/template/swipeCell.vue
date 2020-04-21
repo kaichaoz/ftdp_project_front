@@ -19,7 +19,7 @@
           <!-- 编辑按钮 -->
           <van-button @click="intoCreateName(i)" square type="primary" :text="textEdit" />
           <!-- 删除按钮 -->
-          <van-button @click="deleteName(i)" square type="danger" :text="textDelete" />
+          <van-button @click="deleteName(i,index)" square type="danger" :text="textDelete" />
         </template>
       </van-swipe-cell>
     </div>
@@ -85,7 +85,7 @@ export default {
     },
 
     // 删除按钮
-    deleteName(i) {
+    deleteName(i,index) {
       this.$emit("listenSwipeCellToManagement", i, this.groupIndexP);
     }
   }

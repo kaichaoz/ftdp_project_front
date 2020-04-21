@@ -116,13 +116,18 @@
 }
 </style>
 <script>
-import popup from "../../../components/Super/popup";
+import popup from "../../../../src/components/Super/popup";
 import vuedraggable from "vuedraggable";
+
+import {queryTemplateGroupd} from "../../../../src/api/Super/template/setting";
+import {modifyTemplateGroup} from "../../../../src/api/Super/template/setting";
+import {responseCode} from "../../../../src/utils/responseCode";
 
 export default {
   components: {
     popup,
-    vuedraggable
+    vuedraggable,
+    responseCode
   },
   data() {
     return {
@@ -136,10 +141,6 @@ export default {
       //   { id:"", templateGroupname:"男生项目"},
       //   { id:"", templateGroupname:"女生项目"}
       //   ],
-      // projectName: {
-      //    id:"",
-      //    templateGroupname:"",
-      // },
       projectName: [
         { id: "", templateGroupName: "", isUsable: "", groupSequence: "" }
       ],
@@ -169,19 +170,22 @@ export default {
 
   mounted() {
     this.queryTemplateGroupGet();
-    // this.modifyTemplateGroupPost();
   },
+
   methods: {
+    // 初始化请求后端数据
     queryTemplateGroupGet() {
       this.projectName = [];
       const vm = this;
-      const componentUrl =
-        "http://127.0.0.1:8091/ftdp-web/TemplateGroup/queryTemplateGroup";
-      vm.$axios.get(componentUrl).then(res => {
-        if (res.data.code == "0000") {
-          // console.log(res.data.data,"get")
+
+      // const componentUrl =
+      //   "http://127.0.0.1:8091/ftdp-web/TemplateGroup/queryTemplateGroup";
+      // 请求方法
+      vm.$axios.get(queryTemplateGroupd).then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
           for (let i = 0; i < res.data.data.length; i++) {
             // const element = array[i];
+            // 将后端数据存放到数组中
             this.projectName.push({
               id: res.data.data[i].id,
               templateGroupName: res.data.data[i].templateGroupName,
@@ -190,31 +194,41 @@ export default {
             });
           }
           // this.projectName = res.data.data
-          // console.log(this.projectName,"gett")
+          //  const a = this.replaceTF(this.projectName);
         } else {
-          this.$router.push({ name: "login" });
+          // this.$router.push({ name: "login" });
+          this.$toast({
+            message: ""
+          });
         }
       });
     },
+    
     modifyTemplateGroupPost() {
-      this.changeLocation();
+      const projectNamePosition = this.changeLocation(this.projectName);
 
       const resData = [];
+      for (let i = 0; i < projectNamePosition.length; i++) {
 
-      for (let i = 0; i < this.projectName.length; i++) {
         resData.push({
-          id: this.projectName[i].id,
-          templateGroupName: this.projectName[i].templateGroupName,
-          isUsable: this.projectName[i].isUsable,
-          groupSequence: this.projectName[i].groupSequence
+          id: projectNamePosition[i].id,
+          templateGroupName: projectNamePosition[i].templateGroupName,
+          isUsable: projectNamePosition[i].isUsable,
+          groupSequence: projectNamePosition[i].groupSequence
         });
+        // console.log(projectNamePosition, "zzz");
       }
+
+      console.log(resData);
+      
+    //  console.log(this.projectNamePosition[i].isUsable, "zzz");
+
       const vm = this;
-      const componentUrl =
-        "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
-      vm.$axios.post(componentUrl, resData).then(res => {
-        if (res.data.code == "0000") {
-          // console.log(res.data.data, "ghgh");
+      // const componentUrl =
+      //   "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
+      // 请求方法  
+      vm.$axios.post(modifyTemplateGroup, resData).then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
           this.$toast({
             message: "修改成功"
           });
@@ -227,11 +241,75 @@ export default {
       });
     },
 
+    //删除分组设置
+    addDeleteRecord(i) {
+      const resData = [];
+      resData.push({
+        id: this.projectName[i].id,
+        templateGroupName: this.projectName[i].templateGroupName,
+        isUsable: this.projectName[i].isUsable,
+        groupSequence: this.projectName[i].groupSequence
+      });
+      // console.log(this.projectName[i].isUsable, "zzz");
+
+      const vm = this;
+      // const componentUrl =
+      //   "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
+      vm.$axios.post(modifyTemplateGroup, resData).then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
+          this.$toast({
+            message: "删除成功"
+          });
+        } else {
+          vm.$toast({
+            message: "抱歉，，，",
+            duration: 1000
+          });
+        }
+      });
+    },
+
     // 修改classList数组中位置，随着位置改变，数据改变
-    changeLocation() {
-      for (let i = 0; i < this.projectName.length; i++) {
-        this.projectName[i].groupSequence = i;
+    changeLocation(arrayList) {
+      for (let i = 0; i < arrayList.length; i++) {
+        arrayList[i].groupSequence = i;
       }
+      return arrayList;
+    },
+
+    // 替换前端true和false分别改为01
+    replace01(arrayList) {
+      for (let index = 0; index < arrayList.length; index++) {
+        if (arrayList[index].isUsable == true) {
+          arrayList[index].isUsable = 0;
+        } else if (arrayList[index].isUsable == false) {
+          arrayList[index].isUsable = 1;
+        }
+        
+        return arrayList;
+      }
+    },
+    //替换后端的01分别改为true和false
+    replaceTF(arrayList) {
+      for (let index = 0; index < arrayList.length; index++) {
+        if (arrayList[index].isUsable == "0") {
+          arrayList[index].isUsable = true;
+        } else if (arrayList[index].isUsable == "1") {
+          arrayList[index].isUsable = false;
+        }
+
+        return arrayList;
+      }
+    },
+
+    // 修改isUsable的状态
+    replaceTFF(i) {
+      if (this.projectName[i].isUsable == 0) {
+        this.projectName[i].isUsable = 1;
+      } else if (this.projectName[i].isUsable == 1) {
+        this.projectName[i].isUsable = 0;
+      }
+      // console.log(projectName,"修改")
     },
 
     // 点击抬头左侧按钮
@@ -241,33 +319,33 @@ export default {
 
     // 删除内容
     lessNum(i) {
+      this.replaceTFF(i);
+      // this.projectName[i].isUsable = 1;
+      this.addDeleteRecord(i);
       this.projectName.splice(i, 1);
-      console.log(this.projectName)
-      
+      // console.log(projectName,"删除")
     },
 
     // 增加内容
     plusNum() {
       this.projectName.push({
-        templateGroupName:"请输入信息",
-        id:"",
-        isUsable:"",
-        groupSequence:""
-        });
+        templateGroupName: "请输入信息",
+        id: "",
+        isUsable: "0",
+        groupSequence: ""
+      });
     },
 
     // 点击每个名字进弹框修改
     popupInput(i) {
       //alert("我是白爱民"+i)
       this.boolean = true;
-      // console.log(this.projectName[i]);
       this.projectInfo = this.projectName[i].templateGroupName;
       this.projectIndex = i;
     },
 
     //接收弹出框页面是否可见的boolean值
     receivePopup(newVal) {
-      // console.log(newVal, "newVal");
       this.boolean = newVal;
     },
 

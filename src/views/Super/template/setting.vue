@@ -3,8 +3,8 @@
 *@版本:V1.0
 *@作者:白爱民
 *@Date:2019年12月11日20:16:26
-*@最后修改人:herry
-*@LastEditTime:2019年12月11日20:16:31
+*@最后修改人:张颖娟
+*@LastEditTime:2020年4月21日09:39:41
 *@说明：-->
 <template>
   <div>
@@ -37,7 +37,7 @@
     <popup
       :boolean="boolean"
       :projectInfo="projectInfo"
-      :projectIndex="projectIndex"
+      :projectIndex="projectIndex"  
       @listenToChildSetting="receivePopup"
       @listenToSettingInfo="receivePopupInfo"
     ></popup>
@@ -116,32 +116,38 @@
 }
 </style>
 <script>
-import popup from "../../../components/Super/popup";
+import popup from "../../../../src/components/Super/popup";//引入弹出框
 import vuedraggable from "vuedraggable";
+
+import {queryTemplateGroupd} from "../../../../src/api/Super/template/setting";//引入初始化模板分组接口的后端地址
+import {modifyTemplateGroup} from "../../../../src/api/Super/template/setting";//引入修改模板分组接口的后端地址
+import {responseCode} from "../../../../src/utils/responseCode";//引入定义的状态码
 
 export default {
   components: {
     popup,
-    vuedraggable
+    vuedraggable,
+    responseCode
   },
   data() {
     return {
       //   show: false,
       //   value: ""
 
-      less: require("../../../assets/super/Less.png"),
-      plus: require("../../../assets/super/plus.png"),
+      less: require("../../../assets/super/Less.png"),//右边减号图片图片
+      plus: require("../../../assets/super/plus.png"),//底部加号图片
       // projectName: [
       //   { id:"", templateGroupname:"公共项目"},
       //   { id:"", templateGroupname:"男生项目"},
       //   { id:"", templateGroupname:"女生项目"}
       //   ],
-      // projectName: {
-      //    id:"",
-      //    templateGroupname:"",
-      // },
+
+      //渲染当前setting页面数据
       projectName: [
-        { id: "", templateGroupName: "", isUsable: "", groupSequence: "" }
+        { id: "", 
+          templateGroupName: "", //模板分组名
+          isUsable: "",   //是否可用，0可用、1不可
+          groupSequence: "" }  //分组位置
       ],
 
       boolean: "", // 弹出框输入是否可见
@@ -169,19 +175,30 @@ export default {
 
   mounted() {
     this.queryTemplateGroupGet();
-    // this.modifyTemplateGroupPost();
   },
+
   methods: {
+    /**
+     * @description:  初始化请求后端数据
+     * @param {index:分组索引}
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月21日09:37:36
+     */
     queryTemplateGroupGet() {
       this.projectName = [];
       const vm = this;
-      const componentUrl =
-        "http://127.0.0.1:8091/ftdp-web/TemplateGroup/queryTemplateGroup";
-      vm.$axios.get(componentUrl).then(res => {
-        if (res.data.code == "0000") {
-          // console.log(res.data.data,"get")
+
+      // const componentUrl =
+      //   "http://127.0.0.1:8091/ftdp-web/TemplateGroup/queryTemplateGroup";
+
+      // 请求后端数据
+      vm.$axios.get(queryTemplateGroupd).then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
+          //遍历当前页面所有分组
           for (let i = 0; i < res.data.data.length; i++) {
             // const element = array[i];
+            // 将后端数据存放到数组中
             this.projectName.push({
               id: res.data.data[i].id,
               templateGroupName: res.data.data[i].templateGroupName,
@@ -190,31 +207,50 @@ export default {
             });
           }
           // this.projectName = res.data.data
-          // console.log(this.projectName,"gett")
+          //  const a = this.replaceTF(this.projectName);
         } else {
-          this.$router.push({ name: "login" });
+          // this.$router.push({ name: "login" });
+          this.$toast({
+            message: "加载失败",
+            duration: 1000
+          });
         }
       });
     },
+    
+    /**
+     * @description: 保存当前setting页面数据
+     * @param {index:分组索引}
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月21日09:37:36
+     */
     modifyTemplateGroupPost() {
-      this.changeLocation();
+      const projectNamePosition = this.changeLocation(this.projectName);
 
       const resData = [];
-
-      for (let i = 0; i < this.projectName.length; i++) {
+      for (let i = 0; i < projectNamePosition.length; i++) {
+        // 将前端页面数据存放到数组中
         resData.push({
-          id: this.projectName[i].id,
-          templateGroupName: this.projectName[i].templateGroupName,
-          isUsable: this.projectName[i].isUsable,
-          groupSequence: this.projectName[i].groupSequence
+          id: projectNamePosition[i].id,
+          templateGroupName: projectNamePosition[i].templateGroupName,
+          isUsable: projectNamePosition[i].isUsable,
+          groupSequence: projectNamePosition[i].groupSequence
         });
+        // console.log(projectNamePosition, "zzz");
       }
+
+      console.log(resData);
+      
+    //  console.log(this.projectNamePosition[i].isUsable, "zzz");
+
       const vm = this;
-      const componentUrl =
-        "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
-      vm.$axios.post(componentUrl, resData).then(res => {
-        if (res.data.code == "0000") {
-          // console.log(res.data.data, "ghgh");
+      // const componentUrl =
+      // "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
+
+      // 请求后端数据 
+      vm.$axios.post(modifyTemplateGroup, resData).then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
           this.$toast({
             message: "修改成功"
           });
@@ -227,11 +263,84 @@ export default {
       });
     },
 
+    /**
+     * @description: 删除分组设置
+     * @param {index:分组索引}
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月21日09:37:36
+     */
+    addDeleteRecord(i) {
+      const resData = [];
+      //获取所选分组信息
+      resData.push({
+        id: this.projectName[i].id,
+        templateGroupName: this.projectName[i].templateGroupName,
+        isUsable: this.projectName[i].isUsable,
+        groupSequence: this.projectName[i].groupSequence
+      });
+      // console.log(this.projectName[i].isUsable, "zzz");
+
+      const vm = this;
+      // const componentUrl =
+      //   "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
+
+      //请求后端数据
+      vm.$axios.post(modifyTemplateGroup, resData).then(res => {
+        if (res.data.code == responseCode.SUCCESSCODE) {
+          this.$toast({
+            message: "删除成功"
+          });
+        } else {
+          vm.$toast({
+            message: "抱歉，，，",
+            duration: 1000
+          });
+        }
+      });
+    },
+
     // 修改classList数组中位置，随着位置改变，数据改变
-    changeLocation() {
-      for (let i = 0; i < this.projectName.length; i++) {
-        this.projectName[i].groupSequence = i;
+    changeLocation(arrayList) {
+      for (let i = 0; i < arrayList.length; i++) {
+        arrayList[i].groupSequence = i;
       }
+      return arrayList;
+    },
+
+    // 替换前端true和false分别改为01
+    replace01(arrayList) {
+      for (let index = 0; index < arrayList.length; index++) {
+        if (arrayList[index].isUsable == true) {
+          arrayList[index].isUsable = 0;
+        } else if (arrayList[index].isUsable == false) {
+          arrayList[index].isUsable = 1;
+        }
+        
+        return arrayList;
+      }
+    },
+    //替换后端的01分别改为true和false
+    replaceTF(arrayList) {
+      for (let index = 0; index < arrayList.length; index++) {
+        if (arrayList[index].isUsable == "0") {
+          arrayList[index].isUsable = true;
+        } else if (arrayList[index].isUsable == "1") {
+          arrayList[index].isUsable = false;
+        }
+
+        return arrayList;
+      }
+    },
+
+    // 修改isUsable的状态
+    replaceTFF(i) {
+      if (this.projectName[i].isUsable == 0) {
+        this.projectName[i].isUsable = 1;
+      } else if (this.projectName[i].isUsable == 1) {
+        this.projectName[i].isUsable = 0;
+      }
+      // console.log(projectName,"修改")
     },
 
     // 点击抬头左侧按钮
@@ -240,34 +349,33 @@ export default {
     },
 
     // 删除内容
-    lessNum(i) {
-      this.projectName.splice(i, 1);
-      console.log(this.projectName)
-      
+    lessNum(i) { 
+      this.replaceTFF(i); //修改isUsable的状态
+      this.addDeleteRecord(i); //删除分组设置（后端）
+      this.projectName.splice(i, 1); //删除分组设置（前端）
+      // console.log(projectName,"删除")
     },
 
     // 增加内容
     plusNum() {
       this.projectName.push({
-        templateGroupName:"请输入信息",
-        id:"",
-        isUsable:"",
-        groupSequence:""
-        });
+        templateGroupName: "请输入信息",
+        id: "",
+        isUsable: "0",
+        groupSequence: ""
+      });
     },
 
     // 点击每个名字进弹框修改
     popupInput(i) {
       //alert("我是白爱民"+i)
       this.boolean = true;
-      // console.log(this.projectName[i]);
       this.projectInfo = this.projectName[i].templateGroupName;
       this.projectIndex = i;
     },
 
     //接收弹出框页面是否可见的boolean值
     receivePopup(newVal) {
-      // console.log(newVal, "newVal");
       this.boolean = newVal;
     },
 

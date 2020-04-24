@@ -1,6 +1,6 @@
-const modifyById = 'phoneticCheck/findPhoneticCheck'
+const insertTemplate = 'templateDesign/insertTemplate'
 const nextPhonetic = 'phoneticCheck/nextPhonetic'
 export {
-    modifyById,
+    insertTemplate,
     nextPhonetic
 }

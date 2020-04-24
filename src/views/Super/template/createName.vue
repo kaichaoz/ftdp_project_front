@@ -25,7 +25,7 @@
           <van-field v-model="createNameDataList.managementNamevalue" placeholder="请输入模板名称" />
         </van-cell-group>
       </div>
-      <!-- 下拉框：分组： -->
+      <!-- 下拉框：分组： :title="createNameDataList.title" @change="changeDevelop"-->
       <div class="managementName">
         <van-dropdown-menu active-color="#fecd2a">
           <van-dropdown-item
@@ -140,8 +140,10 @@
 import escape from "../../../api/escape"; // 导入转移符html
 import { ContactCard } from "vant";
 
-import modifyById from "../../../api/Super/template/createName";
+import { insertTemplate } from "../../../api/Super/template/createName"; //引入编辑模板接口的后端地址
 import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量
+
+import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 
 export default {
   computed: {
@@ -165,18 +167,24 @@ export default {
       }
     };
   },
-  mounted() {
+
+  created() {
     this.start();
-    this.jumpToPageLoading();
+  },
+  mounted() {
+    // this.jumpToPageLoading();
   },
 
   updated() {
     // 存储到vuex
     this.$store.commit("setCreateNameDataList", this.createNameDataList);
-
-    // 从vuex获取
-    // const a = this.$store.state.createNameDataList;
   },
+
+  beforeDestroy() {
+    //退出页面保存当前页面数据
+    // this.recallBackendPost();
+  },
+
   methods: {
     recallBackendGet() {
       this.$axios
@@ -191,7 +199,7 @@ export default {
             this.validTime
         )
         .then(res => {
-          if (res.data.code == "0000") {
+          if (res.data.code == responseCode.SUCCESSCODE) {
           } else {
             vm.$toast({
               message: "抱歉,登录失败,请联系管理员",
@@ -203,21 +211,44 @@ export default {
           // 请求出错则会执行的代码在这里写
         });
     },
-    recallBackendPost() {
-      const vm = this;
-      vm.$axios
-        .post(modifyById, {
-          isTurnAuto: localStorage.getItem("setting_checkedAutomatic"),
-          isShowWord: localStorage.getItem("setting_checkedDisplayWord"),
 
-          playNums: vm.viewsNow,
-          turnDelayTime: vm.delayedJumpNow,
-          studyNumber: vm.learningNumNow,
-          playInterval: vm.playIntervalNow,
-          pictureStayTime: vm.residenceTimeNow
-        })
+    recallBackendPost() {
+      const modelData = [];
+
+      for (let index = 0; index < this.createNameDataList.length; index++) {
+        modeData.push({
+          groupSequence: this.createNameDataList[i].groupSequence, //分组排序位置
+          id: this.createNameDataList[i].id, //模板id
+          isFinish: this.createNameDataList[i].isFinish, //是否编辑完成（0完成，1未完成）
+          isUsable: this.createNameDataList[i].isUsable, //是否可用（0可用，1不可用）
+          postscript: this.createNameDataList[i].postscript, //备注
+          staffID: this.createNameDataList[i].staffID, //人员id
+          templateGroupID: this.createNameDataList[i].templateGroupID, //模板分组id
+          templateName: this.createNameDataList[i].templateName //模板名称
+        });
+      }
+
+      const vm = this;
+      // const insertTemplateUrl =
+      // "http://localhost:8090/ftdp-web/templateDesign/insertTemplate";
+
+      vm.$axios
+        .post(
+          insertTemplate,
+          modelData
+          //  {
+          //   isTurnAuto: localStorage.getItem("setting_checkedAutomatic"),
+          //   isShowWord: localStorage.getItem("setting_checkedDisplayWord"),
+
+          //   playNums: vm.viewsNow,
+          //   turnDelayTime: vm.delayedJumpNow,
+          //   studyNumber: vm.learningNumNow,
+          //   playInterval: vm.playIntervalNow,
+          //   pictureStayTime: vm.residenceTimeNow
+          // }
+        )
         .then(res => {
-          if (res.data.code == "0000") {
+          if (res.data.code == responseCode.SUCCESSCODE) {
             this.$toast({
               message: "设置成功"
             });
@@ -228,46 +259,60 @@ export default {
           }
         });
     },
+
+    /**
+     * @description: 上一级页面跳转进来传参
+     * @param ：{index:具体分组的索引}
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月24日19:31:53
+     */
     start() {
       // 初始化从vuex读取，后改为后端
       this.createNameDataList = {};
       this.createNameDataList = this.$store.state.createNameDataList;
-    },
-    // 上一级页面跳转进来传参：
-    jumpToPageLoading() {
-      // 接收上一个页面传参内容
-      const a = this.$route.params.managementEdit; // 接收判断从哪个按钮进入
 
-      const a1 = this.$route.params.title; // 接收从编辑进入的title名字
-      console.log(a1);
-      console.log(this.management_groupName_List);
+      const managementRoute = sessionStorage.getItem("management_route"); // 接收management进入：0表示从加号，1表示从编辑
+      const groupNameRoute = parseInt(
+        sessionStorage.getItem("management_groupNameIndex")
+      ); // 接收当前分组i
 
-      //从任何地方过来都需要当前所有分组名字：公共项目、男生项目、女生项目等的集合
+      let groupNameListRoute = sessionStorage.getItem(
+        "management_groupNameList"
+      ); // 接收页面从上到下的所有分组名字
 
-      if (a == "0") {
-        // 从加号过来的
-        const b = this.$route.params.groupNamePlus;
-        console.log(b);
-        const b1 = this.$route.params.groupNameListPlus;
-        console.log(b1);
-      } else if (a == "1") {
-        //从编辑过来的，还需要给我是哪个id，我在这个页面按照id去后端查询
-        const e = this.$route.params.groupNameEdit;
-        console.log(e);
-        const e1 = this.$route.params.groupNameListEdit;
-        console.log(e1);
+      groupNameListRoute = groupNameListRoute.split(",");// 字符串转数组
+
+      // const managementRoute = this.$route.params.managementRoute; // 接收management进入：0表示从加号，1表示从编辑
+      // const groupNameRoute = this.$route.params.groupNameRoute; // 接收当前分组i
+      // const groupNameListRoute = this.$route.params.groupNameListRoute; // 接收页面从上到下的所有分组名字
+
+      this.createNameDataList.groupOption = [];
+      for (let index = 0; index < groupNameListRoute.length; index++) {
+        this.createNameDataList.groupOption.push({
+          text: groupNameListRoute[index],
+          value: index
+        });
+      }
+
+      this.createNameDataList.groupValue = groupNameRoute;
+      // console.log(this.createNameDataList.groupValue);
+
+      // =0调取后端接口，=1不执行
+      if (managementRoute == "0") {
       }
     },
-    // 返回
+
+    // 上一级页面跳转进来传参：
+    jumpToPageLoading() {},
+
+    // 返回，模板管理页面
     returnPage() {
-      // window.history.go(-1); // windos的返回上一页
-      // this.$router.go(-1) // vue的返回上一页
       this.$router.push({ name: "management" });
     },
 
-    //下一步
+    //下一步，编辑模板拖拽页面
     nextStep() {
-      // console.log("2");
       this.$router.push({ name: "makeForm" });
     },
 
@@ -275,6 +320,7 @@ export default {
     changeText() {
       this.storageTxtNode();
     },
+   
     // 将输入内容存储，需要转html格式，有些字符无法存数据库
     storageTxtNode() {
       var temp = document.getElementById("editer").innerText; // 获取文本框内容

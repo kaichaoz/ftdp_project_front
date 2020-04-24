@@ -10,8 +10,8 @@
   <div>
     <!-- 左右滑动 -->
 
-    <div v-for="(item,i) in title">
-      <van-swipe-cell :before-close="beforeClose">
+    <div v-for="(item,i) in title" :before-close="beforeClose">
+      <van-swipe-cell>
         <!-- 显示内容 -->
         <van-cell :border="false" :title="title[i].templateName" :value="value" />
         <!-- 右划内容 -->
@@ -28,6 +28,7 @@
 <style scoped>
 </style>
 <script>
+import { Dialog } from "vant";
 export default {
   props: {
     groupIndexP: { default: "" },
@@ -81,13 +82,7 @@ export default {
      * @Date:2020-4-21 19:24:12
      */
     intoCreateName(i) {
-      this.$router.push({
-        name: "createName",
-        params: {
-          managementEdit: "1", // 表示从编辑进入
-          title: this.groupIndexP
-        }
-      });
+      this.$emit("listenSwipeCellToManagementEdit", this.groupIndexP, i);
     },
 
     /**

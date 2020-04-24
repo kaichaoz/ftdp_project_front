@@ -39,6 +39,7 @@
             >
               <!-- 具体模板 -->
               <swipeCell
+                @listenSwipeCellToManagementEdit="editRouter"
                 @listenSwipeCellToManagement="deleteTemplateName"
                 :groupIndexP="index"
                 :titleP="managementDataList[index].comTitleList"
@@ -203,13 +204,40 @@ export default {
      */
     plusNum(index) {
       const groupNameList = this.pushGroupNameList();
+      sessionStorage.setItem("management_route", "0"); // 0表示点击加号进入
+      sessionStorage.setItem("management_groupNameIndex", index); // 当前分组名字，如index=0表示公共项目
+      sessionStorage.setItem("management_groupNameList", groupNameList); // 当前所有分组名字集合
+
       this.$router.push({
-        name: "createName",
-        params: {
-          managementEdit: "0", // 0表示点击加号进入
-          groupNamePlus: index, // 当前分组名字，如index=0表示公共项目
-          groupNameListPlus: groupNameList // 当前所有分组名字集合
-        }
+        name: "createName"
+        // params: {
+        //   managementRoute: "0", // 0表示点击加号进入
+        //   groupNameRoute: index, // 当前分组名字，如index=0表示公共项目
+        //   groupNameListRoute: groupNameList // 当前所有分组名字集合
+        // }
+      });
+    },
+
+    /**
+     * @description: 编辑跳转页面
+     * @param ：{index:外层循环分组i,i:内层循环具体模板i}
+     * @return: 无
+     * @author: 付媛媛
+     * @Date: 2020年4月21日10:03:20
+     */
+    editRouter(index, i) {
+      const groupNameList = this.pushGroupNameList();
+
+      sessionStorage.setItem("management_route", "1"); // 0表示点击加号进入
+      sessionStorage.setItem("management_groupNameIndex", index); // 当前分组名字，如index=0表示公共项目
+      sessionStorage.setItem("management_groupNameList", groupNameList); // 当前所有分组名字集合
+      this.$router.push({
+        name: "createName"
+        // params: {
+        //   managementRoute: "1", // 表示从编辑进入
+        //   groupNameRoute: index, // 当前分组名字，如index=0表示公共项目
+        //   groupNameListRoute: groupNameList
+        // }
       });
     },
 

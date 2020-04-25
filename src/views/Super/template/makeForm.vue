@@ -159,7 +159,18 @@ import numberIndex from "../../../components/Super/library/enterInformation/numb
 import siteUser from "../../../components/Super/template/siteUser";
 import siteInfoShow from "../../../components/Super/template/siteInfoShow";
 import siteNumberIndex from "../../../components/Super/template/siteNumberIndex";
+import {
+  queryTemplateContent,
+  insertTemplateContent
+} from "../../../api/Super/template/makeForm";
+
+import { mapState } from "vuex";
+import { mapMutations } from "vuex";
 export default {
+  computed: {
+    // 展开运算符，将全局变量映射为自己界面的变量
+    ...mapState(["makeFormInitializationList", "makeFormDataList"])
+  },
   components: {
     sidebar,
     user,
@@ -181,7 +192,7 @@ export default {
   mounted() {
     this.start(); // 进入页面加载内容
 
-    this.queryGroup() // 初始化接口--test
+    // this.queryGroup(); // 初始化接口--test
   },
   methods: {
     // ====================底部设置弹框========================
@@ -190,9 +201,6 @@ export default {
     isTrue(i) {
       this.templateListIndex = i;
       this.templateList[i].isTrue = true;
-      // console.log(i);
-      // console.log(this.makeFormInitializationList[i]);
-      // console.log(this.templateList[i].templateArray);
     },
 
     // 接收user子组件 底部弹框数据
@@ -227,7 +235,6 @@ export default {
     start() {
       // 当前页面内容：
       this.templateList = []; // 初始化页面有谁：012:表示三个从上排列下去
-      this.makeFormInitializationList = this.$store.state.makeFormInitializationList;
     },
     // 返回按钮
     returnPage() {
@@ -242,9 +249,7 @@ export default {
     },
 
     queryGroup() {
-      const queryGroupUrl =
-        "http://localhost:8090/ftdp-web/templateDesign/queryGroup";
-      this.$axios.get(queryGroupUrl).then(res => {
+      this.$axios.get(queryTemplateContent + "0").then(res => {
         if (res.data.code == "0000") {
           console.log(res.data.data);
         }
@@ -255,113 +260,8 @@ export default {
 
     // 子组件sidebar返回事件，返回是哪个组件
     listenToMakeForm(newVal1) {
-      const makeList = [
-        [true, true, true, true, true, true, true],
-        [
-          {
-            isTrue: true,
-            infoTitle: "某某得分",
-            infoNum: "110",
-            infoList: ["某某得分", "某某信息", "评分"]
-          },
-          {
-            isTrue: true,
-            infoTitle: "某某信息",
-            infoNum: "119",
-            infoList: ["某某得分", "某某信息", "评分"]
-          },
-          {
-            isTrue: true,
-            infoTitle: "评分",
-            infoNum: "120",
-            infoList: ["某某得分", "某某信息", "评分"]
-          }
-        ],
-        [
-          {
-            infoNum: "请输入成就 单位"
-          },
-          {
-            infoNum: "及格分 >=10"
-          }
-        ]
-      ];
+      const makeList = this.makeFormInitializationList;
 
-      // // 玉斌需要的数据
-      // const makeList = [
-      //   {
-      //     componentId: "10001", //前后端绑定id
-      //     data: [
-      //       {
-      //         id: "1001", //该条记录的id
-      //         isUsable: true,
-      //         title: "姓名",
-      //         promptField: "", //提示字段
-      //         groupSequence: "1", //分组排序
-      //         infoList: ["姓名", "性别", "年级"]
-      //       },
-      //       {
-      //         id: "1002", //该条记录的id
-      //         isUsable: true,
-      //         title: "性别",
-      //         promptField: "", //提示字段
-      //         groupSequence: "2", //分组排序
-      //         infoList: ["姓名", "性别", "年级"]
-      //       },
-      //       {
-      //         id: "1003", //该条记录的id
-      //         isUsable: true,
-      //         title: "年级",
-      //         promptField: "", //提示字段
-      //         groupSequence: "3", //分组排序
-      //         infoList: ["姓名", "性别", "年级"]
-      //       }
-      //     ]
-      //   },
-
-      //   {
-      //     componentId: "10002", //前后端绑定id
-      //     data: [
-      //       {
-      //         id: "1001", //该条记录的id
-      //         isUsable: true,
-      //         title: "某某得分",
-      //         promptField: "122", //提示字段
-      //         groupSequence: "1", //分组排序
-      //         infoList: ["某某得分", "某某信息", "评分"]
-      //       },
-      //       {
-      //         id: "1002", //该条记录的id
-      //         isUsable: true,
-      //         title: "某某信息",
-      //         promptField: "123", //提示字段
-      //         groupSequence: "2", //分组排序
-      //         infoList: ["某某得分", "某某信息", "评分"]
-      //       },
-      //       {
-      //         id: "1003", //该条记录的id
-      //         isUsable: true,
-      //         title: "评分",
-      //         promptField: "144", //提示字段
-      //         groupSequence: "3", //分组排序
-      //         infoList: ["某某得分", "某某信息", "评分"]
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     componentId: "10003", //前后端绑定id
-      //     data: [
-      //       {
-      //         id: "1001", //该条记录的id
-      //         isUsable: true,
-      //         title: "请输入成就 单位",
-      //         promptField: "及格分 >=10", //提示字段
-      //         groupSequence: "1", //分组排序
-      //         infoList: ["请输入成就 单位"]
-      //       }
-      //     ]
-      //   }
-      // ];
       // 关闭标签
       this.showPopup = false;
       // 添加一个组件

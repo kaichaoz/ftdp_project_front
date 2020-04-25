@@ -8,65 +8,36 @@ const store = new Vuex.Store({
   //要设置的全局访问的state对象
   state: {
     token: '',//用户token
-    // managementDataList: [], // 模板管理management页面数据
-    // createNameDataList: {}, // 创建模板一：createName页面数据
+
+
+
+
+    // ------------------------------------------------makeForm--------------------
+
     makeFormDataList: [], // 创建模板二：makeForm编辑模板数据
-    // makeFormInitializationList: [], // 创建模板二：makeForm编辑模板初始化数据
 
-
-    // 创建模板二：makeForm编辑模板初始化数据
-    // makeFormInitializationList: {
-    //   isTrueUserList: [true, true, true, true, true, true, true],
-    //   isTrueInfoShowList: [
-    //     {
-    //       isTrue: true,
-    //       infoTitle: "某某得分",
-    //       infoNum: "110",
-    //       infoList: ["某某得分", "某某信息", "评分"]
-    //     },
-    //     {
-    //       isTrue: true,
-    //       infoTitle: "某某信息",
-    //       infoNum: "119",
-    //       infoList: ["某某得分", "某某信息", "评分"]
-    //     },
-    //     {
-    //       isTrue: true,
-    //       infoTitle: "评分",
-    //       infoNum: "120",
-    //       infoList: ["某某得分", "某某信息", "评分"]
-    //     }
-    //   ],
-    //   isTrueNumberIndexList: [
-    //     {
-    //       infoNum: "请输入成就 单位"
-    //     },
-    //     {
-    //       infoNum: "及格分 >=10"
-    //     }
-    //   ]
-    // },
-    // 创建模板二：makeForm编辑模板初始化数据
+    // 创建模板二：makeForm编辑模板初始化数据---最初版
     makeFormInitializationList: [
       [true, true, true, true, true, true, true],
-      [{
-        isTrue: true,
-        infoTitle: "某某得分",
-        infoNum: "110",
-        infoList: ["某某得分", "某某信息", "评分"]
-      },
-      {
-        isTrue: true,
-        infoTitle: "某某信息",
-        infoNum: "119",
-        infoList: ["某某得分", "某某信息", "评分"]
-      },
-      {
-        isTrue: true,
-        infoTitle: "评分",
-        infoNum: "120",
-        infoList: ["某某得分", "某某信息", "评分"]
-      }
+      [
+        {
+          isTrue: true,
+          infoTitle: "某某得分",
+          infoNum: "110",
+          infoList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          isTrue: true,
+          infoTitle: "某某信息",
+          infoNum: "119",
+          infoList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          isTrue: true,
+          infoTitle: "评分",
+          infoNum: "120",
+          infoList: ["某某得分", "某某信息", "评分"]
+        }
       ],
       [
         {
@@ -78,6 +49,122 @@ const store = new Vuex.Store({
       ]],
 
 
+    // 创建模板二：makeForm编辑模板初始化数据---修改版
+    // makeFormInitializationList: [{
+    //   templateId: "", //模板ID
+    //   id: "", // 模板内容ID
+    //   groupSequence: "", // 模板内容分组排序
+    //   componentId: "0", // 标识是哪个组件
+    //   isTrue: false, // 底部弹框是否显示
+    //   templateArray: [
+    //     {
+    //       isTrue: true, // 组内内容是否显示
+    //       title: "姓名",
+    //       value: "张三",
+    //       bottomName: "姓名是否显示",
+    //       fieldSequence: "0" // 组内排序
+    //     },
+    //     {
+    //       isTrue: true, // 组内内容是否显示
+    //       title: "性别",
+    //       value: "男",
+    //       bottomName: "性别是否显示",
+    //       fieldSequence: "" // 组内排序
+    //     },
+    //     {
+    //       isTrue: true, // 组内内容是否显示
+    //       title: "学号",
+    //       value: "12312412123",
+    //       bottomName: "学号是否显示",
+    //       fieldSequence: "", // 组内排序
+    //       infoList: ["姓名", "性别", "年级"] // 下拉框显示
+    //     },
+    //     {
+    //       isTrue: true, // 组内内容是否显示
+    //       title: "学院",
+    //       value: "学院是否显示",
+    //       bottomName: "姓名是否显示",
+    //       fieldSequence: "0" // 组内排序
+    //     },
+    //     {
+    //       isTrue: true, // 组内内容是否显示
+    //       title: "专业",
+    //       value: "电子信息",
+    //       bottomName: "专业是否显示",
+    //       fieldSequence: "" // 组内排序
+    //     },
+    //     {
+    //       isTrue: true, // 组内内容是否显示
+    //       title: "班级",
+    //       value: "二班",
+    //       fieldSequence: "", // 组内排序
+    //       bottomName: "班级是否显示",
+    //       infoList: ["姓名", "性别", "年级"] // 下拉框显示
+    //     },
+    //     {
+    //       isTrue: true, // 组内内容是否显示
+    //       title: "年级",
+    //       value: "一年级",
+    //       bottomName: "年级是否显示",
+    //       fieldSequence: "", // 组内排序
+    //       infoList: ["姓名", "性别", "年级"] // 下拉框显示
+    //     }
+    //   ]
+    // },
+    // {
+    //   templateId: "", //模板ID
+    //   id: "", // 模板内容ID
+    //   groupSequence: "", // 模板内容分组排序
+    //   componentId: "1", // 标识是哪个组件
+    //   isTrue: false, // 底部弹框是否显示
+    //   templateArray: [
+    //     {
+    //       isTrue: true,
+    //       infoTitle: "某某得分",
+    //       infoNum: "110",
+    //       fieldSequence: "2", // 组内排序
+    //       infoList: ["某某得分", "某某信息", "评分"]
+    //     },
+    //     {
+    //       isTrue: true,
+    //       infoTitle: "某某信息",
+    //       infoNum: "119",
+    //       fieldSequence: "2", // 组内排序
+    //       infoList: ["某某得分", "某某信息", "评分"]
+    //     },
+    //     {
+    //       isTrue: true,
+    //       infoTitle: "评分",
+    //       infoNum: "120",
+    //       fieldSequence: "2", // 组内排序
+    //       infoList: ["某某得分", "某某信息", "评分"]
+    //     }
+    //   ]
+    // },
+    // {
+    //   templateId: "", //模板ID
+    //   id: "", // 模板内容ID
+    //   groupSequence: "", // 模板内容分组排序
+    //   componentId: "2", // 标识是哪个组件
+    //   isTrue: false, // 底部弹框是否显示
+    //   templateArray: [
+    //     {
+    //       infoNum: "请输入成就 单位"
+    //     },
+    //     {
+    //       infoNum: "及格分 >=10"
+    //     }
+    //   ]
+    // }],
+
+    // --------------------------------------------------makeForm--------------------
+
+
+
+    // managementDataList: [], // 模板管理management页面数据
+    // createNameDataList: {}, // 创建模板一：createName页面数据
+
+
     // 模板管理management页面数据
     managementDataListStore: [
       {
@@ -85,7 +172,7 @@ const store = new Vuex.Store({
         title: "公共项目",
         comTitleList: ["仰卧起坐"]
       },
-      { activeNames: "1", title: "男生项目", comTitleList: ["1000米","体前屈"] },
+      { activeNames: "1", title: "男生项目", comTitleList: ["1000米", "体前屈"] },
       { activeNames: "1", title: "女生项目", comTitleList: ["800米"] }
     ],
 
@@ -105,7 +192,13 @@ const store = new Vuex.Store({
 
     },
 
-    management_groupName_List:[]  // 存储模板管理页的group分组
+    management_groupName_List: [],  // 存储模板管理页的group分组
+
+
+
+
+
+
 
   },
   //用于监听state的变化的
@@ -114,8 +207,12 @@ const store = new Vuex.Store({
   },
   mutations: {
 
-      //存储模板管理页的group分组名字
-    setManagementGroupNameList(state, managementDataList){
+    setMakeFormDataList(state, makeFormDataList) {
+      state.makeFormDataList = makeFormDataList
+    },
+
+    //存储模板管理页的group分组名字
+    setManagementGroupNameList(state, managementDataList) {
       state.management_groupName_List = managementDataList
     },
 

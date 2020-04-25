@@ -21,7 +21,7 @@
     <div id="addTemplate" class="allTemplate" v-touch:right="eventFun">
       <div v-for="(item ,i) in templateList ">
         <!-- user组件 -->
-        <div :id="'userComDiv' + i" v-if="templateList[i].templateId =='0'">
+        <div :id="'userComDiv' + i" v-if="templateList[i].componentId =='0'">
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="isTrue(i)">
             <user :isTrueList="templateList[i].templateArray" class="publicAll user"></user>
@@ -36,7 +36,7 @@
         </div>
 
         <!-- infoShow组件 -->
-        <div :id="'infoShowComDiv' + i" v-if="templateList[i].templateId =='1'">
+        <div :id="'infoShowComDiv' + i" v-if="templateList[i].componentId =='1'">
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="isTrue(i)">
             <infoShow :infoShowListP="templateList[i].templateArray" class="publicAll infoShow"></infoShow>
@@ -51,7 +51,7 @@
         </div>
 
         <!-- numberIndex组件 -->
-        <div :id="'numberIndexComDiv' + i" v-if="templateList[i].templateId =='2'">
+        <div :id="'numberIndexComDiv' + i" v-if="templateList[i].componentId =='2'">
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="isTrue(i)">
             <numberIndex
@@ -159,6 +159,8 @@ import numberIndex from "../../../components/Super/library/enterInformation/numb
 import siteUser from "../../../components/Super/template/siteUser";
 import siteInfoShow from "../../../components/Super/template/siteInfoShow";
 import siteNumberIndex from "../../../components/Super/template/siteNumberIndex";
+
+import { responseCode } from "../../../utils/responseCode";
 import {
   queryTemplateContent,
   insertTemplateContent
@@ -183,7 +185,7 @@ export default {
   data() {
     return {
       showPopup: false, // 遮罩层弹出
-      templateList: [{ templateId: "", isTrue: false, templateArray: [] }], // 存放当前页面显示的几个页面数据，012分别为三个组件
+      templateList: [], // 存放当前页面显示的几个页面数据，012分别为三个组件
       cross: require("../../../assets/super/template/cross.png"), // 取消（叉号）
 
       templateListIndex: "" // 临时存档当前的I值
@@ -250,7 +252,7 @@ export default {
 
     queryGroup() {
       this.$axios.get(queryTemplateContent + "0").then(res => {
-        if (res.data.code == "0000") {
+        if (res.data.code == responseCode.SUCCESSCODE) {
           console.log(res.data.data);
         }
       });
@@ -266,9 +268,12 @@ export default {
       this.showPopup = false;
       // 添加一个组件
       this.templateList.push({
-        templateId: newVal1,
-        isTrue: false,
-        templateArray: makeList[newVal1]
+        templateId: "", //模板ID
+        id: "", // 模板内容ID
+        groupSequence: "", // 模板内容分组排序
+        componentId: newVal1, // 标识是哪个组件
+        isTrue: false, // 底部弹框是否显示
+        templateArray: makeList[newVal1].templateArray
       });
     },
 
@@ -281,6 +286,7 @@ export default {
     eventFun() {
       this.showPopup = true; // 侧边栏左侧显示
 
+      // 动态添加css属性
       // var t = document.getElementById("sidebar");
       // t.style.cssText = "display:inline";
     }

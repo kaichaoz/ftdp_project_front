@@ -17,8 +17,46 @@ const store = new Vuex.Store({
     makeFormDataList: [], // 创建模板二：makeForm编辑模板数据
 
     // 创建模板二：makeForm编辑模板初始化数据---最初版
+    // makeFormInitializationList: [
+    //   [true, true, true, true, true, true, true],
+    //   [
+    //     {
+    //       isTrue: true,
+    //       infoTitle: "某某得分",
+    //       infoNum: "110",
+    //       infoList: ["某某得分", "某某信息", "评分"]
+    //     },
+    //     {
+    //       isTrue: true,
+    //       infoTitle: "某某信息",
+    //       infoNum: "119",
+    //       infoList: ["某某得分", "某某信息", "评分"]
+    //     },
+    //     {
+    //       isTrue: true,
+    //       infoTitle: "评分",
+    //       infoNum: "120",
+    //       infoList: ["某某得分", "某某信息", "评分"]
+    //     }
+    //   ],
+    //   [
+    //     {
+    //       infoNum: "请输入成就 单位"
+    //     },
+    //     {
+    //       infoNum: "及格分 >=10"
+    //     }
+    //   ]],
+
     makeFormInitializationList: [
-      [true, true, true, true, true, true, true],
+      {
+        templateId: "", //模板ID
+        id: "", // 模板内容ID
+        groupSequence: "", // 模板内容分组排序
+        componentId: "0", // 标识是哪个组件
+        isTrue: false, // 底部弹框是否显示
+        templateArray: [true, true, true, true, true, true, true]
+      },
       [
         {
           isTrue: true,

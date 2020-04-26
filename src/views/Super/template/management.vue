@@ -232,8 +232,8 @@ export default {
       sessionStorage.setItem("management_groupNameIndex", index); // 当前分组名字，如index=0表示公共项目
       sessionStorage.setItem("management_groupNameList", groupNameList); // 当前所有分组名字集合
       sessionStorage.setItem(
-        "templateId",
-        this.managementDataList[index].comTitleList[i].templateId
+        "templateName",
+        this.managementDataList[index].comTitleList[i].templateName
       );
       sessionStorage.setItem(
         "postScript",

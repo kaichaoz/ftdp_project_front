@@ -126,7 +126,7 @@ export default {
     isTrueList(newVal) {
       this.nameIsTrue = []; // 清空当前是否显示数组数据
       for (let i = 0; i < newVal.length; i++) {
-        this.nameIsTrue[i] = newVal[i];
+        this.nameIsTrue[i] = newVal[i].isTrue;
       }
     }
   },

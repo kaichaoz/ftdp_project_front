@@ -75,7 +75,7 @@ export default {
     // 监听父页面传来数据：底部弹框数组内容
     isTrueListP(newVal) {
       for (let i = 0; i < newVal.length; i++) {
-        this.isTrueList[i].isTrue = newVal[i];
+        this.isTrueList[i].isTrue = newVal[i].isTrue;
       }
     },
 

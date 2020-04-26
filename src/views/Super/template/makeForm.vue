@@ -124,7 +124,8 @@ img {
 }
 
 .allTemplate {
-  height: 550px;
+  min-height: 550px;
+  max-height: auto;
   border: 2px solid #fecd2a;
   margin: 30px;
   background-color: #fff;
@@ -211,7 +212,9 @@ export default {
       this.templateList[i].isTrue = siteuserShow;
       this.templateList[i].templateArray = [];
       for (let index = 0; index < istrueUserList.length; index++) {
-        this.templateList[i].templateArray.push(istrueUserList[index].isTrue);
+        this.templateList[i].templateArray.push({
+          isTrue: istrueUserList[index].isTrue
+        });
       }
     },
 
@@ -262,7 +265,107 @@ export default {
 
     // 子组件sidebar返回事件，返回是哪个组件
     listenToMakeForm(newVal1) {
-      const makeList = this.makeFormInitializationList;
+      // 当前此变量必须使用const放到这里，因为使用全局变量会更改此值，除了第一个组件之外都是如此
+      const makeList = [
+        {
+          templateId: "", //模板ID
+          id: "", // 模板内容ID
+          groupSequence: "", // 模板内容分组排序
+          componentId: "0", // 标识是哪个组件
+          isTrue: false, // 底部弹框是否显示
+          templateArray: [
+            {
+              isTrue: true,
+              title: "姓名",
+              value: "张三",
+              bottomName: "姓名是否显示",
+              fieldSequence: "0"
+            },
+            {
+              isTrue: true,
+              title: "姓名",
+              value: "张三",
+              bottomName: "姓名是否显示",
+              fieldSequence: "0"
+            },
+            {
+              isTrue: true,
+              title: "姓名",
+              value: "张三",
+              bottomName: "姓名是否显示",
+              fieldSequence: "0"
+            },
+            {
+              isTrue: true,
+              title: "姓名",
+              value: "张三",
+              bottomName: "姓名是否显示",
+              fieldSequence: "0"
+            },
+            {
+              isTrue: true,
+              title: "姓名",
+              value: "张三",
+              bottomName: "姓名是否显示",
+              fieldSequence: "0"
+            },
+            {
+              isTrue: true,
+              title: "姓名",
+              value: "张三",
+              bottomName: "姓名是否显示",
+              fieldSequence: "0"
+            },
+            {
+              isTrue: true,
+              title: "姓名",
+              value: "张三",
+              bottomName: "姓名是否显示",
+              fieldSequence: "0"
+            }
+          ]
+        },
+        {
+          templateId: "", //模板ID
+          id: "", // 模板内容ID
+          groupSequence: "", // 模板内容分组排序
+          componentId: "0", // 标识是哪个组件
+          isTrue: false, // 底部弹框是否显示
+          templateArray: [
+            {
+              isTrue: true,
+              infoTitle: "某某得分",
+              infoNum: "110",
+              infoList: ["某某得分", "某某信息", "评分"]
+            },
+            {
+              isTrue: true,
+              infoTitle: "某某信息",
+              infoNum: "119",
+              infoList: ["某某得分", "某某信息", "评分"]
+            },
+            {
+              isTrue: true,
+              infoTitle: "评分",
+              infoNum: "120",
+              infoList: ["某某得分", "某某信息", "评分"]
+            }
+          ]
+        },
+        {
+          templateId: "", //模板ID
+          id: "", // 模板内容ID
+          groupSequence: "", // 模板内容分组排序
+          componentId: "0", // 标识是哪个组件
+          isTrue: false, // 底部弹框是否显示
+          templateArray: [
+            {
+              infoNum: "请输入成就 单位",
+              placeholder: "及格分 >=10"
+            }
+          ]
+        }
+      ];
 
       // 关闭标签
       this.showPopup = false;

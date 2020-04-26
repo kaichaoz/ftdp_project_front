@@ -20,7 +20,7 @@
         />
         <van-field
           class="fieldVan"
-          v-model="siteNumberIndexList[1].infoNum"
+          v-model="siteNumberIndexList[0].placeholder"
           label="提示信息"
           :formatter="formatter"
           placeholder="格式化输入内容"
@@ -66,10 +66,8 @@ export default {
       type: Array,
       default: () => [
         {
-          infoNum: "请输入成就 单位"
-        },
-        {
-          infoNum: "及格分 >=10"
+          infoNum: "请输入成就 单位",
+          placeholder: "及格分 >=10"
         }
       ]
     }
@@ -85,7 +83,7 @@ export default {
 
       // 接收父组件与本组件交互：
       siteNumberIndexShow: false, //底部弹框是否显示,
-      siteNumberIndexList: [{ infoNum: "" }, { infoNum: "" }] // 返还给父组件内容
+      siteNumberIndexList: [{ infoNum: "", placeholder: "" }] // 返还给父组件内容
     };
   },
   watch: {

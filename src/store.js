@@ -55,7 +55,57 @@ const store = new Vuex.Store({
         groupSequence: "", // 模板内容分组排序
         componentId: "0", // 标识是哪个组件
         isTrue: false, // 底部弹框是否显示
-        templateArray: [true, true, true, true, true, true, true]
+        templateArray: [
+          {
+            isTrue: true,
+            title: "姓名",
+            value: "张三",
+            bottomName: "姓名是否显示",
+            fieldSequence: "0"
+          },
+          {
+            isTrue: true,
+            title: "姓名",
+            value: "张三",
+            bottomName: "姓名是否显示",
+            fieldSequence: "0"
+          },
+          {
+            isTrue: true,
+            title: "姓名",
+            value: "张三",
+            bottomName: "姓名是否显示",
+            fieldSequence: "0"
+          },
+          {
+            isTrue: true,
+            title: "姓名",
+            value: "张三",
+            bottomName: "姓名是否显示",
+            fieldSequence: "0"
+          },
+          {
+            isTrue: true,
+            title: "姓名",
+            value: "张三",
+            bottomName: "姓名是否显示",
+            fieldSequence: "0"
+          },
+          {
+            isTrue: true,
+            title: "姓名",
+            value: "张三",
+            bottomName: "姓名是否显示",
+            fieldSequence: "0"
+          },
+          {
+            isTrue: true,
+            title: "姓名",
+            value: "张三",
+            bottomName: "姓名是否显示",
+            fieldSequence: "0"
+          },
+        ]
       },
       [
         {

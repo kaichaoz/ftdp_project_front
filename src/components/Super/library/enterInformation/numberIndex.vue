@@ -17,7 +17,7 @@
             type="number"
             :maxlength="maxlength"
             v-model="userInputValue"
-            :placeholder="numberIndexList[1].infoNum"
+            :placeholder="numberIndexList[0].placeholder"
           />
         </van-cell-group>
       </div>
@@ -55,29 +55,26 @@ export default {
       type: Array,
       default: () => [
         {
-          infoNum: "请输入成绩 单位"
-        },
-        {
-          infoNum: "及格分 >=10"
+          infoNum: "请输入成就 单位",
+          placeholder: "及格分 >=10"
         }
       ]
     }
   },
   data() {
     return {
-      userInputValue: "",
-      maxlength: "4",
+      userInputValue: "", // 输入框value值
+      maxlength: "4", // 输入框最大为4
 
-      numberIndexList: [],
-      infoTitle: "请输入成绩 单位",
-      infoInput: "及格分 >=10"
+      numberIndexList: [] // 接收和存储当前显示值
+      // infoTitle: "请输入成绩 单位",
+      // infoInput: "及格分 >=10"
     };
   },
   watch: {
     numuberIndexListP(newVal) {
       this.numberIndexList = [];
       this.numberIndexList = newVal;
-      console.log("更改后：" + this.numberIndexList);
     }
   },
   mounted() {},

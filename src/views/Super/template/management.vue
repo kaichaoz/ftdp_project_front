@@ -231,6 +231,15 @@ export default {
       sessionStorage.setItem("management_route", "1"); // 0表示点击加号进入
       sessionStorage.setItem("management_groupNameIndex", index); // 当前分组名字，如index=0表示公共项目
       sessionStorage.setItem("management_groupNameList", groupNameList); // 当前所有分组名字集合
+      sessionStorage.setItem(
+        "templateId",
+        this.managementDataList[index].comTitleList[i].templateId
+      );
+      sessionStorage.setItem(
+        "postScript",
+        this.managementDataList[index].comTitleList[i].postScript
+      );
+
       this.$router.push({
         name: "createName"
         // params: {
@@ -307,7 +316,9 @@ export default {
                     res.data.data[index].tempByIsUsableData[i].templateName,
                   templateId:
                     res.data.data[index].tempByIsUsableData[i].templateId,
-                  isUsable: res.data.data[index].tempByIsUsableData[i].isUsable
+                  isUsable: res.data.data[index].tempByIsUsableData[i].isUsable,
+                  postScript:
+                    res.data.data[index].tempByIsUsableData[i].postscript // 备注字段
                 } //所有分组模板的具体模板名称/id/是否可用
               );
             }

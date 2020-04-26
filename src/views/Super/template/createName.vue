@@ -153,26 +153,27 @@ export default {
     return {
       // 当前页面所有数据
       createNameDataList: {
+        templateGroupId: "", // 分组ID
         managementNamevalue: "", // 模板名称输入框输入内容
         groupValue: "", // 分组选择后的分组value
-        personValue: "", //人员选择后的value
+        personValue: 0, //人员选择后的value
         // 所属分组
         groupOption: [
           { text: "", value: "" },
           { text: "", value: "" },
           { text: "", value: "" }
         ],
-        personOption: [{ text: "", value: "" }], // 人员下拉框
+        personOption: [{ text: "自己", value: 0 }], // 人员下拉框
         remarkTxt: "" //备注输入内容
       }
     };
   },
 
   created() {
-    this.start();
+    // this.start();
   },
   mounted() {
-    // this.jumpToPageLoading();
+    this.jumpToPageLoading(); // 上一级页面跳转进来传参
   },
 
   updated() {
@@ -182,82 +183,36 @@ export default {
 
   beforeDestroy() {
     //退出页面保存当前页面数据
-    // this.recallBackendPost();
+    this.recallBackendPost();
   },
 
   methods: {
-    recallBackendGet() {
-      this.$axios
-        .get(
-          process.env.VUE_APP_THIREDBIND_verification_send +
-            this.phoneNUmber +
-            "&reSendTime=" +
-            this.reSendTime +
-            "&smsTemplateCode=" +
-            this.sMSTemplate +
-            "&validTime=" +
-            this.validTime
-        )
-        .then(res => {
-          if (res.data.code == responseCode.SUCCESSCODE) {
-          } else {
-            vm.$toast({
-              message: "抱歉,登录失败,请联系管理员",
-              duration: 1000
-            });
-          }
-        })
-        .catch(function(error) {
-          // 请求出错则会执行的代码在这里写
-        });
+    // 退出保存
+    recallBackendPost() {
+      const vm = this;
+      const model = {
+        groupSequence: "string",
+        id: "",
+        isFinish: 0,
+        isUsable: 0,
+        postscript: this.createNameDataList.remarkTxt,
+        staffID: "",
+        templateGroupID: this.createNameDataList.templateGroupId,
+        templateName: this.createNameDataList.managementNamevalue
+      };
+      vm.$axios.post(insertTemplate, model).then(res => {
+        if ((res.data.code = "0000")) {
+          console.log(model, "m");
+        } else {
+          console.log("cuowu");
+        }
+      });
     },
 
-    recallBackendPost() {
-      const modelData = [];
-
-      for (let index = 0; index < this.createNameDataList.length; index++) {
-        modeData.push({
-          groupSequence: this.createNameDataList[i].groupSequence, //分组排序位置
-          id: this.createNameDataList[i].id, //模板id
-          isFinish: this.createNameDataList[i].isFinish, //是否编辑完成（0完成，1未完成）
-          isUsable: this.createNameDataList[i].isUsable, //是否可用（0可用，1不可用）
-          postscript: this.createNameDataList[i].postscript, //备注
-          staffID: this.createNameDataList[i].staffID, //人员id
-          templateGroupID: this.createNameDataList[i].templateGroupID, //模板分组id
-          templateName: this.createNameDataList[i].templateName //模板名称
-        });
-      }
-
-      const vm = this;
-      // const insertTemplateUrl =
-      // "http://localhost:8090/ftdp-web/templateDesign/insertTemplate";
-
-      vm.$axios
-        .post(
-          insertTemplate,
-          modelData
-          //  {
-          //   isTurnAuto: localStorage.getItem("setting_checkedAutomatic"),
-          //   isShowWord: localStorage.getItem("setting_checkedDisplayWord"),
-
-          //   playNums: vm.viewsNow,
-          //   turnDelayTime: vm.delayedJumpNow,
-          //   studyNumber: vm.learningNumNow,
-          //   playInterval: vm.playIntervalNow,
-          //   pictureStayTime: vm.residenceTimeNow
-          // }
-        )
-        .then(res => {
-          if (res.data.code == responseCode.SUCCESSCODE) {
-            this.$toast({
-              message: "设置成功"
-            });
-          } else {
-            this.$toast({
-              message: "服务器跑路了，正在追~~"
-            });
-          }
-        });
+    start() {
+      // // 初始化从vuex读取，后改为后端
+      // this.createNameDataList = {};
+      // this.createNameDataList = this.$store.state.createNameDataList;
     },
 
     /**
@@ -267,51 +222,61 @@ export default {
      * @author: 张颖娟
      * @Date: 2020年4月24日19:31:53
      */
-    start() {
-      // 初始化从vuex读取，后改为后端
-      this.createNameDataList = {};
-      this.createNameDataList = this.$store.state.createNameDataList;
-
-      const managementRoute = sessionStorage.getItem("management_route"); // 接收management进入：0表示从加号，1表示从编辑
-      const groupNameRoute = parseInt(
+    jumpToPageLoading() {
+      // ------------------获取上一页面数据 -----------------------
+      // 获取ID
+      const templateId = sessionStorage.getItem("templateId");
+      // 接收模板名称
+      this.createNameDataList.managementNamevalue = sessionStorage.getItem(
+        "templateName"
+      );
+      // 接收当前分组i
+      this.createNameDataList.groupValue = parseInt(
         sessionStorage.getItem("management_groupNameIndex")
-      ); // 接收当前分组i
-
+      );
+      // 接收页面从上到下的所有分组名字数组
       let groupNameListRoute = sessionStorage.getItem(
         "management_groupNameList"
-      ); // 接收页面从上到下的所有分组名字
+      );
+      // 字符串转数组：缓存存储字符串
+      groupNameListRoute = groupNameListRoute.split(",");
+      // 接收模板备注
+      this.createNameDataList.remarkTxt = sessionStorage.getItem("postScript");
 
-      groupNameListRoute = groupNameListRoute.split(",");// 字符串转数组
+      // 接收management进入：0表示从加号，1表示从编辑--因为不调取后端当前无用
+      const managementRoute = sessionStorage.getItem("management_route");
 
-      // const managementRoute = this.$route.params.managementRoute; // 接收management进入：0表示从加号，1表示从编辑
-      // const groupNameRoute = this.$route.params.groupNameRoute; // 接收当前分组i
-      // const groupNameListRoute = this.$route.params.groupNameListRoute; // 接收页面从上到下的所有分组名字
+      this.createNameDataList.templateGroupId = sessionStorage.getItem(
+        "templateGroupId"
+      );
+      // --------------------从缓存获取数据存储-----------------------
 
+      // 初始化从vuex读取，后改为后端
+      // this.createNameDataList = {};
+      // this.createNameDataList = this.$store.state.createNameDataList;
+
+      // 将下拉框内容清空并存储
       this.createNameDataList.groupOption = [];
       for (let index = 0; index < groupNameListRoute.length; index++) {
         this.createNameDataList.groupOption.push({
-          text: groupNameListRoute[index],
-          value: index
+          text: groupNameListRoute[index], // 具体项目名称
+          value: index // 项目索引
         });
       }
 
-      this.createNameDataList.groupValue = groupNameRoute;
-      // console.log(this.createNameDataList.groupValue);
-
-      // =0调取后端接口，=1不执行
-      if (managementRoute == "0") {
-      }
+      // // =0从加号进入
+      // if (managementRoute == "0") {
+      //   this.createNameDataList.managementNamevalue = ""; // 清空模板名称
+      //   this.createNameDataList.remarkTxt = ""; // 清空备注
+      // }
     },
-
-    // 上一级页面跳转进来传参：
-    jumpToPageLoading() {},
 
     // 返回，模板管理页面
     returnPage() {
       this.$router.push({ name: "management" });
     },
 
-    //下一步，编辑模板拖拽页面
+    //下一步，编辑模板拖拽页面，传模板id
     nextStep() {
       this.$router.push({ name: "makeForm" });
     },
@@ -320,7 +285,7 @@ export default {
     changeText() {
       this.storageTxtNode();
     },
-   
+
     // 将输入内容存储，需要转html格式，有些字符无法存数据库
     storageTxtNode() {
       var temp = document.getElementById("editer").innerText; // 获取文本框内容

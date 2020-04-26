@@ -208,6 +208,14 @@ export default {
       sessionStorage.setItem("management_groupNameIndex", index); // 当前分组名字，如index=0表示公共项目
       sessionStorage.setItem("management_groupNameList", groupNameList); // 当前所有分组名字集合
 
+      sessionStorage.setItem(
+        "templateGroupId",
+        this.managementDataList[index].groupID
+      ); // 分组ID
+
+      sessionStorage.setItem("templateName", "");
+      sessionStorage.setItem("templateId", "");
+      sessionStorage.setItem("postScript", "");
       this.$router.push({
         name: "createName"
         // params: {
@@ -227,13 +235,20 @@ export default {
      */
     editRouter(index, i) {
       const groupNameList = this.pushGroupNameList();
-
+      sessionStorage.setItem(
+        "templateGroupId",
+        this.managementDataList[index].groupID
+      ); // 分组ID
       sessionStorage.setItem("management_route", "1"); // 0表示点击加号进入
       sessionStorage.setItem("management_groupNameIndex", index); // 当前分组名字，如index=0表示公共项目
       sessionStorage.setItem("management_groupNameList", groupNameList); // 当前所有分组名字集合
       sessionStorage.setItem(
         "templateName",
         this.managementDataList[index].comTitleList[i].templateName
+      );
+      sessionStorage.setItem(
+        "templateId",
+        this.managementDataList[index].comTitleList[i].templateId
       );
       sessionStorage.setItem(
         "postScript",

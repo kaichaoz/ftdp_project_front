@@ -63,7 +63,35 @@ export default {
     // 父页面makeForm传递：user在页面要显示的内容数组
     infoShowListP: {
       type: Array,
-      default: () => []
+      default: () => [
+        {
+          id: "", // 模板内容ID
+          isTrue: true,
+          fieldSequence: "0",
+          title: "某某得分",
+          value: "110",
+          bottomName: "姓名是否显示",
+          titleList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          id: "", // 模板内容ID
+          isTrue: true,
+          fieldSequence: "0",
+          title: "某某信息",
+          value: "119",
+          bottomName: "姓名是否显示",
+          titleList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          id: "", // 模板内容ID
+          isTrue: true,
+          fieldSequence: "0",
+          title: "评分",
+          value: "120",
+          bottomName: "姓名是否显示",
+          titleList: ["某某得分", "某某信息", "评分"]
+        }
+      ]
     }
   },
 

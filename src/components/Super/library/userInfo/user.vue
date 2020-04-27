@@ -104,7 +104,71 @@ export default {
     // 父页面makeForm传递：user在页面要显示的内容数组
     isTrueList: {
       type: Array,
-      default: () => []
+      default: () => [
+        {
+          id: "", // 模板内容ID
+          isTrue: true,
+          fieldSequence: "0",
+          title: "姓名",
+          value: "张三",
+          bottomName: "姓名是否显示",
+          titleList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          id: "", // 模板内容ID
+          isTrue: true,
+          fieldSequence: "0",
+          title: "性别",
+          value: "男",
+          bottomName: "姓名是否显示",
+          titleList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          id: "", // 模板内容ID
+          isTrue: true,
+          fieldSequence: "0",
+          title: "学号",
+          value: "122231231231",
+          bottomName: "姓名是否显示",
+          titleList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          id: "", // 模板内容ID
+          isTrue: true,
+          fieldSequence: "0",
+          title: "学院",
+          value: "物理与电子信息学院",
+          bottomName: "姓名是否显示",
+          titleList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          id: "", // 模板内容ID
+          isTrue: true,
+          fieldSequence: "0",
+          title: "专业",
+          value: "电子信息",
+          bottomName: "姓名是否显示",
+          titleList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          id: "", // 模板内容ID
+          isTrue: true,
+          fieldSequence: "0",
+          title: "班级",
+          value: "二班",
+          bottomName: "姓名是否显示",
+          titleList: ["某某得分", "某某信息", "评分"]
+        },
+        {
+          id: "", // 模板内容ID
+          isTrue: true,
+          fieldSequence: "0",
+          title: "年级",
+          value: "一年级",
+          bottomName: "姓名是否显示",
+          titleList: ["某某得分", "某某信息", "评分"]
+        }
+      ]
     }
   },
   data() {

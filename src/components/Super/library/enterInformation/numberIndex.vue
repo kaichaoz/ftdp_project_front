@@ -53,7 +53,17 @@ export default {
   props: {
     numuberIndexListP: {
       type: Array,
-      default: () => []
+      default: () => [
+        {
+          id: "", // 模板内容ID
+          isTrue: true,
+          fieldSequence: "0",
+          title: "请输入成就 单位",
+          value: "及格分 >=10",
+          bottomName: "姓名是否显示",
+          titleList: ["某某得分", "某某信息", "评分"]
+        }
+      ]
     }
   },
   data() {

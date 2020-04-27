@@ -6,6 +6,8 @@
 *@最后修改人:herry
 *@LastEditTime:2020年3月25日16:49:15
 *@说明：
+修改注意：
+1.  当前页面数据必须是在listenToMakeForm里面使用const定义的，并且在每个子组件中必须数据相同，比如user里面数据和当前const里面第一个数组中templateArray内容一致
 -->
 
 <template>

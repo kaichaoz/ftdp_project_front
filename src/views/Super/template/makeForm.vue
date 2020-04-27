@@ -223,9 +223,7 @@ export default {
       this.templateList[i].isTrue = siteuserShow;
       this.templateList[i].templateArray = [];
       for (let index = 0; index < istrueUserList.length; index++) {
-        this.templateList[i].templateArray.push({
-          isTrue: istrueUserList[index].isTrue
-        });
+        this.templateList[i].templateArray.push(istrueUserList[index]);
       }
     },
 
@@ -274,7 +272,6 @@ export default {
     },
 
     //  ==================右划添加组件部分=======================
-
     // 子组件sidebar返回事件，返回是哪个组件
     listenToMakeForm(newVal1, libraryId) {
       // 当前此变量必须使用const放到这里，因为使用全局变量会更改此值，除了第一个组件之外都是如此
@@ -297,48 +294,48 @@ export default {
               id: "", // 模板内容ID
               isTrue: true,
               fieldSequence: "0",
-              title: "姓名",
-              value: "张三",
+              title: "性别",
+              value: "男",
               bottomName: "姓名是否显示"
             },
             {
               id: "", // 模板内容ID
               isTrue: true,
               fieldSequence: "0",
-              title: "姓名",
-              value: "张三",
+              title: "学号",
+              value: "122231231231",
               bottomName: "姓名是否显示"
             },
             {
               id: "", // 模板内容ID
               isTrue: true,
               fieldSequence: "0",
-              title: "姓名",
-              value: "张三",
+              title: "学院",
+              value: "物理与电子信息学院",
               bottomName: "姓名是否显示"
             },
             {
               id: "", // 模板内容ID
               isTrue: true,
               fieldSequence: "0",
-              title: "姓名",
-              value: "张三",
+              title: "专业",
+              value: "电子信息",
               bottomName: "姓名是否显示"
             },
             {
               id: "", // 模板内容ID
               isTrue: true,
               fieldSequence: "0",
-              title: "姓名",
-              value: "张三",
+              title: "班级",
+              value: "二班",
               bottomName: "姓名是否显示"
             },
             {
               id: "", // 模板内容ID
               isTrue: true,
               fieldSequence: "0",
-              title: "姓名",
-              value: "张三",
+              title: "年级",
+              value: "一年级",
               bottomName: "姓名是否显示"
             }
           ]
@@ -353,25 +350,25 @@ export default {
               id: "", // 模板内容ID
               isTrue: true,
               fieldSequence: "0",
-              infoTitle: "某某得分",
-              infoNum: "110",
-              infoList: ["某某得分", "某某信息", "评分"]
+              title: "某某得分",
+              value: "110",
+              titleList: ["某某得分", "某某信息", "评分"]
             },
             {
               id: "", // 模板内容ID
               isTrue: true,
               fieldSequence: "0",
-              infoTitle: "某某信息",
-              infoNum: "119",
-              infoList: ["某某得分", "某某信息", "评分"]
+              title: "某某信息",
+              value: "119",
+              titleList: ["某某得分", "某某信息", "评分"]
             },
             {
               id: "", // 模板内容ID
               isTrue: true,
               fieldSequence: "0",
-              infoTitle: "评分",
-              infoNum: "120",
-              infoList: ["某某得分", "某某信息", "评分"]
+              title: "评分",
+              value: "120",
+              titleList: ["某某得分", "某某信息", "评分"]
             }
           ]
         },
@@ -385,8 +382,8 @@ export default {
               id: "", // 模板内容ID
               isTrue: true,
               fieldSequence: "0",
-              infoNum: "请输入成就 单位",
-              placeholder: "及格分 >=10"
+              title: "请输入成就 单位",
+              value: "及格分 >=10"
             }
           ]
         }

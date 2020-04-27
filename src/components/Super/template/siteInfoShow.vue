@@ -19,7 +19,7 @@
             <div
               :id="'dropDownShow' + index"
               class="dropDownShow"
-              v-text="dropDownBoxList[index].infoTitle"
+              v-text="dropDownBoxList[index].title"
               @click="onDropDown(index)"
             ></div>
             <!-- 下拉框部分 -->
@@ -36,9 +36,9 @@
                 cellpadding="0"
                 align="center"
               >
-                <tbody v-for="(item,i) in dropDownBoxList[index].infoList">
+                <tbody v-for="(item,i) in dropDownBoxList[index].titleList">
                   <tr>
-                    <td @click="onNameShow(i,index)" v-text="dropDownBoxList[index].infoList[i]"></td>
+                    <td @click="onNameShow(i,index)" v-text="dropDownBoxList[index].titleList[i]"></td>
                   </tr>
                   <hr style="display:inline-block" />
                 </tbody>
@@ -115,21 +115,21 @@ export default {
       default: () => [
         {
           isTrue: true,
-          infoTitle: "",
-          infoNum: "",
-          infoList: []
+          title: "",
+          value: "",
+          titleList: []
         },
         {
           isTrue: true,
-          infoTitle: "",
-          infoNum: "",
-          infoList: []
+          title: "",
+          value: "",
+          titleList: []
         },
         {
           isTrue: true,
-          infoTitle: "",
-          infoNum: "",
-          infoList: ["", "", ""]
+          title: "",
+          value: "",
+          titleList: ["", "", ""]
         }
       ]
     }
@@ -197,15 +197,13 @@ export default {
     // 显示当前抬头内容: i为当前下拉框选择的内容位置，ind为当前显示的内容位置
     onNameShow(i, ind) {
       // 记录当前的值
-      const c = this.dropDownBoxList[ind].infoTitle;
+      const c = this.dropDownBoxList[ind].title;
       // 将当前勾选的内容显示到上面
-      this.dropDownBoxList[ind].infoTitle = this.dropDownBoxList[ind].infoList[
-        i
-      ];
+      this.dropDownBoxList[ind].title = this.dropDownBoxList[ind].titleList[i];
       // 判断当前值是否有相同的，相同给的则置换
-      const b = this.swapPosition(this.dropDownBoxList[ind].infoTitle);
+      const b = this.swapPosition(this.dropDownBoxList[ind].title);
       if (b != -1) {
-        this.dropDownBoxList[b].infoTitle = c;
+        this.dropDownBoxList[b].title = c;
       }
       // 关闭所有的下拉框
       this.closeAlldropDownbox();

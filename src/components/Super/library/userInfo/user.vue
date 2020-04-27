@@ -5,7 +5,9 @@
 *@Date:2019年12月11日20:16:26
 *@最后修改人:herry
 *@LastEditTime:2019年12月11日20:16:31
-*@说明：-->
+*@说明：
+当前页面的isTrue必须先声明七个写死的true，然后在赋值才可以
+-->
 
 <template>
   <div>
@@ -16,8 +18,8 @@
       <div class="rightDiv">
         <table class="rightTable" border="1" cellspacing="0" cellpadding="0" align="center">
           <tr v-for="(item ,i) in infoName" v-if="nameIsTrue[i]">
-            <td>{{infoName[i].name}}</td>
-            <td>{{infoName[i].data}}</td>
+            <td>{{infoName[i].title}}</td>
+            <td>{{infoName[i].value}}</td>
           </tr>
         </table>
       </div>
@@ -102,21 +104,13 @@ export default {
     // 父页面makeForm传递：user在页面要显示的内容数组
     isTrueList: {
       type: Array,
-      default: () => [true, true, true, true, true, true, true]
+      default: () => []
     }
   },
   data() {
     return {
       // user组件右侧框里面默认显示内容
-      infoName: [
-        { name: "名字", data: "张三" },
-        { name: "性别", data: "男" },
-        { name: "学号", data: "122231231231" },
-        { name: "学院", data: "物理与电子信息学院" },
-        { name: "专业", data: "电子信息" },
-        { name: "班级", data: "二班" },
-        { name: "年级", data: "一年级" }
-      ],
+      infoName: [],
       picInfo: require("../../../../assets/super/user.png"), // user左侧默认人图片
       nameIsTrue: [true, true, true, true, true, true, true] // 页面是否显示某个属性数组
     };
@@ -124,20 +118,23 @@ export default {
   watch: {
     // 监听父页面makeForm传递数组：是否显示数组数据
     isTrueList(newVal) {
-      this.nameIsTrue = []; // 清空当前是否显示数组数据
+      this.nameIsTrue = []; // 清空当前是否显示数组数据--必须留不可删
+      this.infoName = []; // 清空当前显示数据数组数据
+
       for (let i = 0; i < newVal.length; i++) {
         this.nameIsTrue[i] = newVal[i].isTrue;
+        this.infoName.push(newVal[i]);
       }
     }
   },
   mounted() {
-    // this.start();  //不需要执行即可，因为makeform接收后端值后即可改变，监听也会改变
+    this.start(); //不需要执行即可，因为makeform接收后端值后即可改变，监听也会改变
   },
   methods: {
     start() {
-      this.nameIsTrue = []; // 清空当前是否显示数组数据
+      this.infoName = [];
       for (let i = 0; i < this.isTrueList.length; i++) {
-        this.nameIsTrue[i] = this.isTrueList[i];
+        this.infoName.push(this.isTrueList[i]);
       }
     }
   }

@@ -12,7 +12,7 @@
     <van-action-sheet v-model="siteUserShow" title="图片信息">
       <div class="body">
         <div class="isTrue" v-for="(item,i) in isTrueList">
-          <van-cell center :title="isTrueList[i].name">
+          <van-cell center :title="isTrueList[i].bottomName">
             <template #right-icon>
               <van-switch v-model="isTrueList[i].isTrue" size="24" />
             </template>
@@ -45,23 +45,14 @@
 export default {
   props: {
     siteUserShowP: "", // 接收父页面makeForm传递过来: 显示底部弹框
-    isTrueListP: { type: Array, default: () => {} } // 接收父页面makeForm传递过来: 显示底部数据
+    isTrueListP: { type: Array, default: () => [] } // 接收父页面makeForm传递过来: 显示底部数据
   },
   data() {
     return {
       siteUserShow: false, //底部弹框是否显示
-      userName: "", // 输入名字
 
       // 底部弹框显示内容和是否显示
-      isTrueList: [
-        { name: "姓名是否显示", isTrue: true },
-        { name: "性别是否显示", isTrue: true },
-        { name: "学号是否显示", isTrue: true },
-        { name: "学院是否显示", isTrue: true },
-        { name: "专业是否显示", isTrue: true },
-        { name: "班级是否显示", isTrue: true },
-        { name: "年级是否显示", isTrue: true }
-      ]
+      isTrueList: []
     };
   },
   watch: {
@@ -74,8 +65,9 @@ export default {
 
     // 监听父页面传来数据：底部弹框数组内容
     isTrueListP(newVal) {
+      this.isTrueList = [];
       for (let i = 0; i < newVal.length; i++) {
-        this.isTrueList[i].isTrue = newVal[i].isTrue;
+        this.isTrueList.push(newVal[i]);
       }
     },
 
@@ -84,7 +76,16 @@ export default {
       this.$emit("listenUserToMakeForm", newVal, this.isTrueList);
     }
   },
-  mounted() {},
-  methods: {}
+  mounted() {
+    this.start();
+  },
+  methods: {
+    start() {
+      this.isTrueList = [];
+      for (let i = 0; i < this.isTrueListP.length; i++) {
+        this.isTrueList.push(this.isTrueListP[i]);
+      }
+    }
+  }
 };
 </script>

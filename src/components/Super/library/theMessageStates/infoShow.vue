@@ -10,8 +10,8 @@
   <div>
     <div class="body">
       <div :id="'info' + index" class="info" v-for="(item, index) in isTrueList">
-        <div class="showTitle" v-text="isTrueList[index].infoTitle"></div>
-        <div class="showInfo" v-text="isTrueList[index].infoNum"></div>
+        <div class="showTitle" v-text="isTrueList[index].title"></div>
+        <div class="showInfo" v-text="isTrueList[index].value"></div>
       </div>
     </div>
   </div>
@@ -64,9 +64,9 @@ export default {
     infoShowListP: {
       type: Array,
       default: () => [
-        { isTrue: true, infoTitle: "某某得分", infoNum: "110" },
-        { isTrue: true, infoTitle: "某某信息", infoNum: "119" },
-        { isTrue: true, infoTitle: "评分", infoNum: "120" }
+        { isTrue: true, title: "某某得分", value: "110" },
+        { isTrue: true, title: "某某信息", value: "119" },
+        { isTrue: true, title: "评分", value: "120" }
       ]
     }
   },

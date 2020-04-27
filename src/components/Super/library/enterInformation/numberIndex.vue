@@ -9,7 +9,7 @@
 <template>
   <div>
     <div class="body">
-      <div class="infoTitle" v-text="numberIndexList[0].infoNum"></div>
+      <div class="infoTitle" v-text="numberIndexList[0].title"></div>
       <div class="infoInput">
         <van-cell-group>
           <van-field
@@ -17,7 +17,7 @@
             type="number"
             :maxlength="maxlength"
             v-model="userInputValue"
-            :placeholder="numberIndexList[0].placeholder"
+            :placeholder="numberIndexList[0].value"
           />
         </van-cell-group>
       </div>
@@ -55,8 +55,8 @@ export default {
       type: Array,
       default: () => [
         {
-          infoNum: "请输入成就 单位",
-          placeholder: "及格分 >=10"
+          title: "请输入成就 单位",
+          value: "及格分 >=10"
         }
       ]
     }

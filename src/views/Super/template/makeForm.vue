@@ -83,7 +83,7 @@
     <van-popup v-model="showPopup" position="left" :style="{ height: '100%' }">
       <div id="sidebar">
         <!-- 侧边栏 -->
-        <sidebar @listenToMakeForm="listenToMakeForm"></sidebar>
+        <sidebar :sidebarModel="sidbebarModel" @listenToMakeForm="listenToMakeForm"></sidebar>
       </div>
     </van-popup>
   </div>
@@ -169,10 +169,10 @@ import siteUser from "../../../components/Super/template/siteUser";
 import siteInfoShow from "../../../components/Super/template/siteInfoShow";
 import siteNumberIndex from "../../../components/Super/template/siteNumberIndex";
 
-import { responseCode } from "../../../utils/responseCode";
 import {
   queryTemplateContent,
-  insertTemplateContent
+  insertTemplateContent,
+  queryComponentlibrary
 } from "../../../api/Super/template/makeForm";
 
 import { mapState } from "vuex";
@@ -197,7 +197,7 @@ export default {
       showPopup: false, // 遮罩层弹出
       templateList: [], // 存放当前页面显示的几个页面数据，012分别为三个组件
       cross: require("../../../assets/super/template/cross.png"), // 取消（叉号）
-
+      sidbebarModel: [], // 存储侧边栏数据
       templateListIndex: "" // 临时存档当前的I值
     };
   },
@@ -208,7 +208,8 @@ export default {
   mounted() {
     this.start(); // 进入页面加载内容
 
-    this.queryGroup(); // 初始化接口--test
+    this.queryGroup(); // 初始化接口
+    this.sidbebarStar(); // 初始化侧边栏
   },
   methods: {
     // ====================底部设置弹框========================
@@ -267,8 +268,7 @@ export default {
     // 初始化界面
     queryGroup() {
       this.$axios.get(queryTemplateContent + "8541535").then(res => {
-        if (res.data.code == responseCode.SUCCESSCODE) {
-          console.log(res.data.data);
+        if (res.data.code == this.$responseCode.SUCCESSCODE) {
           for (let index = 0; index < res.data.data.length; index++) {
             this.templateList.push({
               templateId: res.data.data[index].templateId, //模板ID
@@ -447,6 +447,16 @@ export default {
         componentId: libraryId, // 标识是哪个组件
         isTrue: false, // 底部弹框是否显示
         templateArray: makeList[newVal1].templateArray
+      });
+    },
+    // 初始化加载侧边栏数据
+    sidbebarStar() {
+      this.$axios.get(queryComponentlibrary).then(res => {
+        if (res.data.code == this.$responseCode.SUCCESSCODE) {
+          // console.log(res.data.data);
+          this.sidbebarModel = [];
+          this.sidbebarModel = res.data.data;
+        }
       });
     },
 

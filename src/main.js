@@ -16,6 +16,7 @@ import 'vant/lib/index.css'
 // 引入自定义公共样式
 import css from './css/index.css'
 
+import { responseCode } from "../src/utils/responseCode"; // 引入后端返回code码
 import { SwipeCell } from 'vant'; // 左右滑动弹出编辑、删除等
 import { Field } from "vant";
 import touch from 'vue-directive-touch';  // 滑动：长按，左右划等
@@ -23,6 +24,7 @@ import { Overlay } from 'vant';  // 遮罩层
 import { ActionSheet } from 'vant';  // 上拉菜单
 import { DropdownMenu, DropdownItem } from 'vant';  // 下拉菜单
 
+// Vue.use(responseCode)
 Vue.use(Vuex)
 Vue.use(DropdownMenu);
 Vue.use(DropdownItem);
@@ -35,6 +37,8 @@ Vue.use(Vant)
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios // 全局挂载axios
 Vue.prototype.$echarts = echarts// 全局挂载echarts
+
+Vue.prototype.$responseCode = responseCode // 全局挂载返回的code码
 
 Vue.prototype.$changeFontSize = new changeFontSize() // 全局挂载修改字体大小的js
 

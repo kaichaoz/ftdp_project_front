@@ -52,6 +52,7 @@ export default {
   },
   props: {
     // infoNumP: {}
+    sidebarModel: { type: Array, default: () => [] }
   },
   data() {
     return {
@@ -64,11 +65,17 @@ export default {
       Loop: "" // 定时器
     };
   },
-  watch: {},
+  watch: {
+    sidebarModel(newVal) {
+      console.log(newVal + "数值改变后");
+    }
+  },
   created() {
     this.groupIdList = this.libraryIdIndex;
   },
-  mounted() {},
+  mounted() {
+    this.start();
+  },
   methods: {
     // 清除浏览器长按图片弹框
     touchin(i) {
@@ -94,6 +101,9 @@ export default {
 
     infosh() {
       // console.log(this.bg);
+    },
+    start() {
+      console.log(this.sidebarModel + "初始化加载");
     }
   }
 };

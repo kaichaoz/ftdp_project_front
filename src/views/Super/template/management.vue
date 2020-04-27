@@ -211,13 +211,13 @@ export default {
       sessionStorage.setItem("management_groupNameList", groupNameList); // 当前所有分组名字集合
       sessionStorage.setItem("management_groupIdList", groupIdList); // 当前所有分组Id集合
       sessionStorage.setItem(
-        "templateGroupId",
+        "management_templateGroupId",
         this.managementDataList[index].groupID
       ); // 分组ID
 
-      sessionStorage.setItem("templateName", "");
-      sessionStorage.setItem("templateId", "");
-      sessionStorage.setItem("postScript", "");
+      sessionStorage.setItem("management_templateName", "");
+      sessionStorage.setItem("management_templateId", "");
+      sessionStorage.setItem("management_postScript", "");
       this.$router.push({
         name: "createName"
         // params: {
@@ -239,7 +239,7 @@ export default {
       const groupNameList = this.pushGroupNameList();
       const groupIdList = this.pushGroupIdList();
       sessionStorage.setItem(
-        "templateGroupId",
+        "management_templateGroupId",
         this.managementDataList[index].groupID
       ); // 分组ID
       sessionStorage.setItem("management_route", "1"); // 0表示点击加号进入
@@ -248,15 +248,15 @@ export default {
       sessionStorage.setItem("management_groupIdList", groupIdList); // 当前所有分组Id集合
 
       sessionStorage.setItem(
-        "templateName",
+        "management_templateName",
         this.managementDataList[index].comTitleList[i].templateName
       );
       sessionStorage.setItem(
-        "templateId",
+        "management_templateId",
         this.managementDataList[index].comTitleList[i].templateId
       );
       sessionStorage.setItem(
-        "postScript",
+        "management_postScript",
         this.managementDataList[index].comTitleList[i].postScript
       );
 

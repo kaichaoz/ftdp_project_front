@@ -204,10 +204,12 @@ export default {
      */
     plusNum(index) {
       const groupNameList = this.pushGroupNameList();
+      const groupIdList = this.pushGroupIdList();
+
       sessionStorage.setItem("management_route", "0"); // 0表示点击加号进入
       sessionStorage.setItem("management_groupNameIndex", index); // 当前分组名字，如index=0表示公共项目
       sessionStorage.setItem("management_groupNameList", groupNameList); // 当前所有分组名字集合
-
+      sessionStorage.setItem("management_groupIdList", groupIdList); // 当前所有分组Id集合
       sessionStorage.setItem(
         "templateGroupId",
         this.managementDataList[index].groupID
@@ -235,6 +237,7 @@ export default {
      */
     editRouter(index, i) {
       const groupNameList = this.pushGroupNameList();
+      const groupIdList = this.pushGroupIdList();
       sessionStorage.setItem(
         "templateGroupId",
         this.managementDataList[index].groupID
@@ -242,6 +245,8 @@ export default {
       sessionStorage.setItem("management_route", "1"); // 0表示点击加号进入
       sessionStorage.setItem("management_groupNameIndex", index); // 当前分组名字，如index=0表示公共项目
       sessionStorage.setItem("management_groupNameList", groupNameList); // 当前所有分组名字集合
+      sessionStorage.setItem("management_groupIdList", groupIdList); // 当前所有分组Id集合
+
       sessionStorage.setItem(
         "templateName",
         this.managementDataList[index].comTitleList[i].templateName
@@ -266,7 +271,7 @@ export default {
     },
 
     /**
-     * @description: 点击加号存储模板管理页所有分组模板
+     * @description: 点击加号存储模板管理页所有分组模板name
      * @param ：无
      * @return: 当前页面所有分组模板
      * @author: 付媛媛
@@ -282,20 +287,22 @@ export default {
     },
 
     /**
-     * @description: 进入模板管理页面存储模板管理页所有分组模板
+     * @description: 进入模板管理页面存储模板管理页所有分组模板Id
      * @param ：无
      * @return: 无
      * @author: 付媛媛
      * @Date: 2020年4月20日19:59:05
      */
-    startList() {
-      let groupNameList = [];
+    pushGroupIdList() {
+      let groupIdList = [];
       for (let i = 0; i < this.managementDataList.length; i++) {
         //将当前页面所有分组模板名字添加到数组
-        groupNameList.push(this.managementDataList[i].title);
+        groupIdList.push(this.managementDataList[i].groupID);
       }
-      // 存储当前页面的所有分组模板名字
-      this.$store.commit("setManagementGroupNameList", groupNameList);
+      return groupIdList;
+
+      // // 存储当前页面的所有分组模板名字
+      // this.$store.commit("setManagementGroupNameList", groupIdList);
     },
 
     /**

@@ -160,9 +160,9 @@ export default {
         personValue: 0, //人员选择后的value
         // 所属分组
         groupOption: [
-          { text: "", value: "" },
-          { text: "", value: "" },
-          { text: "", value: "" }
+          { text: "", value: "", groupId: "" }, // text存储名字（公共项目），value存储下标（0,1,2）显示的时候使用value
+          { text: "", value: "", groupId: "" },
+          { text: "", value: "", groupId: "" }
         ],
         personOption: [{ text: "自己", value: 0 }], // 人员下拉框
         remarkTxt: "" //备注输入内容
@@ -175,7 +175,7 @@ export default {
   },
   mounted() {
     // 上一级页面跳转进来传参
-    this.jumpToPageLoading(); 
+    this.jumpToPageLoading();
   },
 
   updated() {
@@ -198,6 +198,8 @@ export default {
      */
     recallBackendPost() {
       // ------------------把数据存储到数据库 -----------------------
+      //存储分组ID
+      const groupIdNow = this.substitution(this.createNameDataList.groupValue);
       const vm = this;
       const model = {
         groupSequence: "string", //分组位置
@@ -206,26 +208,31 @@ export default {
         staffID: "", //人员
         id: this.createNameDataList.templateId, //模板id
         postscript: this.createNameDataList.remarkTxt, //备注
-        templateGroupID: this.createNameDataList.templateGroupId, //模板分组id
+        templateGroupID: groupIdNow, //模板分组id
         templateName: this.createNameDataList.managementNamevalue //模板名称
       };
       vm.$axios.post(insertTemplate, model).then(res => {
-        if ((res.data.code = "0000")) {
-          // console.log(model, "m");
+        if (res.data.code == "0000") {
+          // sessionStorage.setItem("templateId", res.data.data.templateId);
         } else {
           console.log("cuowu");
         }
       });
-      
 
       // ------------------把数据存储到缓存 -----------------------
-      //模板名称
+      // 模板名称
       sessionStorage.setItem(
         "templateName",
         this.createNameDataList.managementNamevalue
       );
-      // sessionStorage.setItem("templateId", this.createNameDataList.templateId);
 
+      // 当前分组i
+      sessionStorage.setItem(
+        "management_groupNameIndex",
+        this.createNameDataList.groupValue
+      );
+      // 存储groupID
+      sessionStorage.setItem("templateGroupId", groupIdNow); 
       //备注
       sessionStorage.setItem("postScript", this.createNameDataList.remarkTxt);
     },
@@ -237,6 +244,23 @@ export default {
     },
 
     /**
+     * @description: 根据value值返回groupID
+     * @param ：{name:value值}
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月24日19:31:53
+     */
+    substitution(name) {
+      const num = this.createNameDataList.groupOption;
+      for (let index = 0; index < num.length; index++) {
+        if (name == num[index].value) {
+          return num[index].groupId;
+        }
+      }
+      return -1;
+    },
+
+    /**
      * @description: 上一级页面跳转进来传参
      * @param ：{index:具体分组的索引}
      * @return: 无
@@ -244,9 +268,9 @@ export default {
      * @Date: 2020年4月24日19:31:53
      */
     jumpToPageLoading() {
+
       // ------------------获取上一页面数据 -----------------------
       // 获取ID
-      // const templateId = sessionStorage.getItem("templateId");
       this.createNameDataList.templateId = sessionStorage.getItem("templateId");
       // 接收模板名称
       this.createNameDataList.managementNamevalue = sessionStorage.getItem(
@@ -262,35 +286,28 @@ export default {
       );
       // 字符串转数组：缓存存储字符串
       groupNameListRoute = groupNameListRoute.split(",");
+
+      // 接收页面分组ID数组
+      let groupIdList = sessionStorage.getItem("management_groupIdList");
+      groupIdList = groupIdList.split(",");
+
       // 接收模板备注
       this.createNameDataList.remarkTxt = sessionStorage.getItem("postScript");
 
       // 接收management进入：0表示从加号，1表示从编辑--因为不调取后端当前无用
       const managementRoute = sessionStorage.getItem("management_route");
-      //接收模板分组ID
-      this.createNameDataList.templateGroupId = sessionStorage.getItem(
-        "templateGroupId"
-      );
+
+
       // --------------------从缓存获取数据存储-----------------------
-
-      // 初始化从vuex读取，后改为后端
-      // this.createNameDataList = {};
-      // this.createNameDataList = this.$store.state.createNameDataList;
-
       // 将下拉框内容清空并存储
       this.createNameDataList.groupOption = [];
       for (let index = 0; index < groupNameListRoute.length; index++) {
         this.createNameDataList.groupOption.push({
-          text: groupNameListRoute[index], // 具体项目名称
-          value: index // 项目索引
+          text: groupNameListRoute[index], // text存储名字（公共项目），
+          value: index, // value存储下标（0,1,2）
+          groupId: groupIdList[index] // 分组ID
         });
       }
-
-      // // =0从加号进入，上一页面做处理，传值时清空模板名称和备注
-      // if (managementRoute == "0") {
-      //   this.createNameDataList.managementNamevalue = ""; // 清空模板名称
-      //   this.createNameDataList.remarkTxt = ""; // 清空备注
-      // }
     },
 
     // 返回，模板管理页面
@@ -312,7 +329,6 @@ export default {
     storageTxtNode() {
       var temp = document.getElementById("editer").innerText; // 获取文本框内容
       temp = escape.htmlEncode(temp); // 将特殊字符转格式
-      // console.log(temp);
       return temp;
     }
   }

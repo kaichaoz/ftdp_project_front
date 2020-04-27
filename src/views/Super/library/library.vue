@@ -102,7 +102,12 @@ import {
   updateComponent
 } from "../../../api/Super/library/library";
 import { responseCode } from "../../../utils/responseCode";
+import { mapState } from "vuex";
 export default {
+  computed: {
+    // 展开运算符，将全局变量映射为自己界面的变量
+    ...mapState(["libraryId", ""])
+  },
   components: {
     userInfo,
     theMessageStates,
@@ -114,12 +119,7 @@ export default {
   data() {
     return {
       // 分组ID：与数据库同步
-      groupIdList: {
-        userInfo: "5856212",
-        theMessageStates: "8706797",
-        enterInfomation: "0342524",
-        invalid: "1111111"
-      },
+      groupIdList: {},
       // 由invalidComponents传递过来，并传送给各自组件类(组件是否显示)
       componentInvalidTouserInfoList: [{ isTrue: true, position: 0 }],
       componentInvalidToTheMessageStatesList: [{ isTrue: true, position: 0 }],
@@ -170,6 +170,8 @@ export default {
   // 初始化注入校验后，在el挂载前
   created() {
     this.getQueryComponent(); // 接收后端数据
+    this.groupIdList = this.libraryId;
+    console.log(this.groupIdList);
   },
   // 虚拟DOM重新渲染并应用更新前
   beforeUpdate() {},

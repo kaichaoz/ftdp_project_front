@@ -21,7 +21,7 @@
     <div id="addTemplate" class="allTemplate" v-touch:right="eventFun">
       <div v-for="(item ,i) in templateList ">
         <!-- user组件 -->
-        <div :id="'userComDiv' + i" v-if="templateList[i].componentId =='0'">
+        <div :id="'userComDiv' + i" v-if="templateList[i].componentId ==groupIdList.userInfo">
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="isTrue(i)">
             <user :isTrueList="templateList[i].templateArray" class="publicAll user"></user>
@@ -36,7 +36,10 @@
         </div>
 
         <!-- infoShow组件 -->
-        <div :id="'infoShowComDiv' + i" v-if="templateList[i].componentId =='1'">
+        <div
+          :id="'infoShowComDiv' + i"
+          v-if="templateList[i].componentId ==groupIdList.theMessageStates"
+        >
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="isTrue(i)">
             <infoShow :infoShowListP="templateList[i].templateArray" class="publicAll infoShow"></infoShow>
@@ -51,7 +54,10 @@
         </div>
 
         <!-- numberIndex组件 -->
-        <div :id="'numberIndexComDiv' + i" v-if="templateList[i].componentId =='2'">
+        <div
+          :id="'numberIndexComDiv' + i"
+          v-if="templateList[i].componentId ==groupIdList.enterInfomation"
+        >
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="isTrue(i)">
             <numberIndex
@@ -172,7 +178,7 @@ import { mapMutations } from "vuex";
 export default {
   computed: {
     // 展开运算符，将全局变量映射为自己界面的变量
-    ...mapState(["makeFormInitializationList", "makeFormDataList"])
+    ...mapState(["makeFormInitializationList", "makeFormDataList", "libraryId"])
   },
   components: {
     sidebar,
@@ -185,6 +191,7 @@ export default {
   },
   data() {
     return {
+      groupIdList: {},
       showPopup: false, // 遮罩层弹出
       templateList: [], // 存放当前页面显示的几个页面数据，012分别为三个组件
       cross: require("../../../assets/super/template/cross.png"), // 取消（叉号）
@@ -192,10 +199,14 @@ export default {
       templateListIndex: "" // 临时存档当前的I值
     };
   },
+
+  created() {
+    this.groupIdList = this.libraryId;
+  },
   mounted() {
     this.start(); // 进入页面加载内容
 
-    // this.queryGroup(); // 初始化接口--test
+    this.queryGroup(); // 初始化接口--test
   },
   methods: {
     // ====================底部设置弹框========================
@@ -253,8 +264,9 @@ export default {
       this.$router.push({ name: "ruleSetting" });
     },
 
+    // 初始化界面
     queryGroup() {
-      this.$axios.get(queryTemplateContent + "0").then(res => {
+      this.$axios.get(queryTemplateContent + "8541535").then(res => {
         if (res.data.code == responseCode.SUCCESSCODE) {
           console.log(res.data.data);
         }
@@ -264,88 +276,99 @@ export default {
     //  ==================右划添加组件部分=======================
 
     // 子组件sidebar返回事件，返回是哪个组件
-    listenToMakeForm(newVal1) {
+    listenToMakeForm(newVal1, libraryId) {
       // 当前此变量必须使用const放到这里，因为使用全局变量会更改此值，除了第一个组件之外都是如此
       const makeList = [
         {
           templateId: "", //模板ID
-          id: "", // 模板内容ID
           groupSequence: "", // 模板内容分组排序
           componentId: "0", // 标识是哪个组件
           isTrue: false, // 底部弹框是否显示
           templateArray: [
             {
+              id: "", // 模板内容ID
               isTrue: true,
+              fieldSequence: "0",
               title: "姓名",
               value: "张三",
-              bottomName: "姓名是否显示",
-              fieldSequence: "0"
+              bottomName: "姓名是否显示"
             },
             {
+              id: "", // 模板内容ID
               isTrue: true,
+              fieldSequence: "0",
               title: "姓名",
               value: "张三",
-              bottomName: "姓名是否显示",
-              fieldSequence: "0"
+              bottomName: "姓名是否显示"
             },
             {
+              id: "", // 模板内容ID
               isTrue: true,
+              fieldSequence: "0",
               title: "姓名",
               value: "张三",
-              bottomName: "姓名是否显示",
-              fieldSequence: "0"
+              bottomName: "姓名是否显示"
             },
             {
+              id: "", // 模板内容ID
               isTrue: true,
+              fieldSequence: "0",
               title: "姓名",
               value: "张三",
-              bottomName: "姓名是否显示",
-              fieldSequence: "0"
+              bottomName: "姓名是否显示"
             },
             {
+              id: "", // 模板内容ID
               isTrue: true,
+              fieldSequence: "0",
               title: "姓名",
               value: "张三",
-              bottomName: "姓名是否显示",
-              fieldSequence: "0"
+              bottomName: "姓名是否显示"
             },
             {
+              id: "", // 模板内容ID
               isTrue: true,
+              fieldSequence: "0",
               title: "姓名",
               value: "张三",
-              bottomName: "姓名是否显示",
-              fieldSequence: "0"
+              bottomName: "姓名是否显示"
             },
             {
+              id: "", // 模板内容ID
               isTrue: true,
+              fieldSequence: "0",
               title: "姓名",
               value: "张三",
-              bottomName: "姓名是否显示",
-              fieldSequence: "0"
+              bottomName: "姓名是否显示"
             }
           ]
         },
         {
           templateId: "", //模板ID
-          id: "", // 模板内容ID
           groupSequence: "", // 模板内容分组排序
           componentId: "0", // 标识是哪个组件
           isTrue: false, // 底部弹框是否显示
           templateArray: [
             {
+              id: "", // 模板内容ID
               isTrue: true,
+              fieldSequence: "0",
               infoTitle: "某某得分",
               infoNum: "110",
               infoList: ["某某得分", "某某信息", "评分"]
             },
             {
+              id: "", // 模板内容ID
               isTrue: true,
+              fieldSequence: "0",
               infoTitle: "某某信息",
               infoNum: "119",
               infoList: ["某某得分", "某某信息", "评分"]
             },
             {
+              id: "", // 模板内容ID
               isTrue: true,
+              fieldSequence: "0",
               infoTitle: "评分",
               infoNum: "120",
               infoList: ["某某得分", "某某信息", "评分"]
@@ -354,12 +377,14 @@ export default {
         },
         {
           templateId: "", //模板ID
-          id: "", // 模板内容ID
           groupSequence: "", // 模板内容分组排序
           componentId: "0", // 标识是哪个组件
           isTrue: false, // 底部弹框是否显示
           templateArray: [
             {
+              id: "", // 模板内容ID
+              isTrue: true,
+              fieldSequence: "0",
               infoNum: "请输入成就 单位",
               placeholder: "及格分 >=10"
             }
@@ -372,9 +397,8 @@ export default {
       // 添加一个组件
       this.templateList.push({
         templateId: "", //模板ID
-        id: "", // 模板内容ID
         groupSequence: "", // 模板内容分组排序
-        componentId: newVal1, // 标识是哪个组件
+        componentId: libraryId, // 标识是哪个组件
         isTrue: false, // 底部弹框是否显示
         templateArray: makeList[newVal1].templateArray
       });

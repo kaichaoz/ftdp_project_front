@@ -44,13 +44,18 @@
 </style>
 
 <script>
+import { mapState } from "vuex";
 export default {
+  computed: {
+    // 展开运算符，将全局变量映射为自己界面的变量
+    ...mapState(["libraryIdIndex"])
+  },
   props: {
-    infoNumP: {}
+    // infoNumP: {}
   },
   data() {
     return {
-
+      groupIdList: [],
       infoNum: [
         require("../../../assets/super/library/user.jpg"),
         require("../../../assets/super/library/infoShow.jpg"),
@@ -60,6 +65,9 @@ export default {
     };
   },
   watch: {},
+  created() {
+    this.groupIdList = this.libraryIdIndex;
+  },
   mounted() {},
   methods: {
     // 清除浏览器长按图片弹框
@@ -80,7 +88,8 @@ export default {
 
     //长按后返回父页面，携带当前id并关闭
     returnMakeFor(i) {
-      this.$emit("listenToMakeForm", i);
+      this.$emit("listenToMakeForm", i, this.groupIdList[i]);
+      // console.log(this.groupIdList[i]);
     },
 
     infosh() {

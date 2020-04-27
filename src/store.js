@@ -9,6 +9,16 @@ const store = new Vuex.Store({
   state: {
     token: '',//用户token
 
+    // 分组ID：与数据库同步
+    libraryId: {
+      userInfo: "5856212",
+      theMessageStates: "8706797",
+      enterInfomation: "0342524",
+      invalid: "1111111"
+    },
+    // 同步上面数据：去除invalid，并从上到下排列下来
+    libraryIdIndex:["5856212","8706797","0342524"],
+
 
 
 

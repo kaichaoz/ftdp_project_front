@@ -153,6 +153,7 @@ export default {
     return {
       // 当前页面所有数据
       createNameDataList: {
+        templateId: "", //模板ID
         templateGroupId: "", // 分组ID
         managementNamevalue: "", // 模板名称输入框输入内容
         groupValue: "", // 分组选择后的分组value
@@ -173,7 +174,8 @@ export default {
     // this.start();
   },
   mounted() {
-    this.jumpToPageLoading(); // 上一级页面跳转进来传参
+    // 上一级页面跳转进来传参
+    this.jumpToPageLoading(); 
   },
 
   updated() {
@@ -187,26 +189,45 @@ export default {
   },
 
   methods: {
-    // 退出保存
+    /**
+     * @description: 退出页面保存当前页面数据
+     * @param ：无
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月27日09:38:22
+     */
     recallBackendPost() {
+      // ------------------把数据存储到数据库 -----------------------
       const vm = this;
       const model = {
-        groupSequence: "string",
-        id: "",
-        isFinish: 0,
-        isUsable: 0,
-        postscript: this.createNameDataList.remarkTxt,
-        staffID: "",
-        templateGroupID: this.createNameDataList.templateGroupId,
-        templateName: this.createNameDataList.managementNamevalue
+        groupSequence: "string", //分组位置
+        isFinish: 0, //是否完成编辑（0完成，1未完成）
+        isUsable: 0, //是否可用（0可用，1不可用）
+        staffID: "", //人员
+        id: this.createNameDataList.templateId, //模板id
+        postscript: this.createNameDataList.remarkTxt, //备注
+        templateGroupID: this.createNameDataList.templateGroupId, //模板分组id
+        templateName: this.createNameDataList.managementNamevalue //模板名称
       };
       vm.$axios.post(insertTemplate, model).then(res => {
         if ((res.data.code = "0000")) {
-          console.log(model, "m");
+          // console.log(model, "m");
         } else {
           console.log("cuowu");
         }
       });
+      
+
+      // ------------------把数据存储到缓存 -----------------------
+      //模板名称
+      sessionStorage.setItem(
+        "templateName",
+        this.createNameDataList.managementNamevalue
+      );
+      // sessionStorage.setItem("templateId", this.createNameDataList.templateId);
+
+      //备注
+      sessionStorage.setItem("postScript", this.createNameDataList.remarkTxt);
     },
 
     start() {
@@ -225,7 +246,8 @@ export default {
     jumpToPageLoading() {
       // ------------------获取上一页面数据 -----------------------
       // 获取ID
-      const templateId = sessionStorage.getItem("templateId");
+      // const templateId = sessionStorage.getItem("templateId");
+      this.createNameDataList.templateId = sessionStorage.getItem("templateId");
       // 接收模板名称
       this.createNameDataList.managementNamevalue = sessionStorage.getItem(
         "templateName"
@@ -245,7 +267,7 @@ export default {
 
       // 接收management进入：0表示从加号，1表示从编辑--因为不调取后端当前无用
       const managementRoute = sessionStorage.getItem("management_route");
-
+      //接收模板分组ID
       this.createNameDataList.templateGroupId = sessionStorage.getItem(
         "templateGroupId"
       );
@@ -264,7 +286,7 @@ export default {
         });
       }
 
-      // // =0从加号进入
+      // // =0从加号进入，上一页面做处理，传值时清空模板名称和备注
       // if (managementRoute == "0") {
       //   this.createNameDataList.managementNamevalue = ""; // 清空模板名称
       //   this.createNameDataList.remarkTxt = ""; // 清空备注
@@ -276,21 +298,22 @@ export default {
       this.$router.push({ name: "management" });
     },
 
-    //下一步，编辑模板拖拽页面，传模板id
+    //下一步，编辑模板拖拽页面
     nextStep() {
       this.$router.push({ name: "makeForm" });
     },
 
     // 光标离开备注输入框执行存储
     changeText() {
-      this.storageTxtNode();
+      this.createNameDataList.remarkTxt = this.storageTxtNode();
     },
 
     // 将输入内容存储，需要转html格式，有些字符无法存数据库
     storageTxtNode() {
       var temp = document.getElementById("editer").innerText; // 获取文本框内容
       temp = escape.htmlEncode(temp); // 将特殊字符转格式
-      console.log(temp);
+      // console.log(temp);
+      return temp;
     }
   }
 };

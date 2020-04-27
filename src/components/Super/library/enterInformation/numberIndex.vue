@@ -53,12 +53,7 @@ export default {
   props: {
     numuberIndexListP: {
       type: Array,
-      default: () => [
-        {
-          title: "请输入成就 单位",
-          value: "及格分 >=10"
-        }
-      ]
+      default: () => []
     }
   },
   data() {

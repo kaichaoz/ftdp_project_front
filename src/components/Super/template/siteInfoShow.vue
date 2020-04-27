@@ -112,26 +112,7 @@ export default {
     // 接收父页面makeForm传递过来: 显示底部数据
     siteInfoShowListP: {
       type: Array,
-      default: () => [
-        {
-          isTrue: true,
-          title: "",
-          value: "",
-          titleList: []
-        },
-        {
-          isTrue: true,
-          title: "",
-          value: "",
-          titleList: []
-        },
-        {
-          isTrue: true,
-          title: "",
-          value: "",
-          titleList: ["", "", ""]
-        }
-      ]
+      default: () => []
     }
   },
   data() {

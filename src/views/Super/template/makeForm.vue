@@ -267,6 +267,41 @@ export default {
       this.$axios.get(queryTemplateContent + "8541535").then(res => {
         if (res.data.code == responseCode.SUCCESSCODE) {
           console.log(res.data.data);
+          for (let index = 0; index < res.data.data.length; index++) {
+            this.templateList.push({
+              templateId: res.data.data[index].templateId, //模板ID
+              groupSequence: res.data.data[index].groupSequence, // 模板内容分组排序
+              componentId: res.data.data[index].componentId, // 标识是哪个组件
+              isTrue: false, // 底部弹框是否显示
+              templateArray: []
+            });
+            for (
+              let i = 0;
+              i < res.data.data[index].templateContentData.length;
+              i++
+            ) {
+              this.templateList[index].templateArray.push({
+                id: res.data.data[index].templateContentData[i].id, // 模板内容ID
+                isTrue: res.data.data[index].templateContentData[i].isUsable,
+                fieldSequence: i,
+                title: res.data.data[index].templateContentData[i].title,
+                value: res.data.data[index].templateContentData[i].promptField,
+                bottomName:
+                  res.data.data[index].templateContentData[i].title +
+                  "是否显示",
+                titleList: ["某某得分", "某某信息", "评分"]
+              });
+
+              // 将01改为true和false
+              if (this.templateList[index].templateArray[i].isTrue == "0") {
+                this.templateList[index].templateArray[i].isTrue = true;
+              } else if (
+                this.templateList[index].templateArray[i].isTrue == "1"
+              ) {
+                this.templateList[index].templateArray[i].isTrue = false;
+              }
+            }
+          }
         }
       });
     },
@@ -288,7 +323,8 @@ export default {
               fieldSequence: "0",
               title: "姓名",
               value: "张三",
-              bottomName: "姓名是否显示"
+              bottomName: "姓名是否显示",
+              titleList: ["某某得分", "某某信息", "评分"]
             },
             {
               id: "", // 模板内容ID
@@ -296,7 +332,8 @@ export default {
               fieldSequence: "0",
               title: "性别",
               value: "男",
-              bottomName: "姓名是否显示"
+              bottomName: "姓名是否显示",
+              titleList: ["某某得分", "某某信息", "评分"]
             },
             {
               id: "", // 模板内容ID
@@ -304,7 +341,8 @@ export default {
               fieldSequence: "0",
               title: "学号",
               value: "122231231231",
-              bottomName: "姓名是否显示"
+              bottomName: "姓名是否显示",
+              titleList: ["某某得分", "某某信息", "评分"]
             },
             {
               id: "", // 模板内容ID
@@ -312,7 +350,8 @@ export default {
               fieldSequence: "0",
               title: "学院",
               value: "物理与电子信息学院",
-              bottomName: "姓名是否显示"
+              bottomName: "姓名是否显示",
+              titleList: ["某某得分", "某某信息", "评分"]
             },
             {
               id: "", // 模板内容ID
@@ -320,7 +359,8 @@ export default {
               fieldSequence: "0",
               title: "专业",
               value: "电子信息",
-              bottomName: "姓名是否显示"
+              bottomName: "姓名是否显示",
+              titleList: ["某某得分", "某某信息", "评分"]
             },
             {
               id: "", // 模板内容ID
@@ -328,7 +368,8 @@ export default {
               fieldSequence: "0",
               title: "班级",
               value: "二班",
-              bottomName: "姓名是否显示"
+              bottomName: "姓名是否显示",
+              titleList: ["某某得分", "某某信息", "评分"]
             },
             {
               id: "", // 模板内容ID
@@ -336,7 +377,8 @@ export default {
               fieldSequence: "0",
               title: "年级",
               value: "一年级",
-              bottomName: "姓名是否显示"
+              bottomName: "姓名是否显示",
+              titleList: ["某某得分", "某某信息", "评分"]
             }
           ]
         },
@@ -352,6 +394,7 @@ export default {
               fieldSequence: "0",
               title: "某某得分",
               value: "110",
+              bottomName: "姓名是否显示",
               titleList: ["某某得分", "某某信息", "评分"]
             },
             {
@@ -360,6 +403,7 @@ export default {
               fieldSequence: "0",
               title: "某某信息",
               value: "119",
+              bottomName: "姓名是否显示",
               titleList: ["某某得分", "某某信息", "评分"]
             },
             {
@@ -368,6 +412,7 @@ export default {
               fieldSequence: "0",
               title: "评分",
               value: "120",
+              bottomName: "姓名是否显示",
               titleList: ["某某得分", "某某信息", "评分"]
             }
           ]
@@ -383,7 +428,9 @@ export default {
               isTrue: true,
               fieldSequence: "0",
               title: "请输入成就 单位",
-              value: "及格分 >=10"
+              value: "及格分 >=10",
+              bottomName: "姓名是否显示",
+              titleList: ["某某得分", "某某信息", "评分"]
             }
           ]
         }

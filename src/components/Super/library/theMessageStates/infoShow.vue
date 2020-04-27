@@ -63,11 +63,7 @@ export default {
     // 父页面makeForm传递：user在页面要显示的内容数组
     infoShowListP: {
       type: Array,
-      default: () => [
-        { isTrue: true, title: "某某得分", value: "110" },
-        { isTrue: true, title: "某某信息", value: "119" },
-        { isTrue: true, title: "评分", value: "120" }
-      ]
+      default: () => []
     }
   },
 

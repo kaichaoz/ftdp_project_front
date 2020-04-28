@@ -128,6 +128,7 @@ import {
 } from "../../../api/Super/template/management"; //引入{根据isUsable查询模板，删除模板，修改模板分组}接口的后端地址
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量
+import escape from "../../../api/timer";
 export default {
   computed: {
     ...mapState(["managementDataListStore"]), // 映射store变量managementDataListStore为当前页面变量，直接使用this即可
@@ -175,16 +176,46 @@ export default {
   },
   mounted() {
     //初始化页面加载
-    this.queryGroup();
+    // this.queryGroup();
+    this.start();
+    // escape.start();
+    // this.queryGroup();
   },
   beforeDestroy() {
     //退出页面保存当前分组模板位置
     this.modifyTemplateGroup();
   },
   methods: {
-    // 初始化
+    // 初始化:进入设置更改setting_Leave值为1，当setting页面保存数据后改为0；
+    // 当前进入此页面先判断setting_Leave值是否为0，为0加载数据，为1持续查询直到为0结束定时器，
+    // 当时间超过20s时则自动加载数据
     start() {
-      this.managementDataList = []; // 当前有页面所有数据置空
+      const vm = this;
+      let setting_Leave = sessionStorage.getItem("setting_Leave");
+      // 如果此值为0 加载数据
+      if (setting_Leave == 0) {
+        vm.queryGroup();
+        return;
+      } else {
+        var startTime = new Date().getTime();
+        var num = 0;
+        // 不为0则起定时器每1/2s查询是否为0，为0则加载数据返回并清理定时器
+        var interval = setInterval(function() {
+          setting_Leave = sessionStorage.getItem("setting_Leave");
+          if (setting_Leave == 0) {
+            clearInterval(interval);
+            vm.queryGroup();
+            return;
+          }
+          // 超时20s则自动加载数据并清理定时器
+          if (new Date().getTime() - startTime > 10000) {
+            clearInterval(interval);
+            vm.queryGroup();
+            return;
+          }
+          num++;
+        }, 500);
+      }
     },
     // 抬头左侧按钮跳转到组件管理
     intoModel() {

@@ -220,6 +220,7 @@ export default {
       });
 
       // ------------------把数据存储到缓存 -----------------------
+      // 各个参数前添加management的目的，清楚这个参数是从那个界面接收的，方便查询
       // 模板名称
       sessionStorage.setItem(
         "management_templateName",

@@ -37,7 +37,7 @@
     <popup
       :boolean="boolean"
       :projectInfo="projectInfo"
-      :projectIndex="projectIndex"  
+      :projectIndex="projectIndex"
       @listenToChildSetting="receivePopup"
       @listenToSettingInfo="receivePopupInfo"
     ></popup>
@@ -116,12 +116,12 @@
 }
 </style>
 <script>
-import popup from "../../../../src/components/Super/popup";//引入弹出框
+import popup from "../../../../src/components/Super/popup"; //引入弹出框
 import vuedraggable from "vuedraggable";
 
-import {queryTemplateGroupd} from "../../../../src/api/Super/template/setting";//引入初始化模板分组接口的后端地址
-import {modifyTemplateGroup} from "../../../../src/api/Super/template/setting";//引入修改模板分组接口的后端地址
-import {responseCode} from "../../../../src/utils/responseCode";//引入定义的状态码
+import { queryTemplateGroupd } from "../../../../src/api/Super/template/setting"; //引入初始化模板分组接口的后端地址
+import { modifyTemplateGroup } from "../../../../src/api/Super/template/setting"; //引入修改模板分组接口的后端地址
+import { responseCode } from "../../../../src/utils/responseCode"; //引入定义的状态码
 
 export default {
   components: {
@@ -134,8 +134,8 @@ export default {
       //   show: false,
       //   value: ""
 
-      less: require("../../../assets/super/Less.png"),//右边减号图片图片
-      plus: require("../../../assets/super/plus.png"),//底部加号图片
+      less: require("../../../assets/super/Less.png"), //右边减号图片图片
+      plus: require("../../../assets/super/plus.png"), //底部加号图片
       // projectName: [
       //   { id:"", templateGroupname:"公共项目"},
       //   { id:"", templateGroupname:"男生项目"},
@@ -144,10 +144,12 @@ export default {
 
       //渲染当前setting页面数据
       projectName: [
-        { id: "", 
+        {
+          id: "",
           templateGroupName: "", //模板分组名
-          isUsable: "",   //是否可用，0可用、1不可
-          groupSequence: "" }  //分组位置
+          isUsable: "", //是否可用，0可用、1不可
+          groupSequence: ""
+        } //分组位置
       ],
 
       boolean: "", // 弹出框输入是否可见
@@ -166,21 +168,24 @@ export default {
 
   watch: {},
 
-  // 销毁前（退出界面）
   beforeDestroy() {
+    // 退出界面保存数据
     this.modifyTemplateGroupPost();
   },
 
   updated() {},
 
   mounted() {
+    sessionStorage.setItem("setting_Leave", "1");
+
+    // 初始化请求后端数据
     this.queryTemplateGroupGet();
   },
 
   methods: {
     /**
      * @description:  初始化请求后端数据
-     * @param {index:分组索引}
+     * @param {i:分组索引}
      * @return: 无
      * @author: 张颖娟
      * @Date: 2020年4月21日09:37:36
@@ -188,9 +193,6 @@ export default {
     queryTemplateGroupGet() {
       this.projectName = [];
       const vm = this;
-
-      // const componentUrl =
-      //   "http://127.0.0.1:8091/ftdp-web/TemplateGroup/queryTemplateGroup";
 
       // 请求后端数据
       vm.$axios.get(queryTemplateGroupd).then(res => {
@@ -206,10 +208,7 @@ export default {
               groupSequence: res.data.data[i].groupSequence
             });
           }
-          // this.projectName = res.data.data
-          //  const a = this.replaceTF(this.projectName);
         } else {
-          // this.$router.push({ name: "login" });
           this.$toast({
             message: "加载失败",
             duration: 1000
@@ -217,43 +216,41 @@ export default {
         }
       });
     },
-    
+
     /**
      * @description: 保存当前setting页面数据
-     * @param {index:分组索引}
+     * @param {i:分组索引}
      * @return: 无
      * @author: 张颖娟
      * @Date: 2020年4月21日09:37:36
      */
     modifyTemplateGroupPost() {
+      //修改classList数组中位置，随着位置改变，数据改变
       const projectNamePosition = this.changeLocation(this.projectName);
 
       const resData = [];
       for (let i = 0; i < projectNamePosition.length; i++) {
         // 将前端页面数据存放到数组中
         resData.push({
-          id: projectNamePosition[i].id,
-          templateGroupName: projectNamePosition[i].templateGroupName,
-          isUsable: projectNamePosition[i].isUsable,
-          groupSequence: projectNamePosition[i].groupSequence
+          id: projectNamePosition[i].id, //分组id
+          templateGroupName: projectNamePosition[i].templateGroupName, //模板分组名称
+          isUsable: projectNamePosition[i].isUsable, //是否可用
+          groupSequence: projectNamePosition[i].groupSequence //分组位置
         });
-        // console.log(projectNamePosition, "zzz");
       }
-
       console.log(resData);
-      
-    //  console.log(this.projectNamePosition[i].isUsable, "zzz");
 
       const vm = this;
       // const componentUrl =
       // "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
 
-      // 请求后端数据 
+      // 请求后端数据
       vm.$axios.post(modifyTemplateGroup, resData).then(res => {
         if (res.data.code == responseCode.SUCCESSCODE) {
           this.$toast({
             message: "修改成功"
           });
+          sessionStorage.setItem("setting_Leave", "0");
         } else {
           vm.$toast({
             message: "抱歉，，，",
@@ -265,7 +262,7 @@ export default {
 
     /**
      * @description: 删除分组设置
-     * @param {index:分组索引}
+     * @param {i:分组索引}
      * @return: 无
      * @author: 张颖娟
      * @Date: 2020年4月21日09:37:36
@@ -274,17 +271,12 @@ export default {
       const resData = [];
       //获取所选分组信息
       resData.push({
-        id: this.projectName[i].id,
-        templateGroupName: this.projectName[i].templateGroupName,
-        isUsable: this.projectName[i].isUsable,
-        groupSequence: this.projectName[i].groupSequence
+        id: this.projectName[i].id, //分组id
+        templateGroupName: this.projectName[i].templateGroupName, //模板分组名称
+        isUsable: this.projectName[i].isUsable, //是否可用
+        groupSequence: this.projectName[i].groupSequence //分组位置
       });
-      // console.log(this.projectName[i].isUsable, "zzz");
-
       const vm = this;
-      // const componentUrl =
-      //   "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
-
       //请求后端数据
       vm.$axios.post(modifyTemplateGroup, resData).then(res => {
         if (res.data.code == responseCode.SUCCESSCODE) {
@@ -316,7 +308,7 @@ export default {
         } else if (arrayList[index].isUsable == false) {
           arrayList[index].isUsable = 1;
         }
-        
+
         return arrayList;
       }
     },
@@ -340,7 +332,6 @@ export default {
       } else if (this.projectName[i].isUsable == 1) {
         this.projectName[i].isUsable = 0;
       }
-      // console.log(projectName,"修改")
     },
 
     // 点击抬头左侧按钮
@@ -349,20 +340,19 @@ export default {
     },
 
     // 删除内容
-    lessNum(i) { 
-      this.replaceTFF(i); //修改isUsable的状态
+    lessNum(i) {
+      this.replaceTFF(i); //修改isUsable的状态(由0改为1)
       this.addDeleteRecord(i); //删除分组设置（后端）
       this.projectName.splice(i, 1); //删除分组设置（前端）
-      // console.log(projectName,"删除")
     },
 
     // 增加内容
     plusNum() {
       this.projectName.push({
-        templateGroupName: "请输入信息",
-        id: "",
-        isUsable: "0",
-        groupSequence: ""
+        templateGroupName: "请输入信息", //模板分组名称
+        id: "", //分组id
+        isUsable: "0", //是否可用
+        groupSequence: "" //分组位置
       });
     },
 

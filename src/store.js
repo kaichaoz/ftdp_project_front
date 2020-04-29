@@ -1,4 +1,3 @@
-
 import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
@@ -7,7 +6,7 @@ const store = new Vuex.Store({
 
   //要设置的全局访问的state对象
   state: {
-    token: '',//用户token
+    token: '', //用户token
 
     // 分组ID：与数据库同步
     libraryId: {
@@ -18,14 +17,32 @@ const store = new Vuex.Store({
     },
     // 同步上面数据：去除invalid，并从上到下排列下来
     // libraryIdIndex:["5856212","8706797","0342524"],
-    libraryIdIndex: [
-      { libraryId: "5856212", componentId: require("../src/assets/super/library/user.jpg") },
-      { libraryId: "8706797", componentId: require("../src/assets/super/library/infoShow.jpg") },
-      { libraryId: "0342524", componentId: require("../src/assets/super/library/numberIndex.jpg") }
+    libraryIdIndex: [{
+        libraryId: "5856212",
+        componentId: require("../src/assets/super/library/user.jpg")
+      },
+      {
+        libraryId: "8706797",
+        componentId: require("../src/assets/super/library/infoShow.jpg")
+      },
+      {
+        libraryId: "0342524",
+        componentId: require("../src/assets/super/library/numberIndex.jpg")
+      }
     ],
 
     // 根据这里面的id进行，将传递过来的数据，将这个里面的图片放到后端传递过来的数据中
 
+
+    //顶部弹框内容
+    notifyInfo: [{
+      loginErr: "用户名或密码错误",
+      loginOk: "登陆成功"
+    }, {
+      orange: "#FF976A",
+      green: "#8DC149",
+      blue: "#8DC149"
+    }],
 
 
     // ------------------------------------------------makeForm--------------------
@@ -64,15 +81,13 @@ const store = new Vuex.Store({
     //     }
     //   ]],
 
-    makeFormInitializationList: [
-      {
+    makeFormInitializationList: [{
         templateId: "", //模板ID
         id: "", // 模板内容ID
         groupSequence: "", // 模板内容分组排序
         componentId: "0", // 标识是哪个组件
         isTrue: false, // 底部弹框是否显示
-        templateArray: [
-          {
+        templateArray: [{
             isTrue: true,
             title: "姓名",
             value: "张三",
@@ -123,8 +138,7 @@ const store = new Vuex.Store({
           },
         ]
       },
-      [
-        {
+      [{
           isTrue: true,
           infoTitle: "某某得分",
           infoNum: "110",
@@ -143,14 +157,14 @@ const store = new Vuex.Store({
           infoList: ["某某得分", "某某信息", "评分"]
         }
       ],
-      [
-        {
+      [{
           infoNum: "请输入成就 单位"
         },
         {
           infoNum: "及格分 >=10"
         }
-      ]],
+      ]
+    ],
 
 
     // 创建模板二：makeForm编辑模板初始化数据---修改版
@@ -270,14 +284,21 @@ const store = new Vuex.Store({
 
 
     // 模板管理management页面数据
-    managementDataListStore: [
-      {
+    managementDataListStore: [{
         activeNames: "1", // 默认值，不需要更改
         title: "公共项目",
         comTitleList: ["仰卧起坐"]
       },
-      { activeNames: "1", title: "男生项目", comTitleList: ["1000米", "体前屈"] },
-      { activeNames: "1", title: "女生项目", comTitleList: ["800米"] }
+      {
+        activeNames: "1",
+        title: "男生项目",
+        comTitleList: ["1000米", "体前屈"]
+      },
+      {
+        activeNames: "1",
+        title: "女生项目",
+        comTitleList: ["800米"]
+      }
     ],
 
     // 创建模板一：createName页面数据
@@ -286,17 +307,28 @@ const store = new Vuex.Store({
       groupValue: 0, // 分组选择后的分组value
       personValue: 0, //人员选择后的value
       // 所属分组
-      groupOption: [
-        { text: "公共项目", value: 0 },
-        { text: "男生项目", value: 1 },
-        { text: "女生项目", value: 2 }
+      groupOption: [{
+          text: "公共项目",
+          value: 0
+        },
+        {
+          text: "男生项目",
+          value: 1
+        },
+        {
+          text: "女生项目",
+          value: 2
+        }
       ],
-      personOption: [{ text: "自己", value: 0 }], // 人员下拉框
+      personOption: [{
+        text: "自己",
+        value: 0
+      }], // 人员下拉框
       remarkTxt: "" //备注输入内容
 
     },
 
-    management_groupName_List: [],  // 存储模板管理页的group分组
+    management_groupName_List: [], // 存储模板管理页的group分组
 
 
 

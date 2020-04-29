@@ -29,7 +29,15 @@
 <script>
 import login from "../../api/Authority/login";
 import { Toast } from "vant";
+import { Notify } from "vant";
+import { mapState } from "vuex";
+
+// import notify from "../../../src/api/publicAll/notify";
 export default {
+  computed: {
+    // 展开运算符，将全局变量映射为自己界面的变量
+    ...mapState(["notifyInfo", ""])
+  },
   data() {
     return {
       atLastUserName: "", // 用户最后输入最后用户名
@@ -64,7 +72,7 @@ export default {
       document.onkeydown = function(e) {
         var key = window.event.keyCode;
         if (key == 13) {
-          _self.login();  // 执行登陆方法
+          _self.login(); // 执行登陆方法
         }
       };
     },
@@ -118,9 +126,18 @@ export default {
     // 提示
     prompt(value) {
       if (value == "0") {
-        Toast.fail("用户名或密码错误");
+        const a = "用户名或密码错误";
+        Toast.fail(a);
+        Notify({
+          message: this.notifyInfo[0].loginErr,
+          background: this.notifyInfo[1].orange //红色：#ffelel   橘色：#FF976A
+        });
       } else if (value == "1") {
         Toast.success("登陆成功");
+        Notify({
+          message: this.notifyInfo[0].loginOk,
+          background: this.notifyInfo[1].blue //蓝色：#29B8DB   绿色：#8DC149
+        });
       }
     }
   }

@@ -17,8 +17,14 @@ const store = new Vuex.Store({
       invalid: "1111111"
     },
     // 同步上面数据：去除invalid，并从上到下排列下来
-    libraryIdIndex:["5856212","8706797","0342524"],
+    // libraryIdIndex:["5856212","8706797","0342524"],
+    libraryIdIndex: [
+      { libraryId: "5856212", componentId: require("../src/assets/super/library/user.jpg") },
+      { libraryId: "8706797", componentId: require("../src/assets/super/library/infoShow.jpg") },
+      { libraryId: "0342524", componentId: require("../src/assets/super/library/numberIndex.jpg") }
+    ],
 
+    // 根据这里面的id进行，将传递过来的数据，将这个里面的图片放到后端传递过来的数据中
 
 
 

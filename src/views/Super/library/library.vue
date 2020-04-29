@@ -171,7 +171,7 @@ export default {
   created() {
     this.getQueryComponent(); // 接收后端数据
     this.groupIdList = this.libraryId;
-    console.log(this.groupIdList);
+    // console.log(this.groupIdList);
   },
   // 虚拟DOM重新渲染并应用更新前
   beforeUpdate() {},

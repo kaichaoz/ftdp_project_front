@@ -41,7 +41,7 @@ const store = new Vuex.Store({
     }, {
       orange: "#FF976A",
       green: "#8DC149",
-      blue: "#8DC149"
+      blue: "#29B8DB"
     }],
 
 

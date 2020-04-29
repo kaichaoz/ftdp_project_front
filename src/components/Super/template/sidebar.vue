@@ -17,7 +17,7 @@
         @touchend.prevent="cleartime()"
         v-for="(items,i) in infoNum"
       >
-        <img class="infoShow" width="200" :src="infoNum[i]" alt />
+        <img class="infoShow" width="200" :src="infoNum[i].componentId" alt />
       </div>
     </div>
   </div>
@@ -57,10 +57,17 @@ export default {
   data() {
     return {
       groupIdList: [],
+      // infoNum: [
+      //   require("../../../assets/super/library/user.jpg"),
+      //   require("../../../assets/super/library/infoShow.jpg"),
+      //   require("../../../assets/super/library/numberIndex.jpg")
+      // ],
       infoNum: [
-        require("../../../assets/super/library/user.jpg"),
-        require("../../../assets/super/library/infoShow.jpg"),
-        require("../../../assets/super/library/numberIndex.jpg")
+        { componentId: require("../../../assets/super/library/user.jpg") },
+        { componentId: require("../../../assets/super/library/infoShow.jpg") },
+        {
+          componentId: require("../../../assets/super/library/numberIndex.jpg")
+        }
       ],
       Loop: "" // 定时器
     };
@@ -75,6 +82,8 @@ export default {
   },
   mounted() {
     this.start();
+    this.infoNum = [];
+    this.infoNum = this.libraryIdIndex;
   },
   methods: {
     // 清除浏览器长按图片弹框
@@ -95,7 +104,7 @@ export default {
 
     //长按后返回父页面，携带当前id并关闭
     returnMakeFor(i) {
-      this.$emit("listenToMakeForm", i, this.groupIdList[i]);
+      this.$emit("listenToMakeForm", i, this.groupIdList[i].libraryId);
       // console.log(this.groupIdList[i]);
     },
 

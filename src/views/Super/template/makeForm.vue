@@ -161,22 +161,22 @@ img {
 }
 </style>
 <script>
-import sidebar from "../../../components/Super/template/sidebar";
-import user from "../../../components/Super/library/userInfo/user";
-import infoShow from "../../../components/Super/library/theMessageStates/infoShow";
-import numberIndex from "../../../components/Super/library/enterInformation/numberIndex";
-import siteUser from "../../../components/Super/template/siteUser";
-import siteInfoShow from "../../../components/Super/template/siteInfoShow";
-import siteNumberIndex from "../../../components/Super/template/siteNumberIndex";
+import sidebar from "../../../components/Super/template/sidebar"; // 侧边栏
+import user from "../../../components/Super/library/userInfo/user"; // 子组件用户显示
+import infoShow from "../../../components/Super/library/theMessageStates/infoShow"; // 子组件信息显示
+import numberIndex from "../../../components/Super/library/enterInformation/numberIndex"; // 子组件数字输入框
+import siteUser from "../../../components/Super/template/siteUser"; // 子组件底部弹出修改用户显示
+import siteInfoShow from "../../../components/Super/template/siteInfoShow"; // 子组件底部弹框修改信息显示
+import siteNumberIndex from "../../../components/Super/template/siteNumberIndex"; // 子组件底部弹框修改输入框
 
 import {
   queryTemplateContent,
   insertTemplateContent,
   queryComponentlibrary
-} from "../../../api/Super/template/makeForm";
+} from "../../../api/Super/template/makeForm"; // 页面接口api
 
-import { mapState } from "vuex";
-import { mapMutations } from "vuex";
+import { mapState } from "vuex"; // vuex全局变量
+import { mapMutations } from "vuex"; // vuex方法
 export default {
   computed: {
     // 展开运算符，将全局变量映射为自己界面的变量
@@ -193,7 +193,7 @@ export default {
   },
   data() {
     return {
-      groupIdList: {},
+      groupIdList: {}, // 存放分组ID
       showPopup: false, // 遮罩层弹出
       templateList: [], // 存放当前页面显示的几个页面数据，012分别为三个组件
       cross: require("../../../assets/super/template/cross.png"), // 取消（叉号）
@@ -203,6 +203,7 @@ export default {
   },
 
   created() {
+    // 初始化将vuex中存放的组件ID赋值过来
     this.groupIdList = this.libraryId;
   },
   mounted() {
@@ -211,64 +212,36 @@ export default {
     this.queryGroup(); // 初始化接口
     this.sidbebarStar(); // 初始化侧边栏
   },
+  beforeDestroy() {
+    this.updateTemplateContent(); // 退出页面保存数据
+  },
   methods: {
-    // ====================底部设置弹框========================
-
-    // 点击页面内容对应弹出底部弹框
-    isTrue(i) {
-      this.templateListIndex = i;
-      this.templateList[i].isTrue = true;
-    },
-
-    // 接收user子组件 底部弹框数据
-    listenUser(siteuserShow, istrueUserList) {
-      const i = this.templateListIndex;
-      this.templateList[i].isTrue = siteuserShow;
-      this.templateList[i].templateArray = [];
-      for (let index = 0; index < istrueUserList.length; index++) {
-        this.templateList[i].templateArray.push(istrueUserList[index]);
-      }
-    },
-
-    // 接收siteInfoShow改变后的值
-    listenSiteInfoShow(siteInfoShowShow, istrueUserList) {
-      const i = this.templateListIndex;
-      this.templateList[i].isTrue = siteInfoShowShow;
-      this.templateList[i].templateArray = [];
-      this.templateList[i].templateArray = istrueUserList;
-    },
-
-    // 接收siteNumberIndex改变后的值
-    listenSiteNumberIndex(siteNumberIndexShow, istrueNumberIndexList) {
-      const i = this.templateListIndex;
-      this.templateList[i].isTrue = siteNumberIndexShow;
-      this.templateList[i].templateArray = [];
-      this.templateList[i].templateArray = istrueNumberIndexList;
-    },
-
     // =================页面加载和抬头按钮部分=====================
 
-    // 初始化内容
+    /**
+     * @description: 初始化内容
+     * @param {无}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
     start() {
       // 当前页面内容：
       this.templateList = []; // 初始化页面有谁：012:表示三个从上排列下去
     },
-    // 返回按钮
-    returnPage() {
-      // window.history.go(-1); // windos的返回上一页
-      // this.$router.go(-1) // vue的返回上一页
-      this.$router.push({ name: "createName" });
-    },
 
-    //下一步按钮
-    nextStep() {
-      this.$router.push({ name: "ruleSetting" });
-    },
-
-    // 初始化界面
+    /**
+     * @description: 初始化界面
+     * @param {无}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
     queryGroup() {
       this.$axios.get(queryTemplateContent + "8541535").then(res => {
         if (res.data.code == this.$responseCode.SUCCESSCODE) {
+          console.log(res.data.data);
+
           for (let index = 0; index < res.data.data.length; index++) {
             this.templateList.push({
               templateId: res.data.data[index].templateId, //模板ID
@@ -304,12 +277,148 @@ export default {
               }
             }
           }
+          console.log(this.templateList);
         }
       });
     },
 
-    //  ==================右划添加组件部分=======================
-    // 子组件sidebar返回事件，返回是哪个组件
+    /**
+     * @description: 初始化加载侧边栏数据
+     * @param {无}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    sidbebarStar() {
+      this.$axios.get(queryComponentlibrary).then(res => {
+        if (res.data.code == this.$responseCode.SUCCESSCODE) {
+          // console.log(res.data.data);
+          this.sidbebarModel = [];
+          this.sidbebarModel = res.data.data;
+        }
+      });
+    },
+
+    // ==============================底部设置弹框==================================
+
+    /**
+     * @description:  点击页面内容对应弹出底部弹框
+     * @param {i:当前下标值}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    isTrue(i) {
+      this.templateListIndex = i;
+      this.templateList[i].isTrue = true;
+    },
+
+    /**
+     * @description: 接收user子组件 底部弹框数据
+     * @param {siteuserShow: 底部弹框true/false,istrueUserList:整个数组内容  }
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    listenUser(siteuserShow, istrueUserList) {
+      const i = this.templateListIndex;
+      this.templateList[i].isTrue = siteuserShow;
+      this.templateList[i].templateArray = [];
+      for (let index = 0; index < istrueUserList.length; index++) {
+        this.templateList[i].templateArray.push(istrueUserList[index]);
+      }
+    },
+
+    /**
+     * @description: 接收siteInfoShow改变后的值
+     * @param {siteInfoShowShow: 底部弹框true/false,istrueUserList:整个数组内容  }
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    listenSiteInfoShow(siteInfoShowShow, istrueUserList) {
+      const i = this.templateListIndex;
+      this.templateList[i].isTrue = siteInfoShowShow;
+      this.templateList[i].templateArray = [];
+      this.templateList[i].templateArray = istrueUserList;
+    },
+
+    /**
+     * @description: 接收siteNumberIndex改变后的值
+     * @param {siteNumberIndexShow: 底部弹框true/false,istrueNumberIndexList:整个数组内容  }
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    listenSiteNumberIndex(siteNumberIndexShow, istrueNumberIndexList) {
+      const i = this.templateListIndex;
+      this.templateList[i].isTrue = siteNumberIndexShow;
+      this.templateList[i].templateArray = [];
+      this.templateList[i].templateArray = istrueNumberIndexList;
+    },
+
+    //  ============================离开页面处理=============================
+
+    /**
+     * @description: 离开页面保存数据
+     * @param {无}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    updateTemplateContent() {
+      // console.log(this.templateList);
+      let model = [];
+      for (let index = 0; index < this.templateList.length; index++) {
+        model.push({
+          componentId: this.templateList[index].componentId,
+          groupSequence: index,
+          templateContentData: [],
+          templateId: "8541535"
+        });
+
+        for (
+          let i = 0;
+          i < this.templateList[index].templateArray.length;
+          i++
+        ) {
+          model[index].templateContentData.push({
+            fieldSequence: i,
+            id: this.templateList[index].templateArray[i].id,
+            isUsable: this.templateList[index].templateArray[i].isTrue,
+            promptField: this.templateList[index].templateArray[i].value,
+            title: this.templateList[index].templateArray[i].title
+          });
+
+          // 将true和false改为0/1
+          if (model[index].templateContentData[i].isUsable == true) {
+            model[index].templateContentData[i].isUsable = "0";
+          } else if (model[index].templateContentData[i].isUsable == false) {
+            model[index].templateContentData[i].isUsable = "1";
+          }
+        }
+      }
+
+      console.log(model);
+
+      this.$axios.post(insertTemplateContent, model).then(res => {
+        if (res.data.code == this.$responseCode.SUCCESSCODE) {
+          console.log("保存成功");
+        } else {
+          console.log("失败");
+        }
+      });
+    },
+
+    //  ============================右划添加组件部分=============================
+
+    /**
+     * @description: 子组件sidebar返回事件，返回是哪个组件
+     * @param {newVal1: 当前分组下标，libraryId：标识哪个组件的ID}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
     listenToMakeForm(newVal1, libraryId) {
       // 当前此变量必须使用const放到这里，因为使用全局变量会更改此值，除了第一个组件之外都是如此
       const makeList = [
@@ -449,29 +558,57 @@ export default {
         templateArray: makeList[newVal1].templateArray
       });
     },
-    // 初始化加载侧边栏数据
-    sidbebarStar() {
-      this.$axios.get(queryComponentlibrary).then(res => {
-        if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          // console.log(res.data.data);
-          this.sidbebarModel = [];
-          this.sidbebarModel = res.data.data;
-        }
-      });
-    },
 
-    // 删除第i个组件
+    /**
+     * @description: 删除第i个组件
+     * @param {i:当前分组的下标}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
     spliceList(i) {
       this.templateList.splice(i, 1);
     },
 
-    // 右划事件
+    /**
+     * @description: 右划事件
+     * @param {无}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
     eventFun() {
       this.showPopup = true; // 侧边栏左侧显示
 
       // 动态添加css属性
       // var t = document.getElementById("sidebar");
       // t.style.cssText = "display:inline";
+    },
+
+    //  ============================抬头按钮部分============================
+
+    /**
+     * @description: 返回按钮
+     * @param {无}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    returnPage() {
+      // window.history.go(-1); // windos的返回上一页
+      // this.$router.go(-1) // vue的返回上一页
+      this.$router.push({ name: "createName" });
+    },
+
+    /**
+     * @description:  下一步按钮
+     * @param {无}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    nextStep() {
+      this.$router.push({ name: "ruleSetting" });
     }
   }
 };

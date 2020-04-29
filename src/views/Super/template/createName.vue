@@ -213,16 +213,17 @@ export default {
       };
       vm.$axios.post(insertTemplate, model).then(res => {
         if (res.data.code == "0000") {
-          // sessionStorage.setItem("templateId", res.data.data.templateId);
+          sessionStorage.setItem("management_templateId", res.data.data);
         } else {
           console.log("cuowu");
         }
       });
 
       // ------------------把数据存储到缓存 -----------------------
+      // 各个参数前添加management的目的，清楚这个参数是从那个界面接收的，方便查询
       // 模板名称
       sessionStorage.setItem(
-        "templateName",
+        "management_templateName",
         this.createNameDataList.managementNamevalue
       );
 
@@ -232,9 +233,9 @@ export default {
         this.createNameDataList.groupValue
       );
       // 存储groupID
-      sessionStorage.setItem("templateGroupId", groupIdNow); 
+      sessionStorage.setItem("management_templateGroupId", groupIdNow); 
       //备注
-      sessionStorage.setItem("postScript", this.createNameDataList.remarkTxt);
+      sessionStorage.setItem("management_postScript", this.createNameDataList.remarkTxt);
     },
 
     start() {
@@ -271,10 +272,10 @@ export default {
 
       // ------------------获取上一页面数据 -----------------------
       // 获取ID
-      this.createNameDataList.templateId = sessionStorage.getItem("templateId");
+      this.createNameDataList.templateId = sessionStorage.getItem("management_templateId");
       // 接收模板名称
       this.createNameDataList.managementNamevalue = sessionStorage.getItem(
-        "templateName"
+        "management_templateName"
       );
       // 接收当前分组i
       this.createNameDataList.groupValue = parseInt(
@@ -292,7 +293,7 @@ export default {
       groupIdList = groupIdList.split(",");
 
       // 接收模板备注
-      this.createNameDataList.remarkTxt = sessionStorage.getItem("postScript");
+      this.createNameDataList.remarkTxt = sessionStorage.getItem("management_postScript");
 
       // 接收management进入：0表示从加号，1表示从编辑--因为不调取后端当前无用
       const managementRoute = sessionStorage.getItem("management_route");

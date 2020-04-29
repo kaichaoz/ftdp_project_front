@@ -208,7 +208,7 @@ export default {
             return;
           }
           // 超时20s则自动加载数据并清理定时器
-          if (new Date().getTime() - startTime > 10000) {
+          if (new Date().getTime() - startTime > 3000) {
             clearInterval(interval);
             vm.queryGroup();
             return;

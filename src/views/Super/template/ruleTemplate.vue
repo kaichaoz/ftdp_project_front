@@ -11,7 +11,8 @@
     <!-- 抬头 -->
     <div class="title commonColor">
       <!-- <img @click="intoSetting()" class="iocName" :src="plus" alt /> -->
-      <div class="iocName" @click="savePage()">保存</div>
+      <!-- <div class="iocName" @click="savePage()">保存</div> -->
+      <div class="iocName" >保存</div>
       <div class="button" @click="returnPage()">返回</div>
       <div class="titleName">规则设置</div>
     </div>
@@ -20,9 +21,12 @@
     <div class="ruleTemplateBody">
       <!-- 组件下拉框 -->
       <div>
-        <div class="managementName">
+        <div class="managementName" v-if="dropDownComponent[0].isTrue">
           <van-dropdown-menu active-color="#fecd2a">
-            <van-dropdown-item v-model="dropDownComponent" :options="dropDownOptionComponent" />
+            <van-dropdown-item
+              v-model="dropDownComponent[0].value"
+              :options="dropDownOptionComponent"
+            />
           </van-dropdown-menu>
         </div>
       </div>
@@ -31,7 +35,7 @@
       <div v-for="(item,i) in dropDownOptionList">
         <div class="managementName">
           <van-dropdown-menu active-color="#fecd2a">
-            <van-dropdown-item v-model="dropdownModel[i]" :options="dropDownOptionList[i]" />
+            <van-dropdown-item v-model="dropDownModel[i]" :options="dropDownOptionList[i]" />
           </van-dropdown-menu>
         </div>
       </div>
@@ -141,16 +145,19 @@
 }
 </style>
 <script>
+import {
+  addTemplateRuleRecord,
+  queryTemplateRuleRecord
+} from "../../../api/Super/template/ruleTemplate"; //引入{初始化模板规则页面,初始化模板页面一条规则}接口的后端地址
+import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
+import { Loading } from "vant";
 export default {
   data() {
     return {
-      // 组件下拉框当前值，默认显示在第一个，第二种情况不显示
-      dropDownComponent: 0,
+      // 年级、性别下拉框当前值
+      dropDownModel: [],
 
-      // 本页面：下拉框显示绑定的三个值
-      dropdownModel: [0, 0],
-
-      // 下拉框渲染数据：里面的数据是从数据库来的，所以value需要动态赋值出来
+      // 年级、性别下拉框渲染数据：里面的数据是从数据库来的，所以value需要动态赋值出来
       dropDownOptionList: [
         [
           { text: "大一", value: 0 },
@@ -173,49 +180,340 @@ export default {
         { textName: "评级" }
       ],
 
-      // 需要传入或更改：--------------
-
       //输入框渲染数据
       fieldValue: [
-        { isTrue: true, textValue: "3200" },
-        { isTrue: true, textValue: "4000" },
-        { isTrue: true, textValue: "30" }, // 变为false，则不显示原始得分
-        { isTrue: true, textValue: "30" },
-        { isTrue: true, textValue: "优秀" }
+        { isTrue: "", textValue: "" },
+        { isTrue: "", textValue: "" },
+        { isTrue: "", textValue: "" }, // 变为false，则不显示原始得分
+        { isTrue: "", textValue: "" },
+        { isTrue: "", textValue: "" }
       ],
 
-      // 组件下拉框
-      dropDownOptionComponent: [
-        { text: "组件一", value: 0 },
-        { text: "组件二", value: 1 },
-        { text: "组件三", value: 2 }
-      ]
+      //存放组件Id
+      templateContentId: "",
 
-      //下拉框是否显示
-      // dropDownIsTrue: [],
-      //输入框是否显示
-      // fieldIsTrue: [],
+      // 组件下拉框的值
+      dropDownOptionComponent: [{ text: "", value: 0 }],
+
+      // 组件下拉框当前值以及是否显示
+      dropDownComponent: [{ isTrue: "", text: "", value: "" }],
+
+      //存储点击具体规则显示当前componet值
+      currentComponent: "",
+
+      //页面文本框数量计数
+      fieldNumer: ""
     };
   },
 
   mounted() {
-    // this.dropDownIsTrue = [];
-    // this.dropDownOptionList = [];
-    // this.fieldIsTrue = [];
-    // this.fieldTextList = [];
-    // this.dropDownIsTrue = this.$route.params.dropDownIsTrue;
-    // this.dropDownOptionList = this.$route.params.dropDownOptionList;
-    // this.fieldIsTrue = this.$route.params.fieldIsTrue;
-    // this.fieldTextList = this.$route.params.fieldTextList;
+    // 初始化页面存缓存字段为1
+    sessionStorage.setItem("ruleTemplate_leave", "1");
+
+    this.loaderRuleTemplate();
   },
   methods: {
+    //点击具体规则加载当前页面
+    concreteRuleToThis() {
+      let vm = this;
+      let arrayFieldData = []; //用于存放用户输入文本框的值
+      vm.fieldValue = [];
+
+      vm.$axios
+        .get(
+          queryTemplateRuleRecord +
+            "/{Id}?Id=" +
+            this.$route.params.ruleTemplateId
+        )
+        .then(res => {
+          if (res.data.code == responseCode.SUCCESSCODE) {
+            let finData = res.data.data[0]; //后端返回数据
+
+            //获取当前具体规则的 templateContentId，在保存新规则时使用
+            // sessionStorage.setItem(
+            //   "ruleTemplate_templateContentId",
+            //   finData.templateContentId
+            // );
+
+            //显示文本框数据
+            arrayFieldData.push(
+              finData.startRange,
+              finData.endRange,
+              finData.originalScore,
+              finData.weight,
+              finData.level
+            );
+            //渲染输入框数据
+            for (let index = 0; index < arrayFieldData.length; index++) {
+              vm.fieldValue.push({
+                isTrue: "true",
+                textValue: arrayFieldData[index]
+              });
+            }
+
+            //渲染年级性别 下拉框
+            vm.dropDownModel.push(
+              this.exchangeDropDown(finData.grade),
+              finData.sex
+            );
+
+            //获取组件下拉框所有选项
+            vm.dropDownOptionComponent = [];
+            for (
+              let index = 0;
+              index < vm.$route.params.componentInfo.length;
+              index++
+            ) {
+              vm.dropDownOptionComponent.push({
+                text: vm.$route.params.componentInfo[index].title,
+                value: index
+              });
+
+              //判断组件下拉框中选项与当前组件默认值相等，返回下拉框中值的索引
+              if (vm.dropDownOptionComponent[index].text == finData.title) {
+                vm.currentComponent = vm.dropDownOptionComponent[index].value;
+              }
+            }
+
+            //渲染组件下拉框默认值
+            vm.dropDownComponent = [];
+            vm.dropDownComponent.push({
+              isTrue: "true",
+              text: finData.title,
+              value: vm.currentComponent
+            });
+          } else {
+            vm.$toast({
+              message: "加载失败",
+              duration: 1000
+            });
+          }
+        });
+    },
+
+    //显示下拉框
+    dropDownDisplay(num) {
+      let vm = this;
+      if (num == 2) {
+        vm.dropDownComponent.isTrue = "false";
+      } else {
+        vm.dropDownComponent.isTrue = "true";
+      }
+    },
+
+    //显示文本框
+    fieldTextDisplay(num) {
+      let vm = this;
+      let i = 0;
+      if (num == 4) {
+        //显示4个文本框
+        for (let index = 0; index < 5; index++) {
+          if (index == 2) {
+          } else {
+            vm.fieldValue[index].isTrue = "true";
+            i++;
+          }
+        }
+        vm.fieldNumer = i;
+      } else {
+        //显示所有文本框
+        for (let index = 0; index < 5; index++) {
+          vm.fieldValue[index].isTrue = "true";
+          i++;
+        }
+        vm.fieldNumer = i;
+      }
+    },
+
+    //点击加号加载页面
+    plusToThis() {
+      let vm = this;
+      //年级、性别下拉框赋默认值
+      vm.dropDownModel.push(0, 0);
+      //case 1 :  2个下拉框+5个输入框
+      if (vm.$route.params.componentInfo.length == 1) {
+        vm.dropDownDisplay(2);
+        vm.fieldTextDisplay(5);
+      } else if (vm.$route.params.componentInfo.length == 2) {
+        //case2 ： 2个下拉框+4个输入框
+        vm.dropDownDisplay(2);
+        vm.fieldTextDisplay(4);
+      } else {
+        //case3 ： 3个下拉框+5个输入框
+        vm.dropDownDisplay(3);
+        vm.fieldTextDisplay(5);
+      }
+    },
+    //初始化加载页面
+    loaderRuleTemplate() {
+      if (this.$route.params.ruleSetting == "0") {
+        //0表示点击具体规则进入当前页面
+        this.concreteRuleToThis();
+      } else if (this.$route.params.ruleSetting == "1") {
+        //1表示点击加号进入当前页面
+        this.plusToThis();
+      }
+    },
+
+    //将年级转换为数字标识
+    exchangeDropDown(grade) {
+      switch (grade) {
+        case "大一":
+          return 0;
+          break;
+        case "大二":
+          return 1;
+          break;
+        case "大三":
+          return 2;
+          break;
+        case "大四":
+          return 3;
+          break;
+      }
+    },
+
+    exchangeDropDownToNum(num) {
+      switch (num) {
+        case 0:
+          return "大一";
+          break;
+        case 1:
+          return "大二";
+          break;
+        case 2:
+          return "大三";
+          break;
+        case 3:
+          return "大四";
+          break;
+      }
+    },
+
+    /**
+     * @description: 将后端性别标识转换为文字
+     * @param ：{num:后端sex标识}
+     * @return: {string:sex文字}
+     * @author: 付媛媛
+     * @Date:2020年4月26日21:03:03
+     */
+    exchangeSex(num) {
+      return num == 0 ? "男" : "女";
+    },
+
     // 抬头左侧按钮跳转到组件管理：需要做判断，如果更改了则提示是否保存
     returnPage() {
       this.$router.push({ name: "ruleSetting" });
     },
 
+    //判断文本框是否为空 与 限制文本框长度
+    isEmpty() {
+      let vm = this;
+      let empty = false;
+      //vm.fieldNumer ：表示当前页面文本框的数量
+      for (let index = 0; index < vm.fieldNumer; index++) {
+        if (
+          vm.fieldValue[index].textValue == undefined ||
+          vm.fieldValue[index].textValue == ""
+        ) {
+          vm.$toast({
+            message: "文本框不能为空，请输入数据",
+            duration: 1000
+          });
+          return false;
+        } else {
+          if (vm.fieldValue[index].textValue.length > 11) {
+            vm.$toast({
+              message: "文本框输入长度过长",
+              duration: 1000
+            });
+            return false;
+          }
+        }
+      }
+      return true;
+    },
+    //判断文本框是否为数字
+    isNumber() {
+      let vm = this;
+      var numReg = /^[+-]?((\d*(\.\d{1,2})$)|(\d+$))/;
+      var numRe = new RegExp(numReg);
+      for (let index = 0; index < vm.fieldNumer - 1; index++) {
+        if (!numRe.test(vm.fieldValue[index].textValue)) {
+          vm.$toast({
+            message: "请输入数字，并保证小数位数不超过2位！",
+            duration: 1000
+          });
+          return false;
+        }
+      }
+      return true;
+    },
+
     // 抬头右侧按钮保存页面数据
-    savePage() {},
+    savePage() {
+      let vm = this;
+
+      //点击加号进入的当前页面，需要添加一条数据
+      if (this.$route.params.ruleSetting == "1") {
+        if (vm.isEmpty() && vm.isNumber()) {
+
+          //获取缓存中templateId
+          let templateId = sessionStorage.getItem("management_templateId");
+
+          //获取组件id
+          if (vm.dropDownComponent[0].isTrue == false) {
+            //组件框不显示时，获取templateContentId
+
+            console.log("1111");
+          } else {
+            //组件框显示时，获取templateContentId
+            console.log("222");
+          }
+          const model = {
+            creatTime: "",
+            creater: "admin",
+            endRange: this.fieldValue[1].textValue,
+            grade: this.exchangeDropDownToNum(vm.dropDownModel[0]),
+            id: "",
+            level: this.fieldValue[4].textValue,
+            modifier: "",
+            modifyTime: "",
+            originalScore: this.fieldValue[2].textValue,
+            sex: this.dropDownModel[1],
+            startRange: this.fieldValue[0].textValue,
+            // templateContentId: ,
+            templateId: templateId,
+            weight: this.fieldValue[3].textValue
+          };
+          //调用添加模板规则 接口
+          vm.$axios.post(addTemplateRuleRecord, model).then(res => {
+            if (res.data.code == responseCode.SUCCESSCODE) {
+              vm.$toast({
+                message: "保存成功",
+                duration: 1000
+              });
+
+              //保存成功后输入框置为空
+              for (let index = 0; index < vm.fieldNumer; index++) {
+                vm.fieldValue[index].textValue = "";
+              }
+
+              sessionStorage.setItem("ruleTemplate_leave", "0");
+            } else {
+              vm.$toast({
+                message: "保存失败",
+                duration: 1000
+              });
+            }
+          });
+        }
+
+        //点击具体规则进入的当前页面，需要修改数据
+      } else if (this.$route.params.ruleSetting == "1") {
+        //判断是否修改数据，否 进行提醒，是 更新数据
+      }
+    },
 
     // 默认不需要更改
     onConfirm() {

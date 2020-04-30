@@ -86,7 +86,7 @@
     <van-popup v-model="showPopup" position="left" :style="{ height: '100%' }">
       <div id="sidebar">
         <!-- 侧边栏 -->
-        <sidebar :sidebarModel="sidbebarModel" @listenToMakeForm="listenToMakeForm"></sidebar>
+        <sidebar :sidebarModel="sidebarModel" @listenToMakeForm="listenToMakeForm"></sidebar>
       </div>
     </van-popup>
   </div>
@@ -180,10 +180,17 @@ import {
 
 import { mapState } from "vuex"; // vuex全局变量
 import { mapMutations } from "vuex"; // vuex方法
+import { Notify } from "vant"; // 顶部弹框提示
 export default {
   computed: {
     // 展开运算符，将全局变量映射为自己界面的变量
-    ...mapState(["makeFormInitializationList", "makeFormDataList", "libraryId"])
+    ...mapState([
+      "makeFormInitializationList",
+      "makeFormDataList",
+      "libraryId",
+      "libraryIdIndex",
+      "notifyInfo"
+    ])
   },
   components: {
     sidebar,
@@ -200,7 +207,7 @@ export default {
       showPopup: false, // 遮罩层弹出
       templateList: [], // 存放当前页面显示的几个页面数据，012分别为三个组件
       cross: require("../../../assets/super/template/cross.png"), // 取消（叉号）
-      sidbebarModel: [], // 存储侧边栏数据
+      sidebarModel: [], // 存储侧边栏数据
       templateListIndex: "" // 临时存档当前的I值
     };
   },
@@ -243,7 +250,7 @@ export default {
     queryGroup() {
       this.$axios.get(queryTemplateContent + "8541535").then(res => {
         if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          console.log(res.data.data);
+          // console.log(res.data.data);
 
           for (let index = 0; index < res.data.data.length; index++) {
             this.templateList.push({
@@ -280,13 +287,13 @@ export default {
               }
             }
           }
-          console.log(this.templateList);
+          // console.log(this.templateList);
         }
       });
     },
 
     /**
-     * @description: 初始化加载侧边栏数据
+     * @description: 初始化加载侧边栏数据，使用定时器页面加载后再调取此接口 / 3秒后再执行
      * @param {无}
      * @return: 无
      * @author: 白爱民
@@ -296,8 +303,23 @@ export default {
       this.$axios.get(queryComponentlibrary).then(res => {
         if (res.data.code == this.$responseCode.SUCCESSCODE) {
           // console.log(res.data.data);
-          this.sidbebarModel = [];
-          this.sidbebarModel = res.data.data;
+          this.sidebarModel = [];
+          const libraryList = this.libraryIdIndex;
+
+          for (let i = 0; i < res.data.data.length; i++) {
+            this.sidebarModel.push({
+              groupId: res.data.data[i].groupId,
+              libraryId: res.data.data[i].componentId,
+              groupSequence: res.data.data[i].groupSequence,
+              componentPicture: ""
+            });
+
+            let index = this.drop(this.sidebarModel[i].libraryId);
+            this.sidebarModel[i].componentPicture =
+              libraryList[index].componentId;
+          }
+
+          // console.log(this.sidebarModel);
         }
       });
     },
@@ -402,13 +424,21 @@ export default {
         }
       }
 
-      console.log(model);
+      // console.log(model);
 
       this.$axios.post(insertTemplateContent, model).then(res => {
         if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          console.log("保存成功");
+          Notify({
+            message: this.notifyInfo[0].loginErr,
+            background: this.notifyInfo[1].orange //   橘色：#FF976A
+          });
+          // console.log("保存成功");
         } else {
-          console.log("失败");
+          // console.log("失败");
+          Notify({
+            message: this.notifyInfo[0].loginErr,
+            background: this.notifyInfo[1].orange //   橘色：#FF976A
+          });
         }
       });
     },
@@ -422,7 +452,7 @@ export default {
      * @author: 白爱民
      * @Date: 2020年4月29日09:10:35
      */
-    listenToMakeForm(newVal1, libraryId) {
+    listenToMakeForm(libraryId) {
       // 当前此变量必须使用const放到这里，因为使用全局变量会更改此值，除了第一个组件之外都是如此
       const makeList = [
         {
@@ -550,6 +580,8 @@ export default {
         }
       ];
 
+      const index = this.drop(libraryId);
+
       // 关闭标签
       this.showPopup = false;
       // 添加一个组件
@@ -558,7 +590,7 @@ export default {
         groupSequence: "", // 模板内容分组排序
         componentId: libraryId, // 标识是哪个组件
         isTrue: false, // 底部弹框是否显示
-        templateArray: makeList[newVal1].templateArray
+        templateArray: makeList[index].templateArray
       });
     },
 
@@ -612,7 +644,29 @@ export default {
      */
     nextStep() {
       this.$router.push({ name: "ruleSetting" });
+    },
+
+    /**
+     * @description:  根据组件id替换下标值：接收后端/存储后端数据需要进行更换
+     * @param {name:componentId值}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    drop(name) {
+      let names = {
+        "0445946": "0",
+        "0473771": "1",
+        "4833953": "2"
+      };
+      return names[name] || names["default"];
     }
   }
 };
+
+// function drop(name) {
+//   let names = {
+//     "0445946": "0"
+//   };
+// }
 </script>

@@ -17,7 +17,7 @@
         @touchend.prevent="cleartime()"
         v-for="(items,i) in infoNum"
       >
-        <img class="infoShow" width="200" :src="infoNum[i].componentId" alt />
+        <img class="infoShow" width="200" :src="infoNum[i].componentPicture" alt />
       </div>
     </div>
   </div>
@@ -51,35 +51,31 @@ export default {
     ...mapState(["libraryIdIndex"])
   },
   props: {
-    // infoNumP: {}
     sidebarModel: { type: Array, default: () => [] }
   },
   data() {
     return {
-      groupIdList: [],
-      // infoNum: [
-      //   require("../../../assets/super/library/user.jpg"),
-      //   require("../../../assets/super/library/infoShow.jpg"),
-      //   require("../../../assets/super/library/numberIndex.jpg")
-      // ],
-      infoNum: [],
+      infoNum: [], // 当前页面存储数据
       Loop: "" // 定时器
     };
   },
   watch: {
     sidebarModel(newVal) {
-      console.log(newVal + "数值改变后");
+      console.log(newVal);
     }
   },
-  created() {
-    this.groupIdList = this.libraryIdIndex;
-  },
+  created() {},
   mounted() {
     this.start();
     this.infoNum = [];
-    this.infoNum = this.libraryIdIndex;
+    this.infoNum = this.sidebarModel;
   },
   methods: {
+    start() {
+      this.infoNum = [];
+      this.infoNum = this.sidebarModel;
+    },
+
     // 清除浏览器长按图片弹框
     touchin(i) {
       clearInterval(this.Loop); //再次清空定时器，防止重复注册定时器
@@ -98,15 +94,11 @@ export default {
 
     //长按后返回父页面，携带当前id并关闭
     returnMakeFor(i) {
-      this.$emit("listenToMakeForm", i, this.groupIdList[i].libraryId);
-      // console.log(this.groupIdList[i]);
+      this.$emit("listenToMakeForm", this.infoNum[i].libraryId);
     },
 
     infosh() {
       // console.log(this.bg);
-    },
-    start() {
-      console.log(this.sidebarModel + "初始化加载");
     }
   }
 };

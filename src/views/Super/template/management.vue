@@ -20,8 +20,8 @@
     </div>
 
     <div class="body">
-      <!-- 拖动组件 -->
-      <vuedraggable v-model="managementDataList" :options="options">
+      <!-- 拖动组件 在setting页面实现
+      <vuedraggable v-model="managementDataList" :options="options">-->
         <!-- 多个模板类型 -->
         <div class="bodyDiv" v-for="(item ,index) in managementDataList ">
           <!-- 整个下拉框 -->
@@ -128,7 +128,7 @@ import {
 } from "../../../api/Super/template/management"; //引入{根据isUsable查询模板，删除模板，修改模板分组}接口的后端地址
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量
-import escape from "../../../api/timer";
+
 export default {
   computed: {
     ...mapState(["managementDataListStore"]), // 映射store变量managementDataListStore为当前页面变量，直接使用this即可
@@ -147,14 +147,14 @@ export default {
       iocName: require("../../../assets/super/setting.png"), // 抬头右侧设置图片
       plus: require("../../../assets/super/plus.png"), // 底部加号图片
 
-      // 长按后拖动
-      options: {
-        delayOnTouchOnly: true, //开启触摸延时
-        direction: "vertical", //拖动方向
-        delay: 500, //延时时长
-        touchStartThreshold: 3, //防止某些手机过于敏感(3~5 效果最好)
-        chosenClass: "chosen" //选中之后拖拽项添加的class名(用于选中时候添加样式)
-      },
+      // // 长按后拖动，在setting页面实现
+      // options: {
+      //   delayOnTouchOnly: true, //开启触摸延时
+      //   direction: "vertical", //拖动方向
+      //   delay: 500, //延时时长
+      //   touchStartThreshold: 3, //防止某些手机过于敏感(3~5 效果最好)
+      //   chosenClass: "chosen" //选中之后拖拽项添加的class名(用于选中时候添加样式)
+      // },
 
       // 初始化数据：
       // 模板名称,activeNames默认必须为1，title：management页面模板类名字，comTitleList为具体模板名字
@@ -178,8 +178,6 @@ export default {
     //初始化页面加载
     // this.queryGroup();
     this.start();
-    // escape.start();
-    // this.queryGroup();
   },
   beforeDestroy() {
     //退出页面保存当前分组模板位置

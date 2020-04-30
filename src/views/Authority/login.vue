@@ -126,17 +126,14 @@ export default {
     // 提示
     prompt(value) {
       if (value == "0") {
-        const a = "用户名或密码错误";
-        Toast.fail(a);
         Notify({
           message: this.notifyInfo[0].loginErr,
-          background: this.notifyInfo[1].orange //红色：#ffelel   橘色：#FF976A
+          background: this.notifyInfo[1].orange //   橘色：#FF976A
         });
       } else if (value == "1") {
-        Toast.success("登陆成功");
         Notify({
           message: this.notifyInfo[0].loginOk,
-          background: this.notifyInfo[1].blue //蓝色：#29B8DB   绿色：#8DC149
+          background: this.notifyInfo[1].blue //蓝色：#29B8DB   
         });
       }
     }

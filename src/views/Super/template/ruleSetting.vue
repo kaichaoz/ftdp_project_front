@@ -167,6 +167,8 @@ export default {
     // 抬头右侧加号按钮跳转到模板设置
     intoSetting() {
       let vm = this;
+      console.log(vm.componentInfo);
+      
       vm.$router.push({
         name: "ruleTemplate",
         params: {

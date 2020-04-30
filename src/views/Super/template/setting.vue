@@ -121,19 +121,15 @@ import vuedraggable from "vuedraggable";
 
 import { queryTemplateGroupd } from "../../../../src/api/Super/template/setting"; //引入初始化模板分组接口的后端地址
 import { modifyTemplateGroup } from "../../../../src/api/Super/template/setting"; //引入修改模板分组接口的后端地址
-import { responseCode } from "../../../../src/utils/responseCode"; //引入定义的状态码
 
+import { Dialog } from "vant"; // 提示框（是否删除）
 export default {
   components: {
     popup,
-    vuedraggable,
-    responseCode
+    vuedraggable
   },
   data() {
     return {
-      //   show: false,
-      //   value: ""
-
       less: require("../../../assets/super/Less.png"), //右边减号图片图片
       plus: require("../../../assets/super/plus.png"), //底部加号图片
       // projectName: [
@@ -146,10 +142,10 @@ export default {
       projectName: [
         {
           id: "",
-          templateGroupName: "", //模板分组名
-          isUsable: "", //是否可用，0可用、1不可
-          groupSequence: ""
-        } //分组位置
+          templateGroupName: "", // 模板分组名
+          isUsable: "", // 是否可用，0可用、1不可
+          groupSequence: "" // 分组位置
+        } 
       ],
 
       boolean: "", // 弹出框输入是否可见
@@ -176,8 +172,8 @@ export default {
   updated() {},
 
   mounted() {
+    //进入setting页面缓存setting_Leave的值为1,（定时器使用，management页面）
     sessionStorage.setItem("setting_Leave", "1");
-
     // 初始化请求后端数据
     this.queryTemplateGroupGet();
   },
@@ -196,7 +192,7 @@ export default {
 
       // 请求后端数据
       vm.$axios.get(queryTemplateGroupd).then(res => {
-        if (res.data.code == responseCode.SUCCESSCODE) {
+        if (res.data.code == this.$responseCode.SUCCESSCODE) {
           //遍历当前页面所有分组
           for (let i = 0; i < res.data.data.length; i++) {
             // const element = array[i];
@@ -238,7 +234,6 @@ export default {
           groupSequence: projectNamePosition[i].groupSequence //分组位置
         });
       }
-      console.log(resData);
 
       const vm = this;
       // const componentUrl =
@@ -246,10 +241,11 @@ export default {
 
       // 请求后端数据
       vm.$axios.post(modifyTemplateGroup, resData).then(res => {
-        if (res.data.code == responseCode.SUCCESSCODE) {
+        if (res.data.code == this.$responseCode.SUCCESSCODE) {
           this.$toast({
             message: "修改成功"
           });
+          //保存数据，离开页面，setting_Leave的值为0（定时器使用，management页面）
           sessionStorage.setItem("setting_Leave", "0");
         } else {
           vm.$toast({
@@ -279,10 +275,10 @@ export default {
       const vm = this;
       //请求后端数据
       vm.$axios.post(modifyTemplateGroup, resData).then(res => {
-        if (res.data.code == responseCode.SUCCESSCODE) {
-          this.$toast({
-            message: "删除成功"
-          });
+        if (res.data.code == this.$responseCode.SUCCESSCODE) {
+          // this.$toast({
+          // message: "修改成功"
+          // });
         } else {
           vm.$toast({
             message: "抱歉，，，",
@@ -308,7 +304,6 @@ export default {
         } else if (arrayList[index].isUsable == false) {
           arrayList[index].isUsable = 1;
         }
-
         return arrayList;
       }
     },
@@ -320,7 +315,6 @@ export default {
         } else if (arrayList[index].isUsable == "1") {
           arrayList[index].isUsable = false;
         }
-
         return arrayList;
       }
     },
@@ -341,9 +335,21 @@ export default {
 
     // 删除内容
     lessNum(i) {
-      this.replaceTFF(i); //修改isUsable的状态(由0改为1)
-      this.addDeleteRecord(i); //删除分组设置（后端）
-      this.projectName.splice(i, 1); //删除分组设置（前端）
+      // dialog();
+      Dialog.confirm({
+        title: "标题",
+        message: "确定删除吗？",
+        confirmButtonText: "确定",
+        cancelButtonText: "取消"
+      })
+        .then(() => {
+          this.replaceTFF(i); //修改isUsable的状态(由0改为1)
+          this.addDeleteRecord(i); //删除分组设置（后端）
+          this.projectName.splice(i, 1); //删除分组设置（前端）
+        })
+        .catch(() => {
+          return;
+        });
     },
 
     // 增加内容

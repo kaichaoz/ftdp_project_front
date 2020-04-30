@@ -16,7 +16,9 @@
           <!-- 左滑显示添加删除等 -->
           <van-swipe-cell>
             <!-- 不同下拉框里面不同内容 -->
-            <user v-if="componentList[index].isTrue && componentList[index].position ==0"></user>
+            <user
+              v-if="componentList[index].isTrue && componentList[index].componentId == libraryId.userInfoList.user"
+            ></user>
             <!-- 左滑显示的内容 -->
             <template #right>
               <van-button
@@ -47,22 +49,27 @@
 }
 </style>
 <script>
+import { mapState } from "vuex";
 import user from "./user"; // 引入user组件
 import swipeCell from "../../template/swipeCell"; // 左右滑动
 export default {
+  computed: {
+    // 展开运算符，将全局变量映射为自己界面的变量
+    ...mapState(["libraryId", ""])
+  },
   components: {
     user,
     swipeCell
   },
   props: {
-    titleP: { default: "用户信息组件" }, // 接收父组件传递当前抬头名字
-    userInfoListP: { default: true } // 接收父组件library传递的userInfoList是否显示
+    titleP: { default: "" }, // 接收父组件传递当前抬头名字
+    userInfoListP: { default: [] } // 接收父组件library传递的userInfoList是否显示
   },
   data() {
     return {
       activeNames: "1", // 下拉框默认1，不需要修改
       title: "", // 模板名称
-      componentList: [{ isTrue: true, position: 0 }] // 每个下拉框下面的组件内容
+      componentList: [] // 每个下拉框下面的组件内容
     };
   },
   watch: {
@@ -71,13 +78,14 @@ export default {
       this.title = newVal;
     },
     userInfoListP(newVal) {
-      this.componentList[0].isTrue = newVal;
+      this.componentList = newVal;
     }
   },
+
   mounted() {
     // 初始化监听父页面library数据:此页面组件类名
     this.title = this.titleP;
-    this.componentList[0].isTrue = this.userInfoListP;
+    this.componentList = this.userInfoListP;
   },
   methods: {
     /**

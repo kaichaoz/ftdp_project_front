@@ -98,6 +98,7 @@ export default {
         this.passValue == this.correctPassData
       ) {
         this.prompt(1);
+        this.sessionleave();
         this.saveData();
         this.$router.push({
           name: "library",
@@ -110,6 +111,11 @@ export default {
         this.userValue = "";
         this.passValue = "";
       }
+    },
+    // 需要开始存储到缓存：其他页面进行了判断
+    sessionleave() {
+      sessionStorage.setItem("setting_Leave", "0");
+      sessionStorage.setItem("ruleTemplate_leave", "0");
     },
 
     // 用户输入数据存入

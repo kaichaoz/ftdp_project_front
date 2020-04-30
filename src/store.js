@@ -9,26 +9,52 @@ const store = new Vuex.Store({
     token: '', //用户token
 
     // 分组ID：与数据库同步
+    // libraryId: {
+    //   userInfo: "5856212",
+    //   theMessageStates: "8706797",
+    //   enterInfomation: "0342524",
+    //   invalid: "1111111"
+    // },
+
     libraryId: {
       userInfo: "5856212",
+      userInfoList: { user: "0445946" },
       theMessageStates: "8706797",
+      theMessageStatesList: { infoShow: "0473771" },
       enterInfomation: "0342524",
+      enterInfomationList: { numberIndex: "4833953" },
       invalid: "1111111"
     },
+
     // 同步上面数据：去除invalid，并从上到下排列下来
     // libraryIdIndex:["5856212","8706797","0342524"],
+    // libraryIdIndex: [{
+    //   libraryId: "5856212",
+    //   componentId: require("../src/assets/super/library/user.jpg")
+    // },
+    // {
+    //   libraryId: "8706797",
+    //   componentId: require("../src/assets/super/library/infoShow.jpg")
+    // },
+    // {
+    //   libraryId: "0342524",
+    //   componentId: require("../src/assets/super/library/numberIndex.jpg")
+    // }
+    // ],
+
+    // 同步上面数据：去除invalid，并从上到下排列下来
     libraryIdIndex: [{
-        libraryId: "5856212",
-        componentId: require("../src/assets/super/library/user.jpg")
-      },
-      {
-        libraryId: "8706797",
-        componentId: require("../src/assets/super/library/infoShow.jpg")
-      },
-      {
-        libraryId: "0342524",
-        componentId: require("../src/assets/super/library/numberIndex.jpg")
-      }
+      libraryId: "0445946",
+      componentId: require("../src/assets/super/library/user.jpg")
+    },
+    {
+      libraryId: "0473771",
+      componentId: require("../src/assets/super/library/infoShow.jpg")
+    },
+    {
+      libraryId: "4833953",
+      componentId: require("../src/assets/super/library/numberIndex.jpg")
+    }
     ],
 
     // 根据这里面的id进行，将传递过来的数据，将这个里面的图片放到后端传递过来的数据中
@@ -82,88 +108,88 @@ const store = new Vuex.Store({
     //   ]],
 
     makeFormInitializationList: [{
-        templateId: "", //模板ID
-        id: "", // 模板内容ID
-        groupSequence: "", // 模板内容分组排序
-        componentId: "0", // 标识是哪个组件
-        isTrue: false, // 底部弹框是否显示
-        templateArray: [{
-            isTrue: true,
-            title: "姓名",
-            value: "张三",
-            bottomName: "姓名是否显示",
-            fieldSequence: "0"
-          },
-          {
-            isTrue: true,
-            title: "姓名",
-            value: "张三",
-            bottomName: "姓名是否显示",
-            fieldSequence: "0"
-          },
-          {
-            isTrue: true,
-            title: "姓名",
-            value: "张三",
-            bottomName: "姓名是否显示",
-            fieldSequence: "0"
-          },
-          {
-            isTrue: true,
-            title: "姓名",
-            value: "张三",
-            bottomName: "姓名是否显示",
-            fieldSequence: "0"
-          },
-          {
-            isTrue: true,
-            title: "姓名",
-            value: "张三",
-            bottomName: "姓名是否显示",
-            fieldSequence: "0"
-          },
-          {
-            isTrue: true,
-            title: "姓名",
-            value: "张三",
-            bottomName: "姓名是否显示",
-            fieldSequence: "0"
-          },
-          {
-            isTrue: true,
-            title: "姓名",
-            value: "张三",
-            bottomName: "姓名是否显示",
-            fieldSequence: "0"
-          },
-        ]
+      templateId: "", //模板ID
+      id: "", // 模板内容ID
+      groupSequence: "", // 模板内容分组排序
+      componentId: "0", // 标识是哪个组件
+      isTrue: false, // 底部弹框是否显示
+      templateArray: [{
+        isTrue: true,
+        title: "姓名",
+        value: "张三",
+        bottomName: "姓名是否显示",
+        fieldSequence: "0"
       },
-      [{
-          isTrue: true,
-          infoTitle: "某某得分",
-          infoNum: "110",
-          infoList: ["某某得分", "某某信息", "评分"]
-        },
-        {
-          isTrue: true,
-          infoTitle: "某某信息",
-          infoNum: "119",
-          infoList: ["某某得分", "某某信息", "评分"]
-        },
-        {
-          isTrue: true,
-          infoTitle: "评分",
-          infoNum: "120",
-          infoList: ["某某得分", "某某信息", "评分"]
-        }
-      ],
-      [{
-          infoNum: "请输入成就 单位"
-        },
-        {
-          infoNum: "及格分 >=10"
-        }
+      {
+        isTrue: true,
+        title: "姓名",
+        value: "张三",
+        bottomName: "姓名是否显示",
+        fieldSequence: "0"
+      },
+      {
+        isTrue: true,
+        title: "姓名",
+        value: "张三",
+        bottomName: "姓名是否显示",
+        fieldSequence: "0"
+      },
+      {
+        isTrue: true,
+        title: "姓名",
+        value: "张三",
+        bottomName: "姓名是否显示",
+        fieldSequence: "0"
+      },
+      {
+        isTrue: true,
+        title: "姓名",
+        value: "张三",
+        bottomName: "姓名是否显示",
+        fieldSequence: "0"
+      },
+      {
+        isTrue: true,
+        title: "姓名",
+        value: "张三",
+        bottomName: "姓名是否显示",
+        fieldSequence: "0"
+      },
+      {
+        isTrue: true,
+        title: "姓名",
+        value: "张三",
+        bottomName: "姓名是否显示",
+        fieldSequence: "0"
+      },
       ]
+    },
+    [{
+      isTrue: true,
+      infoTitle: "某某得分",
+      infoNum: "110",
+      infoList: ["某某得分", "某某信息", "评分"]
+    },
+    {
+      isTrue: true,
+      infoTitle: "某某信息",
+      infoNum: "119",
+      infoList: ["某某得分", "某某信息", "评分"]
+    },
+    {
+      isTrue: true,
+      infoTitle: "评分",
+      infoNum: "120",
+      infoList: ["某某得分", "某某信息", "评分"]
+    }
+    ],
+    [{
+      infoNum: "请输入成就 单位"
+    },
+    {
+      infoNum: "及格分 >=10"
+    }
+    ]
     ],
 
 
@@ -285,20 +311,20 @@ const store = new Vuex.Store({
 
     // 模板管理management页面数据
     managementDataListStore: [{
-        activeNames: "1", // 默认值，不需要更改
-        title: "公共项目",
-        comTitleList: ["仰卧起坐"]
-      },
-      {
-        activeNames: "1",
-        title: "男生项目",
-        comTitleList: ["1000米", "体前屈"]
-      },
-      {
-        activeNames: "1",
-        title: "女生项目",
-        comTitleList: ["800米"]
-      }
+      activeNames: "1", // 默认值，不需要更改
+      title: "公共项目",
+      comTitleList: ["仰卧起坐"]
+    },
+    {
+      activeNames: "1",
+      title: "男生项目",
+      comTitleList: ["1000米", "体前屈"]
+    },
+    {
+      activeNames: "1",
+      title: "女生项目",
+      comTitleList: ["800米"]
+    }
     ],
 
     // 创建模板一：createName页面数据
@@ -308,17 +334,17 @@ const store = new Vuex.Store({
       personValue: 0, //人员选择后的value
       // 所属分组
       groupOption: [{
-          text: "公共项目",
-          value: 0
-        },
-        {
-          text: "男生项目",
-          value: 1
-        },
-        {
-          text: "女生项目",
-          value: 2
-        }
+        text: "公共项目",
+        value: 0
+      },
+      {
+        text: "男生项目",
+        value: 1
+      },
+      {
+        text: "女生项目",
+        value: 2
+      }
       ],
       personOption: [{
         text: "自己",

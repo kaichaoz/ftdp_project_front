@@ -88,6 +88,8 @@ const store = new Vuex.Store({
       violet: "#5979C1",   //紫色
       red: "#FF0000"   //红色
       
+    },{
+      duration: 1000      //设置顶部提示，显示时长，1s
     }],
 
 

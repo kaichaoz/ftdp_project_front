@@ -132,12 +132,14 @@ export default {
       if (value == "0") {
         this.$Notify({
           message: this.notifyInfo[0].loginErr,
-          background: this.notifyInfo[1].orange //   橘色：#FF976A
+          background: this.notifyInfo[1].orange, //   橘色：#FF976A
+          duration: this.notifyInfo[2].duration //定义时长
         });
       } else if (value == "1") {
         this.$Notify({
           message: this.notifyInfo[0].loginOk,
-          background: this.notifyInfo[1].blue //蓝色：#29B8DB
+          background: this.notifyInfo[1].blue, //蓝色：#29B8DB
+          duration: this.notifyInfo[2].duration //定义时长
         });
       }
     }

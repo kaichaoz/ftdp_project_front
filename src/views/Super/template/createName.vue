@@ -141,13 +141,15 @@ import escape from "../../../api/escape"; // 导入转移符html
 import { ContactCard } from "vant";
 
 import { insertTemplate } from "../../../api/Super/template/createName"; //引入编辑模板接口的后端地址
-import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量
+import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量，可使用this.
 
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 
 export default {
   computed: {
-    ...mapState(["management_groupName_List"])
+    ...mapState(["management_groupName_List"]),
+    // 展开运算符，将全局变量映射为自己界面的变量
+    ...mapState(["notifyInfo", ""])
   },
   data() {
     return {
@@ -212,10 +214,14 @@ export default {
         templateName: this.createNameDataList.managementNamevalue //模板名称
       };
       vm.$axios.post(insertTemplate, model).then(res => {
-        if (res.data.code == "0000") {
+        if (res.data.code == this.$responseCode.SUCCESSCODE) {
           sessionStorage.setItem("management_templateId", res.data.data);
         } else {
-          console.log("cuowu");
+          this.$Notify({
+            message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
+            background: this.notifyInfo[1].orange // 橘色:#FF976A
+          });
+          // console.log("cuowu");
         }
       });
 

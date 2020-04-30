@@ -122,10 +122,16 @@ import vuedraggable from "vuedraggable";
 import { queryTemplateGroupd } from "../../../../src/api/Super/template/setting"; //引入初始化模板分组接口的后端地址
 import { modifyTemplateGroup } from "../../../../src/api/Super/template/setting"; //引入修改模板分组接口的后端地址
 
-import { Dialog } from 'vant'; // 引用dialog弹出框
+import { Dialog } from "vant"; // 引用dialog弹出框
+import { mapState } from "vuex"; // 全局调取：可使用this.
 
 export default {
+  computed: {
+    // 展开运算符，将全局变量映射为自己界面的变量
+    ...mapState(["notifyInfo", ""])
+  },
   components: {
+    // 组件
     popup,
     vuedraggable
   },
@@ -146,7 +152,7 @@ export default {
           templateGroupName: "", // 模板分组名
           isUsable: "", // 是否可用，0可用、1不可
           groupSequence: "" // 分组位置
-        } 
+        }
       ],
 
       boolean: "", // 弹出框输入是否可见
@@ -196,7 +202,6 @@ export default {
         if (res.data.code == this.$responseCode.SUCCESSCODE) {
           //遍历当前页面所有分组
           for (let i = 0; i < res.data.data.length; i++) {
-            // const element = array[i];
             // 将后端数据存放到数组中
             this.projectName.push({
               id: res.data.data[i].id,
@@ -206,10 +211,10 @@ export default {
             });
           }
         } else {
-          this.$toast({
-            message: "加载失败",
-            duration: 1000
-          });
+          this.$Notify({
+            message:this.notifyInfo[0].loadFailed,// 提示：加载失败
+            background: this.notifyInfo[1].orange //橘色：#FF976A
+          })
         }
       });
     },
@@ -243,15 +248,18 @@ export default {
       // 请求后端数据
       vm.$axios.post(modifyTemplateGroup, resData).then(res => {
         if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          this.$toast({
-            message: "修改成功"
+          this.$Notify({
+            message: this.notifyInfo[0].modifySucceed, // 提示：修改成功
+            background: this.notifyInfo[1].blue, // 蓝色：#29B8DB
+            duration: 500 // 自定义时长
           });
+
           //保存数据，离开页面，setting_Leave的值为0（定时器使用，management页面）
           sessionStorage.setItem("setting_Leave", "0");
         } else {
-          vm.$toast({
-            message: "抱歉，，，",
-            duration: 1000
+          this.$Notify({
+            message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
+            background: this.notifyInfo[1].orange, // 橘色:#FF976A
           });
         }
       });
@@ -281,9 +289,9 @@ export default {
           // message: "修改成功"
           // });
         } else {
-          vm.$toast({
-            message: "抱歉，，，",
-            duration: 1000
+         this.$Notify({
+            message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
+            background: this.notifyInfo[1].orange // 橘色:#FF976A
           });
         }
       });

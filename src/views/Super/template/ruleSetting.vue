@@ -22,6 +22,8 @@
     <div class="ruleSettingBody" v-for="(item,i) in templateRuleRecord">
       <div
         @click="toRuleTemplate(i)"
+        @touchstart.prevent="touchin(i)"
+        @touchend.prevent="cleartime()"
         class="toRuleTemplateBut"
         v-text="templateRuleRecord[i].templateRuleTitle"
       ></div>
@@ -122,7 +124,9 @@ export default {
         }
       ],
 
-      componentInfo: [{ id: "", componentId: "", templateId: "", title: "" }]
+      componentInfo: [{ id: "", componentId: "", templateId: "", title: "" }],
+
+      Loop: "" // 定时器
     };
   },
   mounted() {
@@ -149,7 +153,7 @@ export default {
             vm.queryTemplateRule();
             return;
           }
-          // 超时20s则自动加载数据并清理定时器
+          // 超时3s则自动加载数据并清理定时器
           if (new Date().getTime() - startTime > 3000) {
             clearInterval(interval);
             vm.queryTemplateRule();
@@ -167,8 +171,7 @@ export default {
     // 抬头右侧加号按钮跳转到模板设置
     intoSetting() {
       let vm = this;
-      console.log(vm.componentInfo);
-      
+
       vm.$router.push({
         name: "ruleTemplate",
         params: {
@@ -237,13 +240,15 @@ export default {
             }
           } else if (res.data.code == responseCode.NULLCODE) {
             vm.$toast({
-              message: "暂无数据",
-              duration: 1000
+              message: this.notifyInfo[0].noData,
+              background: this.notifyInfo[1].orange,
+              duration: this.notifyInfo[2].duration
             });
           } else {
             vm.$toast({
-              message: "加载失败",
-              duration: 1000
+              message: this.notifyInfo[0].loadFailed,
+              background: this.notifyInfo[1].orange,
+              duration: this.notifyInfo[2].duration
             });
           }
         });
@@ -272,6 +277,23 @@ export default {
      */
     exchangeSex(num) {
       return num == 0 ? "男" : "女";
+    },
+
+    // 清除浏览器长按图片弹框
+    touchin(i) {
+      clearInterval(this.Loop); //再次清空定时器，防止重复注册定时器
+      this.Loop = setTimeout(
+        function() {
+          // alert("是否确认删除"); // 长按后需要执行的内容
+          // this.returnMakeFor(i);
+          console.log(i);
+        }.bind(this),
+        500
+      );
+    },
+    cleartime() {
+      // 这个方法主要是用来将每次手指移出之后将计时器清零
+      clearInterval(this.Loop);
     }
   }
 };

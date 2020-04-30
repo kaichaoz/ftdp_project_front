@@ -145,6 +145,7 @@
 }
 </style>
 <script>
+import { mapState } from "vuex"; //全局调取，可使用this
 import {
   addTemplateRuleRecord,
   queryTemplateRuleRecord
@@ -152,6 +153,9 @@ import {
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { Loading } from "vant";
 export default {
+  computed: {
+    ...mapState(["notifyInfo", ""])
+  },
   data() {
     return {
       // 年级、性别下拉框当前值
@@ -283,9 +287,10 @@ export default {
               value: vm.currentComponent
             });
           } else {
-            vm.$toast({
-              message: "加载失败",
-              duration: 1000
+            vm.$Notify({
+              message: this.notifyInfo[0].loadFailed,
+              background: this.notifyInfo[1].orange,
+              duration: this.notifyInfo[2].duration
             });
           }
         });
@@ -332,7 +337,7 @@ export default {
       let inputStart = vm.fieldValue[0].textValue;
       //第二个输入框：结束范围的值
       let inputEnd = vm.fieldValue[1].textValue;
-      let value = inputEnd/(inputStart/100*inputStart/100);
+      let value = inputEnd / (((inputStart / 100) * inputStart) / 100);
       return value;
     },
 
@@ -428,15 +433,17 @@ export default {
           vm.fieldValue[index].textValue == ""
         ) {
           vm.$toast({
-            message: "文本框不能为空，请输入数据",
-            duration: 1000
+            message: this.notifyInfo[0].boxEmpty,
+            background: this.notifyInfo[1].orange,
+            duration: this.notifyInfo[2].duration
           });
           return false;
         } else {
           if (vm.fieldValue[index].textValue.length > 11) {
             vm.$toast({
-              message: "文本框输入长度过长",
-              duration: 1000
+              message: this.notifyInfo[0].boxInputLong,
+              background: this.notifyInfo[1].orange,
+              duration: this.notifyInfo[2].duration
             });
             return false;
           }
@@ -452,8 +459,9 @@ export default {
       for (let index = 0; index < vm.fieldNumer - 1; index++) {
         if (!numRe.test(vm.fieldValue[index].textValue)) {
           vm.$toast({
-            message: "请输入数字，并保证小数位数不超过2位！",
-            duration: 1000
+            message: this.notifyInfo[0].inputNumber,
+            background: this.notifyInfo[1].orange,
+            duration: this.notifyInfo[2].duration
           });
           return false;
         }
@@ -465,7 +473,6 @@ export default {
     savePage() {
       let vm = this;
       let comInfo = vm.$route.params.componentInfo;
-      // console.log(comInfo);
 
       vm.calcuValue();
 
@@ -484,17 +491,18 @@ export default {
             //组件框显示时，获取templateContentId
             console.log("222");
           }
+
           const model = {
-            creater: "admin",
             endRange: this.fieldValue[1].textValue,
-            grade: this.exchangeDropDownToNum(vm.dropDownModel[0]),
+            grade: this.fieldValue[1].textValue,
             id: "",
+            isDelete: 0,
             level: this.fieldValue[4].textValue,
-            modifier: "",
+            operator: "admin",
             originalScore: this.fieldValue[2].textValue,
             sex: this.dropDownModel[1],
             startRange: this.fieldValue[0].textValue,
-            // templateContentId: ,
+            // templateContentId: "string",
             templateId: templateId,
             weight: this.fieldValue[3].textValue
           };
@@ -502,8 +510,9 @@ export default {
           vm.$axios.post(addTemplateRuleRecord, model).then(res => {
             if (res.data.code == responseCode.SUCCESSCODE) {
               vm.$toast({
-                message: "保存成功",
-                duration: 1000
+                message: this.notifyInfo[0].saveSucceed,
+                background: this.notifyInfo[1].blue,
+                duration: this.notifyInfo[2].duration
               });
 
               //保存成功后输入框置为空
@@ -514,8 +523,9 @@ export default {
               sessionStorage.setItem("ruleTemplate_leave", "0");
             } else {
               vm.$toast({
-                message: "保存失败",
-                duration: 1000
+                message: this.notifyInfo[0].saveFailed,
+                background: this.notifyInfo[1].orange,
+                duration: this.notifyInfo[2].duration
               });
             }
           });

@@ -122,20 +122,14 @@ import vuedraggable from "vuedraggable";
 import { queryTemplateGroupd } from "../../../../src/api/Super/template/setting"; //引入初始化模板分组接口的后端地址
 import { modifyTemplateGroup } from "../../../../src/api/Super/template/setting"; //引入修改模板分组接口的后端地址
 
-// import { dialog } from "../../../../src/api/dialog";
-import { Dialog } from "vant";
+import { Dialog } from "vant"; // 提示框（是否删除）
 export default {
   components: {
     popup,
     vuedraggable
-
-    // dialog
   },
   data() {
     return {
-      //   show: false,
-      //   value: ""
-
       less: require("../../../assets/super/Less.png"), //右边减号图片图片
       plus: require("../../../assets/super/plus.png"), //底部加号图片
       // projectName: [
@@ -148,10 +142,10 @@ export default {
       projectName: [
         {
           id: "",
-          templateGroupName: "", //模板分组名
-          isUsable: "", //是否可用，0可用、1不可
-          groupSequence: ""
-        } //分组位置
+          templateGroupName: "", // 模板分组名
+          isUsable: "", // 是否可用，0可用、1不可
+          groupSequence: "" // 分组位置
+        } 
       ],
 
       boolean: "", // 弹出框输入是否可见
@@ -178,8 +172,8 @@ export default {
   updated() {},
 
   mounted() {
+    //进入setting页面缓存setting_Leave的值为1,（定时器使用，management页面）
     sessionStorage.setItem("setting_Leave", "1");
-
     // 初始化请求后端数据
     this.queryTemplateGroupGet();
   },
@@ -251,6 +245,7 @@ export default {
           this.$toast({
             message: "修改成功"
           });
+          //保存数据，离开页面，setting_Leave的值为0（定时器使用，management页面）
           sessionStorage.setItem("setting_Leave", "0");
         } else {
           vm.$toast({
@@ -281,7 +276,8 @@ export default {
       //请求后端数据
       vm.$axios.post(modifyTemplateGroup, resData).then(res => {
         if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          // this.$dialog({
+          // this.$toast({
+          // message: "修改成功"
           // });
         } else {
           vm.$toast({
@@ -308,7 +304,6 @@ export default {
         } else if (arrayList[index].isUsable == false) {
           arrayList[index].isUsable = 1;
         }
-
         return arrayList;
       }
     },
@@ -320,7 +315,6 @@ export default {
         } else if (arrayList[index].isUsable == "1") {
           arrayList[index].isUsable = false;
         }
-
         return arrayList;
       }
     },
@@ -342,7 +336,6 @@ export default {
     // 删除内容
     lessNum(i) {
       // dialog();
-
       Dialog.confirm({
         title: "标题",
         message: "确定删除吗？",

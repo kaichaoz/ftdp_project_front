@@ -63,11 +63,31 @@ const store = new Vuex.Store({
     //顶部弹框内容
     notifyInfo: [{
       loginErr: "用户名或密码错误",
-      loginOk: "登陆成功"
+      loginOk: "登陆成功",
+ 
+      noData: "暂无数据",
+      loadFailed: "加载失败",
+      deleteSucceed: "删除成功",
+      deleteFailed: "删除失败",
+
+      modifySucceed: "修改成功",
+      sorry: "抱歉，，，",
+
+      boxEmpty: "文本框不能为空，请输入数据",
+      boxInputLong: "文本框输入长度过长",
+      inputNumber: "请输入数字，并保证小数位数不超过2位",
+      saveSucceed: "保存成功",
+      saveFailed: "保存失败",
+      failed: "失败"
+
     }, {
-      orange: "#FF976A",
-      green: "#8DC149",
-      blue: "#29B8DB"
+      blue: "#29B8DB",     //蓝色提示背景-提示成功使用
+      orange: "#FF976A",  //橘色提示背景-提示失败使用
+      yellow: "#FFF667",  //黄色
+      green: "#8DC149",   //绿色
+      violet: "#5979C1",   //紫色
+      red: "#FF0000"   //红色
+      
     }],
 
 

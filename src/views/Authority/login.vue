@@ -28,9 +28,7 @@
 
 <script>
 import login from "../../api/Authority/login";
-import { Toast } from "vant";
-import { Notify } from "vant";
-import { mapState } from "vuex";
+import { mapState } from "vuex"; // 全局调取：可使用this.
 
 // import notify from "../../../src/api/publicAll/notify";
 export default {
@@ -132,14 +130,14 @@ export default {
     // 提示
     prompt(value) {
       if (value == "0") {
-        Notify({
+        this.$Notify({
           message: this.notifyInfo[0].loginErr,
           background: this.notifyInfo[1].orange //   橘色：#FF976A
         });
       } else if (value == "1") {
-        Notify({
+        this.$Notify({
           message: this.notifyInfo[0].loginOk,
-          background: this.notifyInfo[1].blue //蓝色：#29B8DB   
+          background: this.notifyInfo[1].blue //蓝色：#29B8DB
         });
       }
     }

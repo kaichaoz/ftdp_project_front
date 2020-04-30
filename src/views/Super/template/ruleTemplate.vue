@@ -12,7 +12,7 @@
     <div class="title commonColor">
       <!-- <img @click="intoSetting()" class="iocName" :src="plus" alt /> -->
       <!-- <div class="iocName" @click="savePage()">保存</div> -->
-      <div class="iocName" >保存</div>
+      <div class="iocName" @click="savePage()">保存</div>
       <div class="button" @click="returnPage()">返回</div>
       <div class="titleName">规则设置</div>
     </div>
@@ -325,6 +325,17 @@ export default {
       }
     },
 
+    //当组件数为2时，计算值
+    calcuValue() {
+      let vm = this;
+      //第一个输入框：开始范围的值
+      let inputStart = vm.fieldValue[0].textValue;
+      //第二个输入框：结束范围的值
+      let inputEnd = vm.fieldValue[1].textValue;
+      let value = inputEnd/(inputStart/100*inputStart/100);
+      return value;
+    },
+
     //点击加号加载页面
     plusToThis() {
       let vm = this;
@@ -453,32 +464,33 @@ export default {
     // 抬头右侧按钮保存页面数据
     savePage() {
       let vm = this;
+      let comInfo = vm.$route.params.componentInfo;
+      // console.log(comInfo);
+
+      vm.calcuValue();
 
       //点击加号进入的当前页面，需要添加一条数据
       if (this.$route.params.ruleSetting == "1") {
         if (vm.isEmpty() && vm.isNumber()) {
-
           //获取缓存中templateId
           let templateId = sessionStorage.getItem("management_templateId");
 
           //获取组件id
           if (vm.dropDownComponent[0].isTrue == false) {
             //组件框不显示时，获取templateContentId
-
-            console.log("1111");
+            // console.log("1213");
+            // console.log("1111");
           } else {
             //组件框显示时，获取templateContentId
             console.log("222");
           }
           const model = {
-            creatTime: "",
             creater: "admin",
             endRange: this.fieldValue[1].textValue,
             grade: this.exchangeDropDownToNum(vm.dropDownModel[0]),
             id: "",
             level: this.fieldValue[4].textValue,
             modifier: "",
-            modifyTime: "",
             originalScore: this.fieldValue[2].textValue,
             sex: this.dropDownModel[1],
             startRange: this.fieldValue[0].textValue,
@@ -510,7 +522,7 @@ export default {
         }
 
         //点击具体规则进入的当前页面，需要修改数据
-      } else if (this.$route.params.ruleSetting == "1") {
+      } else if (this.$route.params.ruleSetting == "0") {
         //判断是否修改数据，否 进行提醒，是 更新数据
       }
     },

@@ -18,20 +18,20 @@
     <vuedraggable v-model="classList" :options="options">
       <div class="bodyDiv" v-for="(item ,index) in classList">
         <userInfo
-          :userInfoListP="componentInvalidTouserInfoList[0].isTrue"
+          :userInfoListP="componentInvalidTouserInfoList"
           @listenUserInfoToLibrary="listenUserInfo"
           :titleP="classList[index].title"
           v-if="classList[index].isTrue && classList[index].groupId == groupIdList.userInfo"
         ></userInfo>
         <theMessageStates
-          :theMessageStatesListP="componentInvalidToTheMessageStatesList[0].isTrue"
+          :theMessageStatesListP="componentInvalidToTheMessageStatesList"
           @listenTheMessageStatesToLibrary="listenTheMessageStates"
           :titleP="classList[index].title"
           v-if="classList[index].isTrue
           && classList[index].groupId == groupIdList.theMessageStates "
         ></theMessageStates>
         <enterInformation
-          :enterInfomationListP="componentInvalidToEnterInfomationList[0].isTrue"
+          :enterInfomationListP="componentInvalidToEnterInfomationList"
           @listenEnterInfomationToLibrary="listenEnterInfomation"
           :titleP="classList[index].title"
           v-if="classList[index].isTrue && classList[index].groupId == groupIdList.enterInfomation"
@@ -121,13 +121,25 @@ export default {
       // 分组ID：与数据库同步
       groupIdList: {},
       // 由invalidComponents传递过来，并传送给各自组件类(组件是否显示)
-      componentInvalidTouserInfoList: [{ isTrue: true, position: 0 }],
-      componentInvalidToTheMessageStatesList: [{ isTrue: true, position: 0 }],
-      componentInvalidToEnterInfomationList: [{ isTrue: true, position: 0 }],
+      componentInvalidTouserInfoList: [
+        { isTrue: true, position: 0, componentId: "0445946" }
+      ],
+      componentInvalidToTheMessageStatesList: [
+        { isTrue: true, position: 0, componentId: "0473771" }
+      ],
+      componentInvalidToEnterInfomationList: [
+        { isTrue: true, position: 0, componentId: "4833953" }
+      ],
       // 由各个组件类传递过来，并传送给invalidComponents（无效组件是否显示）
-      componentuserInfoToInvalidList: [{ isTrue: false, position: 0 }],
-      componentTheMessageStatesToInvalidList: [{ isTrue: false, position: 0 }],
-      componentEnterInfomationToInvalidList: [{ isTrue: false, position: 0 }],
+      componentuserInfoToInvalidList: [
+        { isTrue: false, position: 0, componentId: "0445946" }
+      ],
+      componentTheMessageStatesToInvalidList: [
+        { isTrue: false, position: 0, componentId: "0473771" }
+      ],
+      componentEnterInfomationToInvalidList: [
+        { isTrue: false, position: 0, componentId: "4833953" }
+      ],
       //渲染当前library页面数据
       classList: [
         {

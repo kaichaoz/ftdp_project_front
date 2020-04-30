@@ -16,7 +16,9 @@
           <!-- 左滑显示添加删除等 -->
           <van-swipe-cell>
             <!-- 不同下拉框里面不同内容 -->
-            <numberIndex v-if="componentList[index].isTrue && componentList[index].position ==0"></numberIndex>
+            <numberIndex
+              v-if="componentList[index].isTrue && componentList[index].componentId ==libraryId.enterInfomationList.numberIndex"
+            ></numberIndex>
 
             <!-- 左滑显示的内容 -->
             <template #right>
@@ -48,10 +50,16 @@
 }
 </style>
 <script>
+import { mapState } from "vuex";
+
 import numberIndex from "./numberIndex"; // 引入数字输入组件
 import swipeCell from "../../template/swipeCell"; // 左右滑动
 
 export default {
+  computed: {
+    // 展开运算符，将全局变量映射为自己界面的变量
+    ...mapState(["libraryId", ""])
+  },
   components: {
     numberIndex,
     swipeCell
@@ -59,13 +67,13 @@ export default {
 
   props: {
     titleP: { default: "数据输入组件" }, // 接收父组件传递当前抬头名字
-    enterInfomationListP: { default: true } // 接收父组件library传递的theMessageStatesList是否显示
+    enterInfomationListP: { default: [] } // 接收父组件library传递的theMessageStatesList是否显示
   },
   data() {
     return {
       activeNames: "1", // 下拉框默认1，不需要修改
       title: "", // 模板名称
-      componentList: [{ isTrue: true, position: 0 }] // 每个下拉框下面的组件内容
+      componentList: [] // 每个下拉框下面的组件内容
     };
   },
   watch: {
@@ -74,13 +82,13 @@ export default {
       this.title = newVal;
     },
     enterInfomationListP(newVal) {
-      this.componentList[0].isTrue = newVal;
+      this.componentList = newVal;
     }
   },
   mounted() {
     // 初始化监听父页面library数据:此页面组件类名
     this.title = this.titleP;
-    this.componentList[0].isTrue = this.enterInfomationListP;
+    this.componentList = this.enterInfomationListP;
   },
   methods: {
     // 组件右划停用按钮操作

@@ -16,9 +16,15 @@
           <!-- 左滑显示添加删除等 -->
           <van-swipe-cell>
             <!-- 不同下拉框里面不同内容 -->
-            <user v-if="componentList[index].isTrue && componentList[index].position ==0"></user>
-            <infoShow v-if="componentList[index].isTrue && componentList[index].position ==1"></infoShow>
-            <numberIndex v-if="componentList[index].isTrue && componentList[index].position ==2"></numberIndex>
+            <user
+              v-if="componentList[index].isTrue && componentList[index].componentId ==libraryId.userInfoList.user"
+            ></user>
+            <infoShow
+              v-if="componentList[index].isTrue && componentList[index].componentId ==libraryId.theMessageStatesList.infoShow"
+            ></infoShow>
+            <numberIndex
+              v-if="componentList[index].isTrue && componentList[index].componentId ==libraryId.enterInfomationList.numberIndex"
+            ></numberIndex>
 
             <!-- 左滑显示的内容 -->
             <template #right>
@@ -57,7 +63,13 @@ import infoShow from "../library/theMessageStates/infoShow"; // 信息显示
 import numberIndex from "../library/enterInformation/numberIndex"; // 数字输入框
 
 import swipeCell from "../template/swipeCell"; // 左右滑动
+import { mapState } from "vuex";
+
 export default {
+  computed: {
+    // 展开运算符，将全局变量映射为自己界面的变量
+    ...mapState(["libraryId", ""])
+  },
   components: {
     user,
     infoShow,
@@ -78,9 +90,9 @@ export default {
 
       // 每个下拉框内容，默认是不显示的
       componentList: [
-        { isTrue: false, position: 0 },
-        { isTrue: false, position: 1 },
-        { isTrue: false, position: 2 }
+        { isTrue: false, position: 0, componentId: "0445946" },
+        { isTrue: false, position: 1, componentId: "0473771" },
+        { isTrue: false, position: 2, componentId: "4833953" }
       ]
     };
   },

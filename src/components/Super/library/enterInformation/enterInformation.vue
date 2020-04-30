@@ -66,7 +66,7 @@ export default {
   },
 
   props: {
-    titleP: { default: "数据输入组件" }, // 接收父组件传递当前抬头名字
+    titleP: { default: "" }, // 接收父组件传递当前抬头名字
     enterInfomationListP: { default: [] } // 接收父组件library传递的theMessageStatesList是否显示
   },
   data() {

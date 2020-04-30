@@ -65,7 +65,7 @@ export default {
     swipeCell
   },
   props: {
-    titleP: { default: "信息显示组件" },
+    titleP: { default: "" },
     theMessageStatesListP: { default: [] } // 接收父组件library传递的theMessageStatesList是否显示
   },
   data() {

@@ -62,13 +62,7 @@ export default {
       //   require("../../../assets/super/library/infoShow.jpg"),
       //   require("../../../assets/super/library/numberIndex.jpg")
       // ],
-      infoNum: [
-        { componentId: require("../../../assets/super/library/user.jpg") },
-        { componentId: require("../../../assets/super/library/infoShow.jpg") },
-        {
-          componentId: require("../../../assets/super/library/numberIndex.jpg")
-        }
-      ],
+      infoNum: [],
       Loop: "" // 定时器
     };
   },

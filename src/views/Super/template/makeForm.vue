@@ -23,7 +23,10 @@
     <div id="addTemplate" class="allTemplate" v-touch:right="eventFun">
       <div v-for="(item ,i) in templateList ">
         <!-- user组件 -->
-        <div :id="'userComDiv' + i" v-if="templateList[i].componentId ==groupIdList.userInfo">
+        <div
+          :id="'userComDiv' + i"
+          v-if="templateList[i].componentId ==libraryId.userInfoList.user"
+        >
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="isTrue(i)">
             <user :isTrueList="templateList[i].templateArray" class="publicAll user"></user>
@@ -40,7 +43,7 @@
         <!-- infoShow组件 -->
         <div
           :id="'infoShowComDiv' + i"
-          v-if="templateList[i].componentId ==groupIdList.theMessageStates"
+          v-if="templateList[i].componentId ==libraryId.theMessageStatesList.infoShow"
         >
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="isTrue(i)">
@@ -58,7 +61,7 @@
         <!-- numberIndex组件 -->
         <div
           :id="'numberIndexComDiv' + i"
-          v-if="templateList[i].componentId ==groupIdList.enterInfomation"
+          v-if="templateList[i].componentId ==libraryId.enterInfomationList.numberIndex"
         >
           <img @click="spliceList(i)" :src="cross" alt />
           <div @click="isTrue(i)">
@@ -193,7 +196,7 @@ export default {
   },
   data() {
     return {
-      groupIdList: {}, // 存放分组ID
+      // groupIdList: {}, // 存放分组ID
       showPopup: false, // 遮罩层弹出
       templateList: [], // 存放当前页面显示的几个页面数据，012分别为三个组件
       cross: require("../../../assets/super/template/cross.png"), // 取消（叉号）
@@ -204,7 +207,7 @@ export default {
 
   created() {
     // 初始化将vuex中存放的组件ID赋值过来
-    this.groupIdList = this.libraryId;
+    // this.groupIdList = this.libraryId;
   },
   mounted() {
     this.start(); // 进入页面加载内容

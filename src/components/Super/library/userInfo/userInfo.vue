@@ -62,7 +62,7 @@ export default {
     swipeCell
   },
   props: {
-    titleP: { default: "用户信息组件" }, // 接收父组件传递当前抬头名字
+    titleP: { default: "" }, // 接收父组件传递当前抬头名字
     userInfoListP: { default: [] } // 接收父组件library传递的userInfoList是否显示
   },
   data() {

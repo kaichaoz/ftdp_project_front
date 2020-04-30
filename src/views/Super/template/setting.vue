@@ -122,7 +122,8 @@ import vuedraggable from "vuedraggable";
 import { queryTemplateGroupd } from "../../../../src/api/Super/template/setting"; //引入初始化模板分组接口的后端地址
 import { modifyTemplateGroup } from "../../../../src/api/Super/template/setting"; //引入修改模板分组接口的后端地址
 
-import { Dialog } from "vant"; // 提示框（是否删除）
+import { Dialog } from 'vant'; // 引用dialog弹出框
+
 export default {
   components: {
     popup,

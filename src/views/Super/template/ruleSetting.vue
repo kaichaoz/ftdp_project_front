@@ -75,10 +75,14 @@
 }
 </style>
 <script>
+import { mapState } from "vuex"; //全局调取，可使用this
 import { queryTemplateRecord } from "../../../api/Super/template/ruleSetting"; //引入{初始化模板规则页面}接口的后端地址
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { queryTemplateComponentName } from "../../../api/Super/template/ruleTemplate"; //引入{初始化模板规则页面,初始化模板页面一条规则}接口的后端地址
 export default {
+  computed: {
+    ...mapState(["notifyInfo", ""])
+  },
   data() {
     return {
       plus: require("../../../assets/super/template/plus.png"), // 底部加号图片
@@ -239,13 +243,13 @@ export default {
               });
             }
           } else if (res.data.code == responseCode.NULLCODE) {
-            vm.$toast({
+            vm.$Notify({
               message: this.notifyInfo[0].noData,
               background: this.notifyInfo[1].orange,
               duration: this.notifyInfo[2].duration
             });
           } else {
-            vm.$toast({
+            vm.$Notify({
               message: this.notifyInfo[0].loadFailed,
               background: this.notifyInfo[1].orange,
               duration: this.notifyInfo[2].duration

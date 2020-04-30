@@ -432,7 +432,7 @@ export default {
           vm.fieldValue[index].textValue == undefined ||
           vm.fieldValue[index].textValue == ""
         ) {
-          vm.$toast({
+          vm.$Notify({
             message: this.notifyInfo[0].boxEmpty,
             background: this.notifyInfo[1].orange,
             duration: this.notifyInfo[2].duration
@@ -440,7 +440,7 @@ export default {
           return false;
         } else {
           if (vm.fieldValue[index].textValue.length > 11) {
-            vm.$toast({
+            vm.$Notify({
               message: this.notifyInfo[0].boxInputLong,
               background: this.notifyInfo[1].orange,
               duration: this.notifyInfo[2].duration
@@ -458,7 +458,7 @@ export default {
       var numRe = new RegExp(numReg);
       for (let index = 0; index < vm.fieldNumer - 1; index++) {
         if (!numRe.test(vm.fieldValue[index].textValue)) {
-          vm.$toast({
+          vm.$Notify({
             message: this.notifyInfo[0].inputNumber,
             background: this.notifyInfo[1].orange,
             duration: this.notifyInfo[2].duration
@@ -509,7 +509,7 @@ export default {
           //调用添加模板规则 接口
           vm.$axios.post(addTemplateRuleRecord, model).then(res => {
             if (res.data.code == responseCode.SUCCESSCODE) {
-              vm.$toast({
+              vm.$Notify({
                 message: this.notifyInfo[0].saveSucceed,
                 background: this.notifyInfo[1].blue,
                 duration: this.notifyInfo[2].duration
@@ -522,7 +522,7 @@ export default {
 
               sessionStorage.setItem("ruleTemplate_leave", "0");
             } else {
-              vm.$toast({
+              vm.$Notify({
                 message: this.notifyInfo[0].saveFailed,
                 background: this.notifyInfo[1].orange,
                 duration: this.notifyInfo[2].duration

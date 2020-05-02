@@ -106,7 +106,7 @@ import { mapState } from "vuex";
 export default {
   computed: {
     // 展开运算符，将全局变量映射为自己界面的变量
-    ...mapState(["libraryId", ""])
+    ...mapState(["libraryId", "notifyInfo"])
   },
   components: {
     userInfo,
@@ -230,8 +230,18 @@ export default {
       this.$axios.post(updateComponent, modelData).then(res => {
         if (res.data.code == responseCode.SUCCESSCODE) {
           // console.log("成功了");
+          this.$Notify({
+            message: this.notifyInfo[0].saveSucceed,
+            background: this.notifyInfo[1].blue, //   橘色：#FF976A
+            duration: this.notifyInfo[2].duration
+          });
         } else {
           // console.log("失败了");
+          this.$Notify({
+            message: this.notifyInfo[0].saveFailed,
+            background: this.notifyInfo[1].orange, //   橘色：#FF976A
+            duration: this.notifyInfo[2].duration
+          });
         }
       });
     },

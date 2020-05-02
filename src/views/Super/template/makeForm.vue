@@ -180,7 +180,6 @@ import {
 
 import { mapState } from "vuex"; // vuex全局变量
 import { mapMutations } from "vuex"; // vuex方法
-import { Notify } from "vant"; // 顶部弹框提示
 export default {
   computed: {
     // 展开运算符，将全局变量映射为自己界面的变量
@@ -428,16 +427,18 @@ export default {
 
       this.$axios.post(insertTemplateContent, model).then(res => {
         if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          Notify({
-            message: this.notifyInfo[0].loginErr,
-            background: this.notifyInfo[1].orange //   橘色：#FF976A
+          this.$Notify({
+            message: this.notifyInfo[0].saveSucceed,
+            background: this.notifyInfo[1].blue, //   橘色：#FF976A
+            duration: this.notifyInfo[2].duration
           });
           // console.log("保存成功");
         } else {
           // console.log("失败");
-          Notify({
-            message: this.notifyInfo[0].loginErr,
-            background: this.notifyInfo[1].orange //   橘色：#FF976A
+          this.$Notify({
+            message: this.notifyInfo[0].saveFailed,
+            background: this.notifyInfo[1].orange, //   橘色：#FF976A
+            duration: this.notifyInfo[2].duration
           });
         }
       });

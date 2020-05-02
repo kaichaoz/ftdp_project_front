@@ -80,7 +80,7 @@ const store = new Vuex.Store({
       saveSucceed: "保存成功",
       saveFailed: "保存失败",
       failed: "失败",
-      message :"确定删除吗？"
+      
     }, {
       blue: "#29B8DB",     //蓝色提示背景-提示成功使用
       orange: "#FF976A",  //橘色提示背景-提示失败使用
@@ -91,7 +91,16 @@ const store = new Vuex.Store({
 
     }, {
       duration: 1000      //设置顶部提示，显示时长，1s
-    }],
+    }
+  ],
+   
+  
+  // 提示框内容
+   TipsStore : [{
+     message :"确定删除吗？"
+   }
+  ],
+
 
 
     // ------------------------------------------------makeForm--------------------

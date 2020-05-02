@@ -128,7 +128,9 @@ import { mapState } from "vuex"; // 全局调取：可使用this.
 export default {
   computed: {
     // 展开运算符，将全局变量映射为自己界面的变量
-    ...mapState(["notifyInfo", ""])
+    ...mapState(["notifyInfo", ""]),// 映射store变量notigyInfo为当前页面变量，直接使用this即可
+    ...mapState(["TipsStore", ""]), // 映射store变量TipsStore为当前页面变量，直接使用this即可
+
   },
   components: {
     // 组件
@@ -350,7 +352,7 @@ export default {
       // dialog();
       Dialog.confirm({
         // title: "标题",
-        message: this.notifyInfo[0].message, //提示框内容：确定删除吗？(store.js)
+        message: this.TipsStore[0].message, //提示框内容：确定删除吗？(store.js)
         confirmButtonText: "确定",
         cancelButtonText: "取消"
       })

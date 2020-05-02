@@ -22,8 +22,7 @@
     <div class="ruleSettingBody" v-for="(item,i) in templateRuleRecord">
       <div
         @click="toRuleTemplate(i)"
-        @touchstart.prevent="touchin(i)"
-        @touchend.prevent="cleartime()"
+        v-touch:long="(e)=>touchin(i)"
         class="toRuleTemplateBut"
         v-text="templateRuleRecord[i].templateRuleTitle"
       ></div>
@@ -75,8 +74,13 @@
 }
 </style>
 <script>
+import { Dialog, Loading } from "vant"; // 引用dialog弹出框
 import { mapState } from "vuex"; //全局调取，可使用this
-import { queryTemplateRecord } from "../../../api/Super/template/ruleSetting"; //引入{初始化模板规则页面}接口的后端地址
+// import touch from 'vue-directive-touch';
+import {
+  queryTemplateRecord,
+  deleteTemplateRuleRecord
+} from "../../../api/Super/template/ruleSetting"; //引入{初始化模板规则页面}接口的后端地址
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { queryTemplateComponentName } from "../../../api/Super/template/ruleTemplate"; //引入{初始化模板规则页面,初始化模板页面一条规则}接口的后端地址
 export default {
@@ -135,9 +139,15 @@ export default {
   },
   mounted() {
     this.start();
-    // this.queryTemplateRule(); //初始化加载
   },
   methods: {
+    /**
+     * @description: 定时器-加载页面模板规则先访问缓存，获取不到访问数据库查询
+     * @param ：无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date:2020年5月2日11:48:49
+     */
     start() {
       const vm = this;
       let ruleTemplate_leave = sessionStorage.getItem("ruleTemplate_leave");
@@ -175,14 +185,15 @@ export default {
     // 抬头右侧加号按钮跳转到模板设置
     intoSetting() {
       let vm = this;
-
       vm.$router.push({
         name: "ruleTemplate",
         params: {
-          ruleSetting: 1, //1表示从加号进入 ruleTemplate页面
-          componentInfo: vm.componentInfo
+          // ruleSetting: 1, //1表示从加号进入 ruleTemplate页面
+          //componentInfo: vm.componentInfo //根据templateId查询的组件信息
         }
       });
+      //1表示点击加号进入ruleTemplate页面
+      sessionStorage.setItem("ruleSetting_addOrEditToRule", 1);
     },
 
     //调用 queryTemplateComponentNameRuleRecord接口查询组件个数
@@ -199,12 +210,22 @@ export default {
             vm.componentInfo = [];
             for (let index = 0; index < res.data.data.length; index++) {
               vm.componentInfo.push({
-                id: res.data.data[index].Id,
+                id: res.data.data[index].id,
                 componentId: res.data.data[index].componentId,
                 templateId: res.data.data[index].templateId,
                 title: res.data.data[index].title
               });
             }
+            sessionStorage.setItem(
+              "ruleSetting_templateContentId",
+              vm.componentInfo[0].id
+            );
+          } else if (res.data.code == responseCode.NULLCODE) {
+            vm.$Notify({
+              message: this.notifyInfo[0].noData,
+              background: this.notifyInfo[1].orange,
+              duration: this.notifyInfo[2].duration
+            });
           }
         });
     },
@@ -256,7 +277,7 @@ export default {
             });
           }
         });
-      this.queryTemplateComponent();
+      vm.queryTemplateComponent();
     },
 
     // 点击具体规则进入编辑模板
@@ -265,11 +286,25 @@ export default {
       vm.$router.push({
         name: "ruleTemplate",
         params: {
-          ruleSetting: 0, //0表示从具体规则进入ruleTemplate页面
-          ruleTemplateId: vm.templateRuleRecord[i].id, //点击的当前具体规则的id
-          componentInfo: vm.componentInfo
+          // ruleSetting: 0, //0表示从具体规则进入ruleTemplate页面
+          //ruleTemplateId: vm.templateRuleRecord[i].id, //点击的当前具体规则的id
+          //componentInfo: vm.componentInfo //根据templateId查询的组件信息
         }
       });
+      //0表示点击具体规则进入ruleTemplate页面
+      sessionStorage.setItem("ruleSetting_addOrEditToRule", 0);
+      sessionStorage.setItem(
+        "ruleSetting_ruleTemplateId",
+        vm.templateRuleRecord[i].id
+      );
+      sessionStorage.setItem(
+        "ruleSetting_ruleTemplateId",
+        vm.templateRuleRecord[i].id
+      );
+      
+      //根据templateId查询的组件
+      sessionStorage.setItem( "ruleSetting_componentInfo",JSON.stringify(vm.componentInfo));
+    
     },
 
     /**
@@ -283,14 +318,45 @@ export default {
       return num == 0 ? "男" : "女";
     },
 
-    // 清除浏览器长按图片弹框
+    /**
+     * @description: 长按模板规则删除
+     * @param ：{i:长按的规则索引}
+     * @return: 无
+     * @author: 付媛媛
+     * @Date:2020年5月2日11:46:59
+     */
     touchin(i) {
       clearInterval(this.Loop); //再次清空定时器，防止重复注册定时器
       this.Loop = setTimeout(
         function() {
-          // alert("是否确认删除"); // 长按后需要执行的内容
-          // this.returnMakeFor(i);
-          console.log(i);
+          let vm = this;
+          Dialog.confirm({
+            title: "标题",
+            message: "确定删除吗？",
+            confirmButtonText: "确定",
+            cancelButtonText: "取消"
+          })
+            .then(() => {
+              //删除当前具体规则
+              vm.$axios
+                .post(
+                  deleteTemplateRuleRecord + "/" + vm.templateRuleRecord[i].id
+                )
+                .then(res => {
+                  vm.$Notify({
+                    message: this.notifyInfo[0].deleteSucceed,
+                    background: this.notifyInfo[1].blue,
+                    duration: this.notifyInfo[2].duration
+                  });
+
+                  //删除页面长按模板规则
+                  vm.templateRuleRecord.splice(i, 1);
+                  console.log(vm.templateRuleRecord);
+                });
+            })
+            .catch(() => {
+              return;
+            });
         }.bind(this),
         500
       );

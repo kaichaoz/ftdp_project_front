@@ -145,7 +145,7 @@
 }
 </style>
 <script>
-import { mapState } from "vuex"; //全局调取，可使用this
+import { mapState } from "vuex"; //全局调取，可queryTemplateComponentName使用this
 import {
   addTemplateRuleRecord,
   queryTemplateRuleRecord
@@ -227,18 +227,11 @@ export default {
         .get(
           queryTemplateRuleRecord +
             "/{Id}?Id=" +
-            this.$route.params.ruleTemplateId
+            sessionStorage.getItem("ruleSetting_ruleTemplateId")
         )
         .then(res => {
           if (res.data.code == responseCode.SUCCESSCODE) {
             let finData = res.data.data[0]; //后端返回数据
-
-            //获取当前具体规则的 templateContentId，在保存新规则时使用
-            // sessionStorage.setItem(
-            //   "ruleTemplate_templateContentId",
-            //   finData.templateContentId
-            // );
-
             //显示文本框数据
             arrayFieldData.push(
               finData.startRange,
@@ -248,6 +241,7 @@ export default {
               finData.level
             );
             //渲染输入框数据
+
             for (let index = 0; index < arrayFieldData.length; index++) {
               vm.fieldValue.push({
                 isTrue: "true",
@@ -263,13 +257,14 @@ export default {
 
             //获取组件下拉框所有选项
             vm.dropDownOptionComponent = [];
+            let componentInfo = JSON.parse(sessionStorage.getItem("ruleSetting_componentInfo"));
             for (
               let index = 0;
-              index < vm.$route.params.componentInfo.length;
+              index < componentInfo.length;
               index++
             ) {
               vm.dropDownOptionComponent.push({
-                text: vm.$route.params.componentInfo[index].title,
+                text: componentInfo[index].title,
                 value: index
               });
 
@@ -285,6 +280,12 @@ export default {
               isTrue: "true",
               text: finData.title,
               value: vm.currentComponent
+            });
+          } else if (res.data.code == responseCode.NULLCODE) {
+            vm.$Notify({
+              message: this.notifyInfo[0].noData,
+              background: this.notifyInfo[1].orange,
+              duration: this.notifyInfo[2].duration
             });
           } else {
             vm.$Notify({
@@ -346,11 +347,12 @@ export default {
       let vm = this;
       //年级、性别下拉框赋默认值
       vm.dropDownModel.push(0, 0);
+      let component = JSON.parse(sessionStorage.getItem("ruleSetting_componentInfo"));
       //case 1 :  2个下拉框+5个输入框
-      if (vm.$route.params.componentInfo.length == 1) {
+      if (component.length == 1) {
         vm.dropDownDisplay(2);
         vm.fieldTextDisplay(5);
-      } else if (vm.$route.params.componentInfo.length == 2) {
+      } else if (component.length == 2) {
         //case2 ： 2个下拉框+4个输入框
         vm.dropDownDisplay(2);
         vm.fieldTextDisplay(4);
@@ -362,11 +364,11 @@ export default {
     },
     //初始化加载页面
     loaderRuleTemplate() {
-      if (this.$route.params.ruleSetting == "0") {
-        //0表示点击具体规则进入当前页面
+      //0表示点击具体规则进入当前页面
+      if (sessionStorage.getItem("ruleSetting_addOrEditToRule") == 0) {
         this.concreteRuleToThis();
-      } else if (this.$route.params.ruleSetting == "1") {
         //1表示点击加号进入当前页面
+      } else if (sessionStorage.getItem("ruleSetting_addOrEditToRule") == 1) {
         this.plusToThis();
       }
     },
@@ -469,71 +471,68 @@ export default {
       return true;
     },
 
+    //点击保存判断数据是否重复提交
+    // isRepeatSave(){
+
+    // },
+
     // 抬头右侧按钮保存页面数据
     savePage() {
       let vm = this;
-      let comInfo = vm.$route.params.componentInfo;
 
-      vm.calcuValue();
+      let templateId = sessionStorage.getItem("management_templateId");
+      let templateConId = sessionStorage.getItem(
+        "ruleSetting_templateContentId"
+      );
+      let ruleTemplateId;
 
-      //点击加号进入的当前页面，需要添加一条数据
-      if (this.$route.params.ruleSetting == "1") {
-        if (vm.isEmpty() && vm.isNumber()) {
-          //获取缓存中templateId
-          let templateId = sessionStorage.getItem("management_templateId");
+      //0表示点击具体规则进入当前页面
+      if (sessionStorage.getItem("ruleSetting_addOrEditToRule") == 0) {
+        ruleTemplateId = sessionStorage.getItem("ruleSetting_ruleTemplateId");
+        //1表示点击加号进入当前页面
+      } else if (sessionStorage.getItem("ruleSetting_addOrEditToRule") == 1) {
+        ruleTemplateId = "";
+      }
 
-          //获取组件id
-          if (vm.dropDownComponent[0].isTrue == false) {
-            //组件框不显示时，获取templateContentId
-            // console.log("1213");
-            // console.log("1111");
+      let model = {
+        endRange: this.fieldValue[1].textValue,
+        grade: this.exchangeDropDownToNum(this.dropDownModel[0]),
+        id: ruleTemplateId,
+        isDelete: 0,
+        level: this.fieldValue[4].textValue,
+        operator: "admin",
+        originalScore: this.fieldValue[2].textValue,
+        sex: this.dropDownModel[1],
+        startRange: this.fieldValue[0].textValue,
+        templateContentId: templateConId,
+        templateId: templateId,
+        weight: this.fieldValue[3].textValue
+      };
+
+      //点击保存判断输入库内容是否符合规则
+      if (vm.isEmpty() && vm.isNumber()) {
+        //调用添加模板规则 接口
+        vm.$axios.post(addTemplateRuleRecord, model).then(res => {
+          if (res.data.code == responseCode.SUCCESSCODE) {
+            vm.$Notify({
+              message: this.notifyInfo[0].saveSucceed,
+              background: this.notifyInfo[1].blue,
+              duration: this.notifyInfo[2].duration
+            });
+
+            sessionStorage.setItem("ruleTemplate_leave", "0");
           } else {
-            //组件框显示时，获取templateContentId
-            console.log("222");
+            vm.$Notify({
+              message: this.notifyInfo[0].saveFailed,
+              background: this.notifyInfo[1].orange,
+              duration: this.notifyInfo[2].duration
+            });
           }
-
-          const model = {
-            endRange: this.fieldValue[1].textValue,
-            grade: this.fieldValue[1].textValue,
-            id: "",
-            isDelete: 0,
-            level: this.fieldValue[4].textValue,
-            operator: "admin",
-            originalScore: this.fieldValue[2].textValue,
-            sex: this.dropDownModel[1],
-            startRange: this.fieldValue[0].textValue,
-            // templateContentId: "string",
-            templateId: templateId,
-            weight: this.fieldValue[3].textValue
-          };
-          //调用添加模板规则 接口
-          vm.$axios.post(addTemplateRuleRecord, model).then(res => {
-            if (res.data.code == responseCode.SUCCESSCODE) {
-              vm.$Notify({
-                message: this.notifyInfo[0].saveSucceed,
-                background: this.notifyInfo[1].blue,
-                duration: this.notifyInfo[2].duration
-              });
-
-              //保存成功后输入框置为空
-              for (let index = 0; index < vm.fieldNumer; index++) {
-                vm.fieldValue[index].textValue = "";
-              }
-
-              sessionStorage.setItem("ruleTemplate_leave", "0");
-            } else {
-              vm.$Notify({
-                message: this.notifyInfo[0].saveFailed,
-                background: this.notifyInfo[1].orange,
-                duration: this.notifyInfo[2].duration
-              });
-            }
-          });
-        }
-
-        //点击具体规则进入的当前页面，需要修改数据
-      } else if (this.$route.params.ruleSetting == "0") {
-        //判断是否修改数据，否 进行提醒，是 更新数据
+          //保存成功后输入框置为空
+          // for (let index = 0; index < vm.fieldNumer; index++) {
+          //   vm.fieldValue[index].textValue = "";
+          // }
+        });
       }
     },
 

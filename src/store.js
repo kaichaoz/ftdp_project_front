@@ -7,6 +7,7 @@ const store = new Vuex.Store({
   //要设置的全局访问的state对象
   state: {
     token: '', //用户token
+    isShowLoading: false, // 请求前加载动画
 
     // 分组ID：与数据库同步
     // libraryId: {
@@ -64,7 +65,7 @@ const store = new Vuex.Store({
     notifyInfo: [{
       loginErr: "用户名或密码错误",
       loginOk: "登陆成功",
- 
+
       noData: "暂无数据",
       loadFailed: "加载失败",
       deleteSucceed: "删除成功",
@@ -87,8 +88,8 @@ const store = new Vuex.Store({
       green: "#8DC149",   //绿色
       violet: "#5979C1",   //紫色
       red: "#FF0000"   //红色
-      
-    },{
+
+    }, {
       duration: 1000      //设置顶部提示，显示时长，1s
     }],
 

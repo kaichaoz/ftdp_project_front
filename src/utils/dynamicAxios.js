@@ -9,10 +9,10 @@ import router from '../router' //引用router，用于在某些错误情况下�
 axios.defaults.baseURL = process.env.VUE_APP_BACKEND_URL
 
 /*
- * axios的请求拦截器
+ * request的请求拦截器:请求前的操作
  */
-// 下方的service这个名字就是我们自己创建的axios的名字
 axios.interceptors.request.use(config => {
+  store.state.isShowLoading = true // 加载中动画显示
 
   // config.headers.Authorization = store.state.token
   //localStorage.getItem("token")//store.getToken()
@@ -21,9 +21,13 @@ axios.interceptors.request.use(config => {
 }, error => { Promise.reject(error) })
 
 /**
-  * response拦截器
+  * response接收拦截器：接收后的操作
   */
+// 
 axios.interceptors.response.use(response => {
+
+  store.state.isShowLoading = false // 加载中动画关闭
+
   //此处表示我们的请求让服务器正确的接收了，并且返回了数据（状态码 200）
   // 
   return response

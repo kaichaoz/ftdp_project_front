@@ -212,8 +212,9 @@ export default {
           }
         } else {
           this.$Notify({
-            message:this.notifyInfo[0].loadFailed,// 提示：加载失败
-            background: this.notifyInfo[1].orange //橘色：#FF976A
+            message:this.notifyInfo[0].loadFailed,// 提示：加载失败.==store.js
+            background: this.notifyInfo[1].orange, //橘色：#FF976A
+            duration: this.notifyInfo[2].duration //定义时长,1s
           })
         }
       });
@@ -251,7 +252,7 @@ export default {
           this.$Notify({
             message: this.notifyInfo[0].modifySucceed, // 提示：修改成功
             background: this.notifyInfo[1].blue, // 蓝色：#29B8DB
-            duration: 500 // 自定义时长
+            duration: this.notifyInfo[2].duration //定义时长,1s
           });
 
           //保存数据，离开页面，setting_Leave的值为0（定时器使用，management页面）
@@ -260,6 +261,7 @@ export default {
           this.$Notify({
             message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
             background: this.notifyInfo[1].orange, // 橘色:#FF976A
+            duration: this.notifyInfo[2].duration //定义时长,1s
           });
         }
       });
@@ -291,7 +293,8 @@ export default {
         } else {
          this.$Notify({
             message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
-            background: this.notifyInfo[1].orange // 橘色:#FF976A
+            background: this.notifyInfo[1].orange, // 橘色:#FF976A
+            duration: this.notifyInfo[2].duration //定义时长,1s
           });
         }
       });

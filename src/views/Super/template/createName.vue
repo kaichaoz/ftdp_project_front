@@ -219,7 +219,8 @@ export default {
         } else {
           this.$Notify({
             message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
-            background: this.notifyInfo[1].orange // 橘色:#FF976A
+            background: this.notifyInfo[1].orange, // 橘色:#FF976A
+            duration: this.notifyInfo[2].duration //定义时长,1s
           });
           // console.log("cuowu");
         }

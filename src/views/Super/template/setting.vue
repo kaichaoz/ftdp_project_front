@@ -349,8 +349,8 @@ export default {
     lessNum(i) {
       // dialog();
       Dialog.confirm({
-        title: "标题",
-        message: "确定删除吗？",
+        // title: "标题",
+        message: this.notifyInfo[0].message, //提示框内容：确定删除吗？(store.js)
         confirmButtonText: "确定",
         cancelButtonText: "取消"
       })

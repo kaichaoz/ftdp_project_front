@@ -79,8 +79,8 @@ const store = new Vuex.Store({
       inputNumber: "请输入数字，并保证小数位数不超过2位",
       saveSucceed: "保存成功",
       saveFailed: "保存失败",
-      failed: "失败"
-
+      failed: "失败",
+      message :"确定删除吗？"
     }, {
       blue: "#29B8DB",     //蓝色提示背景-提示成功使用
       orange: "#FF976A",  //橘色提示背景-提示失败使用

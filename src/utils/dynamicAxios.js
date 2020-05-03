@@ -35,8 +35,10 @@ axios.interceptors.response.use(response => {
   //此处表示服务器没有正确的处理我们的请求，然后给我们返回了错误的数据信息
   //status 表示 错误的http状态码
   if (!error.response) {
-    Notify({ type: 'warning', duration: 1000, message: '服务器出现问题，请稍后重试！' });
-    router.push({ name: 'login' });
+    // Notify({ type: 'warning', duration: 1000, message: '服务器出现问题，请稍后重试！' });
+    // router.push({ name: 'login' });
+    store.state.isShowLoadFailed=true  //加载失败页面显示
+    store.state.isShowLoading = false // 加载中动画关闭
   }
   const status = error.response.status
   switch (status) { // 其他情况补充处理

@@ -72,8 +72,10 @@
 .body {
   margin: 20px auto 20px;
   width: 335px;
-  height: 500px;
+  /* height: 500px; */
   border: 1px solid #e0e9ea;
+  min-height: auto;
+  max-height: auto;
 }
 
 .nameTitle {

@@ -8,7 +8,7 @@ const store = new Vuex.Store({
   state: {
     token: '', //用户token
     isShowLoading: false, // 请求前加载动画
-
+    isShowLoadFailed: false,  //请求失败加载页面/断网加载页面
     // 分组ID：与数据库同步
     // libraryId: {
     //   userInfo: "5856212",
@@ -80,7 +80,7 @@ const store = new Vuex.Store({
       saveSucceed: "保存成功",
       saveFailed: "保存失败",
       failed: "失败",
-      
+      noTemplateRuie: "当前模板没有输入组件，无法添加模板规则",
     }, {
       blue: "#29B8DB",     //蓝色提示背景-提示成功使用
       orange: "#FF976A",  //橘色提示背景-提示失败使用

@@ -80,7 +80,7 @@ const store = new Vuex.Store({
       saveSucceed: "保存成功",
       saveFailed: "保存失败",
       failed: "失败",
-      noTemplateRuie: "当前模板没有输入组件，无法添加模板规则",
+      noTemplateRule: "当前模板没有输入组件，无法添加模板规则",
     }, {
       blue: "#29B8DB",     //蓝色提示背景-提示成功使用
       orange: "#FF976A",  //橘色提示背景-提示失败使用

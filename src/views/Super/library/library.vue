@@ -101,7 +101,6 @@ import {
   queryComponent,
   updateComponent
 } from "../../../api/Super/library/library";
-import { responseCode } from "../../../utils/responseCode";
 import { mapState } from "vuex";
 export default {
   computed: {
@@ -228,20 +227,21 @@ export default {
         modelData[i].isUsable = modelData[i].isUsable == true ? "0" : "1";
       }
       this.$axios.post(updateComponent, modelData).then(res => {
-        if (res.data.code == responseCode.SUCCESSCODE) {
-          // console.log("成功了");
-          this.$Notify({
-            message: this.notifyInfo[0].saveSucceed,
-            background: this.notifyInfo[1].blue, //   橘色：#FF976A
-            duration: this.notifyInfo[2].duration
-          });
-        } else {
-          // console.log("失败了");
-          this.$Notify({
-            message: this.notifyInfo[0].saveFailed,
-            background: this.notifyInfo[1].orange, //   橘色：#FF976A
-            duration: this.notifyInfo[2].duration
-          });
+        switch (res.data.code) {
+          case this.$responseCode.SUCCESSCODE:
+            this.$Notify({
+              message: this.notifyInfo[0].saveSucceed,
+              background: this.notifyInfo[1].blue, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
+            });
+            break;
+          default:
+            this.$Notify({
+              message: this.notifyInfo[0].saveFailed,
+              background: this.notifyInfo[1].orange, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
+            });
+            break;
         }
       });
     },
@@ -279,26 +279,42 @@ export default {
       this.classList = []; // 清空数据
       // 请求方法
       this.$axios.get(queryComponent).then(res => {
-        if (res.data.code == responseCode.SUCCESSCODE) {
-          for (let i = 0; i < res.data.data.length; i++) {
-            // 将后端数据存放到数组中
-            this.classList.push({
-              groupId: res.data.data[i].groupId,
-              title: res.data.data[i].groupName,
-              isTrue: "true",
-              isUsable: res.data.data[i].isUsable,
-              position: res.data.data[i].groupSequence,
-              componentId: res.data.data[i].componentId
+        switch (res.data.code) {
+          case this.$responseCode.SUCCESSCODE:
+            for (let i = 0; i < res.data.data.length; i++) {
+              // 将后端数据存放到数组中
+              this.classList.push({
+                groupId: res.data.data[i].groupId,
+                title: res.data.data[i].groupName,
+                isTrue: "true",
+                isUsable: res.data.data[i].isUsable,
+                position: res.data.data[i].groupSequence,
+                componentId: res.data.data[i].componentId
+              });
+              // 替换后端的01分别改为true和false
+              this.classList[i].isUsable =
+                this.classList[i].isUsable === "0" ? true : false;
+              // 将上面六个字段赋值：用于是否显示
+              this.assignmentTF(
+                this.classList[i].groupId,
+                this.classList[i].isUsable
+              );
+            }
+            break;
+          case this.$responseCode.NULLCODE:
+            this.$Notify({
+              message: this.notifyInfo[0].noData,
+              background: this.notifyInfo[1].orange, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
             });
-            // 替换后端的01分别改为true和false
-            this.classList[i].isUsable =
-              this.classList[i].isUsable === "0" ? true : false;
-            // 将上面六个字段赋值：用于是否显示
-            this.assignmentTF(
-              this.classList[i].groupId,
-              this.classList[i].isUsable
-            );
-          }
+            break;
+          default:
+            this.$Notify({
+              message: this.notifyInfo[0].loadFailed,
+              background: this.notifyInfo[1].orange, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
+            });
+            break;
         }
       });
     },

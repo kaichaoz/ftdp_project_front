@@ -260,45 +260,62 @@ export default {
       const sessionTemplateId = sessionStorage.getItem("management_templateId");
 
       this.$axios.get(queryTemplateContent + sessionTemplateId).then(res => {
-        if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          // console.log(res.data.data);
+        switch (res.data.code) {
+          case this.$responseCode.SUCCESSCODE:
+            // console.log(res.data.data);
 
-          for (let index = 0; index < res.data.data.length; index++) {
-            this.templateList.push({
-              templateId: res.data.data[index].templateId, //模板ID
-              groupSequence: res.data.data[index].groupSequence, // 模板内容分组排序
-              componentId: res.data.data[index].componentId, // 标识是哪个组件
-              isTrue: false, // 底部弹框是否显示
-              templateArray: []
-            });
-            for (
-              let i = 0;
-              i < res.data.data[index].templateContentData.length;
-              i++
-            ) {
-              this.templateList[index].templateArray.push({
-                id: res.data.data[index].templateContentData[i].id, // 模板内容ID
-                isTrue: res.data.data[index].templateContentData[i].isUsable,
-                fieldSequence: i,
-                title: res.data.data[index].templateContentData[i].title,
-                value: res.data.data[index].templateContentData[i].promptField,
-                bottomName:
-                  res.data.data[index].templateContentData[i].title +
-                  "是否显示",
-                titleList: ["某某得分", "某某信息", "评分"]
+            for (let index = 0; index < res.data.data.length; index++) {
+              this.templateList.push({
+                templateId: res.data.data[index].templateId, //模板ID
+                groupSequence: res.data.data[index].groupSequence, // 模板内容分组排序
+                componentId: res.data.data[index].componentId, // 标识是哪个组件
+                isTrue: false, // 底部弹框是否显示
+                templateArray: []
               });
-
-              // 将01改为true和false
-              if (this.templateList[index].templateArray[i].isTrue == "0") {
-                this.templateList[index].templateArray[i].isTrue = true;
-              } else if (
-                this.templateList[index].templateArray[i].isTrue == "1"
+              for (
+                let i = 0;
+                i < res.data.data[index].templateContentData.length;
+                i++
               ) {
-                this.templateList[index].templateArray[i].isTrue = false;
+                this.templateList[index].templateArray.push({
+                  id: res.data.data[index].templateContentData[i].id, // 模板内容ID
+                  isTrue: res.data.data[index].templateContentData[i].isUsable,
+                  fieldSequence: i,
+                  title: res.data.data[index].templateContentData[i].title,
+                  value:
+                    res.data.data[index].templateContentData[i].promptField,
+                  bottomName:
+                    res.data.data[index].templateContentData[i].title +
+                    "是否显示",
+                  titleList: ["某某得分", "某某信息", "评分"]
+                });
+
+                // 将01改为true和false
+                if (this.templateList[index].templateArray[i].isTrue == "0") {
+                  this.templateList[index].templateArray[i].isTrue = true;
+                } else if (
+                  this.templateList[index].templateArray[i].isTrue == "1"
+                ) {
+                  this.templateList[index].templateArray[i].isTrue = false;
+                }
               }
             }
-          }
-          // console.log(this.templateList);
+            // console.log(this.templateList);
+            break;
+          case this.$responseCode.NULLCODE:
+            this.$Notify({
+              message: this.notifyInfo[0].noData,
+              background: this.notifyInfo[1].orange, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
+            });
+            break;
+          default:
+            this.$Notify({
+              message: this.notifyInfo[0].loadFailed,
+              background: this.notifyInfo[1].orange, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
+            });
+            break;
         }
       });
     },
@@ -312,25 +329,38 @@ export default {
      */
     sidbebarStar() {
       this.$axios.get(queryComponentlibrary).then(res => {
-        if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          // console.log(res.data.data);
-          this.sidebarModel = [];
-          const libraryList = this.libraryIdIndex;
+        switch (res.data.code) {
+          case this.$responseCode.SUCCESSCODE:
+            this.sidebarModel = [];
+            const libraryList = this.libraryIdIndex;
 
-          for (let i = 0; i < res.data.data.length; i++) {
-            this.sidebarModel.push({
-              groupId: res.data.data[i].groupId,
-              libraryId: res.data.data[i].componentId,
-              groupSequence: res.data.data[i].groupSequence,
-              componentPicture: ""
+            for (let i = 0; i < res.data.data.length; i++) {
+              this.sidebarModel.push({
+                groupId: res.data.data[i].groupId,
+                libraryId: res.data.data[i].componentId,
+                groupSequence: res.data.data[i].groupSequence,
+                componentPicture: ""
+              });
+
+              let index = this.drop(this.sidebarModel[i].libraryId);
+              this.sidebarModel[i].componentPicture =
+                libraryList[index].componentId;
+            }
+            break;
+          case this.$responseCode.NULLCODE:
+            this.$Notify({
+              message: this.notifyInfo[0].noData,
+              background: this.notifyInfo[1].orange, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
             });
-
-            let index = this.drop(this.sidebarModel[i].libraryId);
-            this.sidebarModel[i].componentPicture =
-              libraryList[index].componentId;
-          }
-
-          // console.log(this.sidebarModel);
+            break;
+          default:
+            this.$Notify({
+              message: this.notifyInfo[0].loadFailed,
+              background: this.notifyInfo[1].orange, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
+            });
+            break;
         }
       });
     },
@@ -437,20 +467,21 @@ export default {
       }
 
       this.$axios.post(insertTemplateContent, model).then(res => {
-        if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          this.$Notify({
-            message: this.notifyInfo[0].saveSucceed,
-            background: this.notifyInfo[1].blue, //   橘色：#FF976A
-            duration: this.notifyInfo[2].duration
-          });
-          // console.log("保存成功");
-        } else {
-          // console.log("失败");
-          this.$Notify({
-            message: this.notifyInfo[0].saveFailed,
-            background: this.notifyInfo[1].orange, //   橘色：#FF976A
-            duration: this.notifyInfo[2].duration
-          });
+        switch (res.data.code) {
+          case this.$responseCode.SUCCESSCODE:
+            this.$Notify({
+              message: this.notifyInfo[0].saveSucceed,
+              background: this.notifyInfo[1].blue, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
+            });
+            break;
+          default:
+            this.$Notify({
+              message: this.notifyInfo[0].saveFailed,
+              background: this.notifyInfo[1].orange, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
+            });
+            break;
         }
       });
     },

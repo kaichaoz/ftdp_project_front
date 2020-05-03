@@ -247,7 +247,9 @@ export default {
      * @Date: 2020年4月29日09:10:35
      */
     queryGroup() {
-      this.$axios.get(queryTemplateContent + "8541535").then(res => {
+      const sessionTemplateId = sessionStorage.getItem("management_templateId");
+
+      this.$axios.get(queryTemplateContent + sessionTemplateId).then(res => {
         if (res.data.code == this.$responseCode.SUCCESSCODE) {
           // console.log(res.data.data);
 
@@ -392,13 +394,14 @@ export default {
      */
     updateTemplateContent() {
       // console.log(this.templateList);
+      const sessionTemplateId = sessionStorage.getItem("management_templateId");
       let model = [];
       for (let index = 0; index < this.templateList.length; index++) {
         model.push({
           componentId: this.templateList[index].componentId,
           groupSequence: index,
           templateContentData: [],
-          templateId: "8541535"
+          templateId: sessionTemplateId
         });
 
         for (
@@ -422,8 +425,6 @@ export default {
           }
         }
       }
-
-      // console.log(model);
 
       this.$axios.post(insertTemplateContent, model).then(res => {
         if (res.data.code == this.$responseCode.SUCCESSCODE) {

@@ -235,6 +235,16 @@ export default {
      * @Date: 2020年4月29日09:10:35
      */
     start() {
+      // 解决开始计入页面不能左滑，刷新页面解决
+      const a = sessionStorage.getItem("makeFormFirstEntry");
+      if (a != "0") {
+        sessionStorage.setItem("makeFormFirstEntry", "0");
+        window.location.reload(); // 刷新页面
+        // window.location.reload() // 刷新页面
+        // window.history.go(0); // 出现空白页
+        // document.execCommand("Refresh"); // MSDN说适用于IE
+      }
+
       // 当前页面内容：
       this.templateList = []; // 初始化页面有谁：012:表示三个从上排列下去
     },

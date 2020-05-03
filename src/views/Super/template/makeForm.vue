@@ -207,7 +207,8 @@ export default {
       templateList: [], // 存放当前页面显示的几个页面数据，012分别为三个组件
       cross: require("../../../assets/super/template/cross.png"), // 取消（叉号）
       sidebarModel: [], // 存储侧边栏数据
-      templateListIndex: "" // 临时存档当前的I值
+      templateListIndex: "", // 临时存档当前的I值
+      canSaveTemplateContent: 1 // 1：页面数据未更改不用保存，0：页面数据更改可保存
     };
   },
 
@@ -222,7 +223,16 @@ export default {
     this.sidbebarStar(); // 初始化侧边栏
   },
   beforeDestroy() {
-    this.updateTemplateContent(); // 退出页面保存数据
+    // 保存时候判断：如果为0表示修改过可以进行保存，为1时候提示； 当前只有添加和删除做了修改为0
+    if (this.canSaveTemplateContent == 0) {
+      this.updateTemplateContent(); // 退出页面保存数据
+    } else {
+      this.$Notify({
+        message: this.notifyInfo[0].noModification,
+        background: this.notifyInfo[1].orange, //   橘色：#FF976A
+        duration: this.notifyInfo[2].duration
+      });
+    }
   },
   methods: {
     // =================页面加载和抬头按钮部分=====================
@@ -489,7 +499,7 @@ export default {
     //  ============================右划添加组件部分=============================
 
     /**
-     * @description: 子组件sidebar返回事件，返回是哪个组件
+     * @description: 添加组件内容：子组件sidebar返回事件，返回是哪个组件
      * @param {newVal1: 当前分组下标，libraryId：标识哪个组件的ID}
      * @return: 无
      * @author: 白爱民
@@ -635,6 +645,8 @@ export default {
         isTrue: false, // 底部弹框是否显示
         templateArray: makeList[index].templateArray
       });
+
+      this.canSaveTemplateContent = 0; // 0表示当前页面数据修改过
     },
 
     /**
@@ -646,6 +658,7 @@ export default {
      */
     spliceList(i) {
       this.templateList.splice(i, 1);
+      this.canSaveTemplateContent = 0; // 0表示当前页面数据修改过
     },
 
     /**
@@ -706,10 +719,4 @@ export default {
     }
   }
 };
-
-// function drop(name) {
-//   let names = {
-//     "0445946": "0"
-//   };
-// }
 </script>

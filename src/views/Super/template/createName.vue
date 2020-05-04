@@ -17,7 +17,7 @@
       :leftText="createNameTitle.leftText"
       :rightText="createNameTitle.rightText"
       @listenTitlePerPageLeftClick="returnPage"
-      @listenTitlePerPagerightClick="nextStep"
+      @listenTitlePerPageRightClick="nextStep"
     ></titlePerPage>
     <!-- <div class="title commonColor">
       <div class="buttonLeft" @click="returnPage()">返回</div>
@@ -40,13 +40,13 @@
 
       <div class="body">
         <!-- 输入框： -->
-        <div class="managementName">
+        <div class="managementName" @blur="notFocus()">
           <van-cell-group>
             <van-field v-model="createNameDataList.managementNamevalue" placeholder="请输入模板名称" />
           </van-cell-group>
         </div>
         <!-- 下拉框：分组： :title="createNameDataList.title" @change="changeDevelop"-->
-        <div class="managementName">
+        <div class="managementName" @blur="notFocus()">
           <van-dropdown-menu active-color="#fecd2a">
             <van-dropdown-item
               v-model="createNameDataList.groupValue"
@@ -55,7 +55,7 @@
           </van-dropdown-menu>
         </div>
         <!-- 下拉框：使用者默认自己 -->
-        <div class="managementName">
+        <div class="managementName" @blur="notFocus()">
           <van-dropdown-menu active-color="#fecd2a">
             <van-dropdown-item
               v-model="createNameDataList.personValue"
@@ -64,7 +64,7 @@
           </van-dropdown-menu>
         </div>
         <!-- 备注： -->
-        <div class="remark">
+        <div class="remark" @blur="notFocus()">
           <div class="remarkLabel">表单备注:</div>
           <div
             id="editer"
@@ -172,7 +172,6 @@ export default {
     ...mapState(["management_groupName_List"]),
     // 展开运算符，将全局变量映射为自己界面的变量
     ...mapState(["notifyInfo", "pullRefresh"])
-
   },
   components: {
     // 组件
@@ -200,7 +199,8 @@ export default {
         ],
         personOption: [{ text: "自己", value: 0 }], // 人员下拉框
         remarkTxt: "" //备注输入内容
-      }
+      },
+      isModify: 0
     };
   },
 
@@ -377,12 +377,18 @@ export default {
       return temp;
     },
 
+    // 下拉刷新
     onRefresh() {
       const vm = this;
       setTimeout(() => {
         vm.pullRefresh.isLoading = false; //刷新完成，关闭刷新功能
       }, 1000); //1000代表刷新时间
       this.jumpToPageLoading(); //重新加载页面
+    },
+
+    // 判断当前页面数据是否修改
+    notFocus() {
+      vm.isModify = 1;
     }
   }
 };

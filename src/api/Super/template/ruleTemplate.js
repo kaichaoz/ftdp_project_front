@@ -1,8 +1,8 @@
 const addTemplateRuleRecord = 'templateRuleRecord/addTemplateRuleRecord';
 const queryTemplateRuleRecord = 'templateRuleRecord/queryTemplateRuleRecordId';
-const queryTemplateComponentName = 'templateRuleRecord/queryTemplateComponentNameRuleRecord';
+const queryTemplateComponent = 'templateRuleRecord/queryTemplateComponentNameRuleRecord';
 export {
     addTemplateRuleRecord,
     queryTemplateRuleRecord,
-    queryTemplateComponentName
+    queryTemplateComponent
 }

@@ -82,7 +82,7 @@ import {
   deleteTemplateRuleRecord
 } from "../../../api/Super/template/ruleSetting"; //引入{初始化模板规则页面}接口的后端地址
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
-import { queryTemplateComponentName } from "../../../api/Super/template/ruleTemplate"; //引入{初始化模板规则页面,初始化模板页面一条规则}接口的后端地址
+import { queryTemplateComponent } from "../../../api/Super/template/ruleTemplate"; //引入{初始化模板规则页面,初始化模板页面一条规则}接口的后端地址
 export default {
   computed: {
     ...mapState(["notifyInfo", ""])
@@ -131,9 +131,6 @@ export default {
           dropdownNow: 0
         }
       ],
-
-      componentInfo: [{ id: "", componentId: "", templateId: "", title: "" }],
-
       Loop: "" // 定时器
     };
   },
@@ -185,34 +182,48 @@ export default {
     // 抬头右侧加号按钮跳转到模板设置
     intoSetting() {
       let vm = this;
-      vm.$router.push({
-        name: "ruleTemplate",
-        params: {
-          // ruleSetting: 1, //1表示从加号进入 ruleTemplate页面
-          //componentInfo: vm.componentInfo //根据templateId查询的组件信息
-        }
-      });
-      //1表示点击加号进入ruleTemplate页面
-      sessionStorage.setItem("ruleSetting_addOrEditToRule", 1);
+      let templateId = sessionStorage.getItem("management_templateId");
+      vm.$axios
+        .get(queryTemplateComponent + "/{templateId}?templateId=" + templateId)
+        .then(res => {
+          switch (res.data.code) {
+            case responseCode.SUCCESSCODE:
+              vm.$router.push({
+                name: "ruleTemplate"
+              });
+              //1表示点击加号进入ruleTemplate页面
+              sessionStorage.setItem("ruleSetting_addOrEditToRule", 1);
+              break;
+            case responseCode.NULLCODE:
+              vm.$Notify({
+                message: this.notifyInfo[0].noTemplateRule,
+                background: this.notifyInfo[1].orange,
+                duration: this.notifyInfo[2].duration
+              });
+              break;
+            default:
+              vm.$Notify({
+                message: this.notifyInfo[0].failed,
+                background: this.notifyInfo[1].orange,
+                duration: this.notifyInfo[2].duration
+              });
+          }
+        });
     },
 
-    //调用 queryTemplateComponentNameRuleRecord接口查询组件个数
+    //调用 queryTemplateComponentNameRuleRecord接口查询组件信息
     queryTemplateComponent() {
       let vm = this;
+      vm.componentInfo = [];
       //获取缓存中的templateId
-      const templateId = sessionStorage.getItem("management_templateId");
+      let templateId = sessionStorage.getItem("management_templateId");
       vm.$axios
-        .get(
-          queryTemplateComponentName + "/{templateId}?templateId=" + templateId
-        )
+        .get(queryTemplateComponent + "/{templateId}?templateId=" + templateId)
         .then(res => {
           if (res.data.code == responseCode.SUCCESSCODE) {
-            vm.componentInfo = [];
             for (let index = 0; index < res.data.data.length; index++) {
               vm.componentInfo.push({
                 id: res.data.data[index].id,
-                componentId: res.data.data[index].componentId,
-                templateId: res.data.data[index].templateId,
                 title: res.data.data[index].title
               });
             }
@@ -220,12 +231,23 @@ export default {
               "ruleSetting_templateContentId",
               vm.componentInfo[0].id
             );
+
+            // console.log(vm.componentInfo);
+            sessionStorage.setItem(
+              "ruleSetting_componentInfo",
+              JSON.stringify(vm.componentInfo)
+            );
+
+            //标识组件下拉框是否显示，0表示不显示，1表示显示
+            sessionStorage.setItem("ruleSetting_componentIsTrue", 1);
           } else if (res.data.code == responseCode.NULLCODE) {
             vm.$Notify({
               message: this.notifyInfo[0].noData,
               background: this.notifyInfo[1].orange,
               duration: this.notifyInfo[2].duration
             });
+            //标识组件下拉框是否显示，0表示不显示，1表示显示
+            sessionStorage.setItem("ruleSetting_componentIsTrue", 0);
           }
         });
     },
@@ -284,12 +306,7 @@ export default {
     toRuleTemplate(i) {
       let vm = this;
       vm.$router.push({
-        name: "ruleTemplate",
-        params: {
-          // ruleSetting: 0, //0表示从具体规则进入ruleTemplate页面
-          //ruleTemplateId: vm.templateRuleRecord[i].id, //点击的当前具体规则的id
-          //componentInfo: vm.componentInfo //根据templateId查询的组件信息
-        }
+        name: "ruleTemplate"
       });
       //0表示点击具体规则进入ruleTemplate页面
       sessionStorage.setItem("ruleSetting_addOrEditToRule", 0);
@@ -297,14 +314,6 @@ export default {
         "ruleSetting_ruleTemplateId",
         vm.templateRuleRecord[i].id
       );
-      sessionStorage.setItem(
-        "ruleSetting_ruleTemplateId",
-        vm.templateRuleRecord[i].id
-      );
-      
-      //根据templateId查询的组件
-      sessionStorage.setItem( "ruleSetting_componentInfo",JSON.stringify(vm.componentInfo));
-    
     },
 
     /**

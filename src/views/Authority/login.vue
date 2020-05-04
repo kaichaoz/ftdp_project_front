@@ -114,6 +114,9 @@ export default {
     sessionleave() {
       sessionStorage.setItem("setting_Leave", "0");
       sessionStorage.setItem("ruleTemplate_leave", "0");
+
+      // 为0时候表示登陆成功
+      sessionStorage.setItem("logIn", "0");
     },
 
     // 用户输入数据存入

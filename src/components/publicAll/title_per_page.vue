@@ -34,14 +34,14 @@
   </div>
 </template>
 <style scoped>
-.van-nav-bar {
+>>>.van-nav-bar {
   background-color: #fecd2a;
 }
-.van-nav-bar__text {
+>>>.van-nav-bar__text {
   color: #2f4f4f;
   font-size: 15px;
 }
-.van-nav-bar__title {
+>>>.van-nav-bar__title {
   font-size: 20px;
 }
 /* .commonColor {

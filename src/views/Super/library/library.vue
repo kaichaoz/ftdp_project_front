@@ -16,11 +16,11 @@
       @listenTitlePerPageLeftClick="intoManagement"
     ></titlePerPage>
     <van-pull-refresh
-      v-model="isLoading"
-      :pulling-text="pulling"
-      :loosing-text="lossing"
-      :loading-text="loading"
-      :success-text="success"
+      v-model="pullRefresh.isLoading"
+      :pulling-text="pullRefresh.pulling"
+      :loosing-text="pullRefresh.lossing"
+      :loading-text="pullRefresh.loading"
+      :success-text="pullRefresh.success"
       @refresh="onRefresh"
     >
       <!-- 可以长按拖动内容 -->
@@ -169,12 +169,6 @@ export default {
         touchStartThreshold: 3, //防止某些手机过于敏感(3~5 效果最好)
         chosenClass: "chosen" //选中之后拖拽项添加的class名(用于选中时候添加样式)
       },
-      //下拉刷新属性
-      isLoading: false, //判断当前是否正在刷新，false为否
-      pulling:"下拉即可刷新",   //下拉即可刷新
-      lossing:"释放即可刷新",   //释放即可刷新
-      loading:"加载中",   //加载中
-      success:"刷新成功"    //刷新成功
    
     };
   },
@@ -381,10 +375,11 @@ export default {
       this.componentEnterInfomationToInvalidList[0].isTrue = false;
     }, //下拉刷新功能
     onRefresh() {
+      const vm = this;
       setTimeout(() => {
-        this.isLoading = false; //刷新完成，关闭刷新功能 // location.reload();      //重新加载页面 // this.getQueryComponent();
+        vm.pullRefresh.isLoading = false; //刷新完成，关闭刷新功能 
       }, 1000); //1000代表刷新时间
-      this.getQueryComponent();
+      this.getQueryComponent();   //重新加载页面
     }
   }
 };

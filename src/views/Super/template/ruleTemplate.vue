@@ -9,47 +9,61 @@
 <template>
   <div>
     <!-- 抬头 -->
-    <div class="title commonColor">
-      <!-- <img @click="intoSetting()" class="iocName" :src="plus" alt /> -->
-      <!-- <div class="iocName" @click="savePage()">保存</div> -->
-      <div class="iocName" @click="savePage()">保存</div>
-      <div class="button" @click="returnPage()">返回</div>
-      <div class="titleName">规则设置</div>
-    </div>
+    <titlePerPage
+      :title="ruleTemplateTitle.title"
+      :leftText="ruleTemplateTitle.leftText"
+      :rightText="ruleTemplateTitle.rightText"
+      @listenTitlePerPageLeftClick="returnPage()"
+      @listenTitlePerPageRightClick="savePage()"
+    ></titlePerPage>
 
-    <!-- 内容 -->
-    <div class="ruleTemplateBody">
-      <!-- 组件下拉框 -->
-      <div>
-        <div class="managementName" v-if="dropDownComponent[0].isTrue">
-          <van-dropdown-menu active-color="#fecd2a">
-            <van-dropdown-item
-              v-model="dropDownComponent[0].value"
-              :options="dropDownOptionComponent"
-            />
-          </van-dropdown-menu>
+    <van-pull-refresh
+      v-model="pullRefresh.isLoading"
+      :pulling-text="pullRefresh.pulling"
+      :loosing-text="pullRefresh.lossing"
+      :loading-text="pullRefresh.loading"
+      :success-text="pullRefresh.success"
+      @refresh="onRefresh"
+    >
+      <!-- 内容 -->
+      <div class="ruleTemplateBody">
+        <!-- 组件下拉框 -->
+        <div>
+          <div class="managementName" v-if="dropDownComponent[0].isTrue">
+            <van-dropdown-menu active-color="#fecd2a">
+              <van-dropdown-item
+                v-model="dropDownComponent[0].value"
+                :options="dropDownOptionComponent"
+              />
+            </van-dropdown-menu>
+          </div>
+        </div>
+
+        <!-- 年级和性别下拉框 -->
+        <div v-for="(item,i) in dropDownOptionList">
+          <div class="managementName">
+            <van-dropdown-menu active-color="#fecd2a">
+              <van-dropdown-item v-model="dropDownModel[i]" :options="dropDownOptionList[i]" />
+            </van-dropdown-menu>
+          </div>
+        </div>
+
+        <!-- 输入任意文本 -->
+        <div
+          style="margin-top:30px"
+          v-for="(item,i) in fieldValue"
+          v-if="fieldValue[i].isTrue"
+          @blur="notFocus()"
+        >
+          <van-field
+            type="text"
+            style="border-radius: 5px"
+            v-model="fieldValue[i].textValue"
+            :label="fieldText[i].textName"
+          />
         </div>
       </div>
-
-      <!-- 年级和性别下拉框 -->
-      <div v-for="(item,i) in dropDownOptionList">
-        <div class="managementName">
-          <van-dropdown-menu active-color="#fecd2a">
-            <van-dropdown-item v-model="dropDownModel[i]" :options="dropDownOptionList[i]" />
-          </van-dropdown-menu>
-        </div>
-      </div>
-
-      <!-- 输入任意文本 -->
-      <div style="margin-top:30px" v-for="(item,i) in fieldValue" v-if="fieldValue[i].isTrue">
-        <van-field
-          type="text"
-          style="border-radius: 5px"
-          v-model="fieldValue[i].textValue"
-          :label="fieldText[i].textName"
-        />
-      </div>
-    </div>
+    </van-pull-refresh>
   </div>
 </template>
 <style scoped>
@@ -153,12 +167,21 @@ import {
 } from "../../../api/Super/template/ruleTemplate"; //引入{初始化模板规则页面,初始化模板页面一条规则}接口的后端地址
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { Loading } from "vant";
+import titlePerPage from "../../../components/publicAll/title_per_page"; // title组件
 export default {
   computed: {
-    ...mapState(["notifyInfo", ""])
+    ...mapState(["notifyInfo", "pullRefresh"])
+  },
+  components: {
+    titlePerPage
   },
   data() {
     return {
+      ruleTemplateTitle: {
+        title: "规则设置",
+        leftText: "返回",
+        rightText: "保存"
+      },
       // 年级、性别下拉框当前值
       dropDownModel: [],
 
@@ -201,7 +224,8 @@ export default {
       currentComponent: "",
       //页面文本框数量计数
       fieldNumer: "",
-      resData: ""
+      resData: "",
+      isModify: 0
     };
   },
 
@@ -212,7 +236,15 @@ export default {
     this.loaderRuleTemplate();
   },
   methods: {
-//==========================================初始化加载当前页面================================================
+    //下拉刷新
+    onRefresh() {
+      const vm = this;
+      setTimeout(() => {
+        vm.pullRefresh.isLoading = false; //刷新完成，关闭刷新功能
+      }, 1000); //1000代表刷新时间
+      this.loaderRuleTemplate(); //重新加载页面
+    },
+    //==========================================初始化加载当前页面================================================
 
     //初始化加载页面
     loaderRuleTemplate() {
@@ -628,6 +660,10 @@ export default {
      */
     returnPage() {
       this.$router.push({ name: "ruleSetting" });
+    },
+    //=================================================判断当前页面数据是否修改===================================================
+    notFocus() {
+      vm.isModify = 1;
     },
 
     //=================================================保存当前页面===================================================

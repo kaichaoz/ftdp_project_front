@@ -102,6 +102,30 @@ export default {
       }
     };
   },
+
+  watch: {
+    title(newVal) {
+      this.titlePerPageData.title = newVal;
+    },
+    leftText(newVal) {
+      this.titlePerPageData.leftText = newVal;
+    },
+    rightText(newVal) {
+      this.titlePerPageData.rightText = newVal;
+    },
+    iconName(newVal) {
+      this.titlePerPageData.iconName = newVal;
+    },
+    iconSize(newVal) {
+      this.titlePerPageData.iconSize = newVal;
+    },
+    iconColor(newVal) {
+      this.titlePerPageData.iconColor = newVal;
+    },
+    iconIsTrue(newVal) {
+      this.titlePerPageData.iconIsTrue = newVal;
+    }
+  },
   mounted() {
     this.start();
   },

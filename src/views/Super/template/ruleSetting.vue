@@ -12,21 +12,39 @@
 <template>
   <div>
     <!-- 抬头 -->
-    <div class="title commonColor">
+    <titlePerPage
+      :title="ruleSettingTitle.title"
+      :leftText="ruleSettingTitle.leftText"
+      :iconName="ruleSettingTitle.iconName"
+      :iconIsTrue="ruleSettingTitle.iconIsTrue"
+      @listenTitlePerPageLeftClick="intoModel()"
+      @listenTitlePerPageRightClick="intoSetting()"
+    ></titlePerPage>
+
+    <!-- 抬头 -->
+    <!-- <div class="title commonColor">
       <img @click="intoSetting()" class="iocName" :src="plus" alt />
       <div class="button" @click="intoModel()">编辑模板</div>
       <div class="titleName" v-text="templateName + '规则'"></div>
-    </div>
-
-    <!-- 内容 -->
-    <div class="ruleSettingBody" v-for="(item,i) in templateRuleRecord">
-      <div
-        @click="toRuleTemplate(i)"
-        v-touch:long="(e)=>touchin(i)"
-        class="toRuleTemplateBut"
-        v-text="templateRuleRecord[i].templateRuleTitle"
-      ></div>
-    </div>
+    </div>-->
+    <van-pull-refresh
+      v-model="pullRefresh.isLoading"
+      :pulling-text="pullRefresh.pulling"
+      :loosing-text="pullRefresh.lossing"
+      :loading-text="pullRefresh.loading"
+      :success-text="pullRefresh.success"
+      @refresh="onRefresh"
+    >
+      <!-- 内容 -->
+      <div class="ruleSettingBody" v-for="(item,i) in templateRuleRecord">
+        <div
+          @click="toRuleTemplate(i)"
+          v-touch:long="(e)=>touchin(i)"
+          class="toRuleTemplateBut"
+          v-text="templateRuleRecord[i].templateRuleTitle"
+        ></div>
+      </div>
+    </van-pull-refresh>
   </div>
 </template>
 <style scoped>
@@ -83,17 +101,26 @@ import {
 } from "../../../api/Super/template/ruleSetting"; //引入{初始化模板规则页面}接口的后端地址
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { queryTemplateComponent } from "../../../api/Super/template/ruleTemplate"; //引入{初始化模板规则页面,初始化模板页面一条规则}接口的后端地址
+import titlePerPage from "../../../components/publicAll/title_per_page"; // title组件
+
 export default {
   computed: {
-    ...mapState(["notifyInfo", ""])
+    ...mapState(["notifyInfo", "pullRefresh", ""])
+  },
+  components: {
+    titlePerPage
   },
   data() {
     return {
-      plus: require("../../../assets/super/template/plus.png"), // 底部加号图片
-
       //编辑模板页面添加的模板Name
       templateName: "",
-
+      ruleSettingTitle: {
+        title: "规则",
+        leftText: "编辑模板",
+        iconName: "plus",
+        iconIsTrue: true
+      },
+      plus: require("../../../assets/super/template/plus.png"), // 底部加号图片
       //页面加载规则数据,id：具体规则id，templateRuleTitle：具体规则title
       templateRuleRecord: [],
 
@@ -131,8 +158,24 @@ export default {
   },
   mounted() {
     this.start();
+    this.initialization();
   },
   methods: {
+    //下拉刷新
+    onRefresh() {
+      const vm = this;
+      setTimeout(() => {
+        vm.pullRefresh.isLoading = false; //刷新完成，关闭刷新功能
+      }, 1000); //1000代表刷新时间
+      this.start(); //重新加载页面
+    },
+
+    initialization() {
+      //获取缓存中的 templateName
+      this.templateName = sessionStorage.getItem("management_templateName");
+      this.ruleSettingTitle.title = this.templateName + "规则";
+    },
+
     //==========================================初始化加载当前页面================================================
 
     /**
@@ -181,11 +224,10 @@ export default {
      */
     queryTemplateRule() {
       let vm = this;
-      // vm.templateRuleRecord = [];
+      vm.templateRuleRecord = [];
       //获取缓存中的templateId
       const templateId = sessionStorage.getItem("management_templateId");
-      //获取缓存中的 templateName
-      vm.templateName = sessionStorage.getItem("management_templateName");
+
       vm.$axios
         .get(queryTemplateRecord + "/{templateId}?templateId=" + templateId)
         .then(res => {
@@ -384,7 +426,6 @@ export default {
 
                   //删除页面长按模板规则
                   vm.templateRuleRecord.splice(i, 1);
-                  console.log(vm.templateRuleRecord);
                 });
             })
             .catch(() => {

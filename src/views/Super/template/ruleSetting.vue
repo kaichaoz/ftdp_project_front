@@ -95,12 +95,7 @@ export default {
       templateName: "",
 
       //页面加载规则数据,id：具体规则id，templateRuleTitle：具体规则title
-      templateRuleRecord: [
-        {
-          id: "",
-          templateRuleTitle: ""
-        }
-      ],
+      templateRuleRecord: [],
 
       // 传递给ruleTemplate中输入框数据
       fieldList: [
@@ -138,6 +133,8 @@ export default {
     this.start();
   },
   methods: {
+    //==========================================初始化加载当前页面================================================
+
     /**
      * @description: 定时器-加载页面模板规则先访问缓存，获取不到访问数据库查询
      * @param ：无
@@ -174,83 +171,6 @@ export default {
         }, 500);
       }
     },
-    // 抬头左侧按钮跳转到组件管理
-    intoModel() {
-      this.$router.push({ name: "makeForm" });
-    },
-
-    // 抬头右侧加号按钮跳转到模板设置
-    intoSetting() {
-      let vm = this;
-      let templateId = sessionStorage.getItem("management_templateId");
-      vm.$axios
-        .get(queryTemplateComponent + "/{templateId}?templateId=" + templateId)
-        .then(res => {
-          switch (res.data.code) {
-            case responseCode.SUCCESSCODE:
-              vm.$router.push({
-                name: "ruleTemplate"
-              });
-              //1表示点击加号进入ruleTemplate页面
-              sessionStorage.setItem("ruleSetting_addOrEditToRule", 1);
-              break;
-            case responseCode.NULLCODE:
-              vm.$Notify({
-                message: this.notifyInfo[0].noTemplateRule,
-                background: this.notifyInfo[1].orange,
-                duration: this.notifyInfo[2].duration
-              });
-              break;
-            default:
-              vm.$Notify({
-                message: this.notifyInfo[0].failed,
-                background: this.notifyInfo[1].orange,
-                duration: this.notifyInfo[2].duration
-              });
-          }
-        });
-    },
-
-    //调用 queryTemplateComponentNameRuleRecord接口查询组件信息
-    queryTemplateComponent() {
-      let vm = this;
-      vm.componentInfo = [];
-      //获取缓存中的templateId
-      let templateId = sessionStorage.getItem("management_templateId");
-      vm.$axios
-        .get(queryTemplateComponent + "/{templateId}?templateId=" + templateId)
-        .then(res => {
-          if (res.data.code == responseCode.SUCCESSCODE) {
-            for (let index = 0; index < res.data.data.length; index++) {
-              vm.componentInfo.push({
-                id: res.data.data[index].id,
-                title: res.data.data[index].title
-              });
-            }
-            sessionStorage.setItem(
-              "ruleSetting_templateContentId",
-              vm.componentInfo[0].id
-            );
-
-            // console.log(vm.componentInfo);
-            sessionStorage.setItem(
-              "ruleSetting_componentInfo",
-              JSON.stringify(vm.componentInfo)
-            );
-
-            //标识组件下拉框是否显示，0表示不显示，1表示显示
-            sessionStorage.setItem("ruleSetting_componentIsTrue", 1);
-          } else if (res.data.code == responseCode.NULLCODE) {
-            vm.$Notify({
-              message: this.notifyInfo[0].noData,
-              background: this.notifyInfo[1].orange,
-              duration: this.notifyInfo[2].duration
-            });
-            //标识组件下拉框是否显示，0表示不显示，1表示显示
-            sessionStorage.setItem("ruleSetting_componentIsTrue", 0);
-          }
-        });
-    },
 
     /**
      * @description: 进入模板规则页面加载数据
@@ -261,7 +181,7 @@ export default {
      */
     queryTemplateRule() {
       let vm = this;
-      vm.templateRuleRecord = [];
+      // vm.templateRuleRecord = [];
       //获取缓存中的templateId
       const templateId = sessionStorage.getItem("management_templateId");
       //获取缓存中的 templateName
@@ -302,7 +222,111 @@ export default {
       vm.queryTemplateComponent();
     },
 
-    // 点击具体规则进入编辑模板
+    /**
+     * @description: 调用 queryTemplateComponentNameRuleRecord接口查询组件信息
+     * @param ：无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date:2020年5月2日11:48:49
+     */
+    queryTemplateComponent() {
+      let vm = this;
+      vm.componentInfo = [];
+      //获取缓存中的templateId
+      let templateId = sessionStorage.getItem("management_templateId");
+      vm.$axios
+        .get(queryTemplateComponent + "/{templateId}?templateId=" + templateId)
+        .then(res => {
+          if (res.data.code == responseCode.SUCCESSCODE) {
+            for (let index = 0; index < res.data.data.length; index++) {
+              vm.componentInfo.push({
+                id: res.data.data[index].id,
+                title: res.data.data[index].title
+              });
+            }
+            sessionStorage.setItem(
+              "ruleSetting_templateContentId",
+              vm.componentInfo[0].id
+            );
+
+            // console.log(vm.componentInfo);
+            sessionStorage.setItem(
+              "ruleSetting_componentInfo",
+              JSON.stringify(vm.componentInfo)
+            );
+
+            //标识组件下拉框是否显示，0表示不显示，1表示显示
+            sessionStorage.setItem("ruleSetting_componentIsTrue", 1);
+          } else if (res.data.code == responseCode.NULLCODE) {
+            vm.$Notify({
+              message: this.notifyInfo[0].noData,
+              background: this.notifyInfo[1].orange,
+              duration: this.notifyInfo[2].duration
+            });
+            //标识组件下拉框是否显示，0表示不显示，1表示显示
+            sessionStorage.setItem("ruleSetting_componentIsTrue", 0);
+          }
+        });
+    },
+
+    //=================================================页面路由跳转===================================================
+
+    /**
+     * @description: 抬头左侧按钮跳转到组件管理
+     * @param ：无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date:2020年5月2日11:48:49
+     */
+    intoModel() {
+      this.$router.push({ name: "makeForm" });
+    },
+
+    /**
+     * @description: 抬头右侧加号按钮跳转到模板设置
+     * @param ：无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date:2020年5月2日11:48:49
+     */
+    intoSetting() {
+      let vm = this;
+      let templateId = sessionStorage.getItem("management_templateId");
+      vm.$axios
+        .get(queryTemplateComponent + "/{templateId}?templateId=" + templateId)
+        .then(res => {
+          switch (res.data.code) {
+            case responseCode.SUCCESSCODE:
+              vm.$router.push({
+                name: "ruleTemplate"
+              });
+              //1表示点击加号进入ruleTemplate页面
+              sessionStorage.setItem("ruleSetting_addOrEditToRule", 1);
+              break;
+            case responseCode.NULLCODE:
+              vm.$Notify({
+                message: this.notifyInfo[0].noTemplateRule,
+                background: this.notifyInfo[1].orange,
+                duration: this.notifyInfo[2].duration
+              });
+              break;
+            default:
+              vm.$Notify({
+                message: this.notifyInfo[0].failed,
+                background: this.notifyInfo[1].orange,
+                duration: this.notifyInfo[2].duration
+              });
+          }
+        });
+    },
+
+    /**
+     * @description: 点击具体规则进入编辑模板
+     * @param ：无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date:2020年5月2日11:48:49
+     */
     toRuleTemplate(i) {
       let vm = this;
       vm.$router.push({
@@ -315,7 +339,7 @@ export default {
         vm.templateRuleRecord[i].id
       );
     },
-
+    //==============================================性别转换标识方法+长按删除=======================================
     /**
      * @description: 将后端性别标识转换为文字
      * @param ：{num:后端sex标识}

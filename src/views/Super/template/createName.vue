@@ -12,7 +12,7 @@
 
 <template>
   <div>
-     <titlePerPage
+    <titlePerPage
       :title="createNameTitle.title"
       :leftText="createNameTitle.leftText"
       :rightText="createNameTitle.rightText"
@@ -23,45 +23,59 @@
       <div class="buttonLeft" @click="returnPage()">返回</div>
       <div class="buttonRight" @click="nextStep()">下一步</div>
       <div class="titleName">编辑模板</div>
-    </div> -->
+    </div>-->
+    <van-pull-refresh
+      v-model="pullRefresh.isLoading"
+      :pulling-text="pullRefresh.pulling"
+      :loosing-text="pullRefresh.lossing"
+      :loading-text="pullRefresh.loading"
+      :success-text="pullRefresh.success"
+      @refresh="onRefresh"
+    >
+      <!-- 
+       下拉刷新
+       pulling：下拉显示内容，loosing：释放显示内容，loading:加载显示内容，success:刷新成功显示内容
+       @refresh：事件
+      -->
 
-    <div class="body">
-      <!-- 输入框： -->
-      <div class="managementName">
-        <van-cell-group>
-          <van-field v-model="createNameDataList.managementNamevalue" placeholder="请输入模板名称" />
-        </van-cell-group>
+      <div class="body">
+        <!-- 输入框： -->
+        <div class="managementName">
+          <van-cell-group>
+            <van-field v-model="createNameDataList.managementNamevalue" placeholder="请输入模板名称" />
+          </van-cell-group>
+        </div>
+        <!-- 下拉框：分组： :title="createNameDataList.title" @change="changeDevelop"-->
+        <div class="managementName">
+          <van-dropdown-menu active-color="#fecd2a">
+            <van-dropdown-item
+              v-model="createNameDataList.groupValue"
+              :options="createNameDataList.groupOption"
+            />
+          </van-dropdown-menu>
+        </div>
+        <!-- 下拉框：使用者默认自己 -->
+        <div class="managementName">
+          <van-dropdown-menu active-color="#fecd2a">
+            <van-dropdown-item
+              v-model="createNameDataList.personValue"
+              :options="createNameDataList.personOption"
+            />
+          </van-dropdown-menu>
+        </div>
+        <!-- 备注： -->
+        <div class="remark">
+          <div class="remarkLabel">表单备注:</div>
+          <div
+            id="editer"
+            contenteditable="canEdit"
+            class="remarkTxt"
+            v-text="createNameDataList.remarkTxt"
+            @blur="changeText()"
+          ></div>
+        </div>
       </div>
-      <!-- 下拉框：分组： :title="createNameDataList.title" @change="changeDevelop"-->
-      <div class="managementName">
-        <van-dropdown-menu active-color="#fecd2a">
-          <van-dropdown-item
-            v-model="createNameDataList.groupValue"
-            :options="createNameDataList.groupOption"
-          />
-        </van-dropdown-menu>
-      </div>
-      <!-- 下拉框：使用者默认自己 -->
-      <div class="managementName">
-        <van-dropdown-menu active-color="#fecd2a">
-          <van-dropdown-item
-            v-model="createNameDataList.personValue"
-            :options="createNameDataList.personOption"
-          />
-        </van-dropdown-menu>
-      </div>
-      <!-- 备注： -->
-      <div class="remark">
-        <div class="remarkLabel">表单备注:</div>
-        <div
-          id="editer"
-          contenteditable="canEdit"
-          class="remarkTxt"
-          v-text="createNameDataList.remarkTxt"
-          @blur="changeText()"
-        ></div>
-      </div>
-    </div>
+    </van-pull-refresh>
   </div>
 </template>
 
@@ -157,18 +171,19 @@ export default {
   computed: {
     ...mapState(["management_groupName_List"]),
     // 展开运算符，将全局变量映射为自己界面的变量
-    ...mapState(["notifyInfo", ""])
+    ...mapState(["notifyInfo", "pullRefresh"])
+
   },
   components: {
     // 组件
-    titlePerPage,
+    titlePerPage
   },
   data() {
     return {
       createNameTitle: {
-        title:"编辑模板",
-        leftText:"返回",
-        rightText:"下一步",
+        title: "编辑模板",
+        leftText: "返回",
+        rightText: "下一步"
       },
       // 当前页面所有数据
       createNameDataList: {
@@ -257,9 +272,12 @@ export default {
         this.createNameDataList.groupValue
       );
       // 存储groupID
-      sessionStorage.setItem("management_templateGroupId", groupIdNow); 
+      sessionStorage.setItem("management_templateGroupId", groupIdNow);
       //备注
-      sessionStorage.setItem("management_postScript", this.createNameDataList.remarkTxt);
+      sessionStorage.setItem(
+        "management_postScript",
+        this.createNameDataList.remarkTxt
+      );
     },
 
     start() {
@@ -293,10 +311,11 @@ export default {
      * @Date: 2020年4月24日19:31:53
      */
     jumpToPageLoading() {
-
       // ------------------获取上一页面数据 -----------------------
       // 获取ID
-      this.createNameDataList.templateId = sessionStorage.getItem("management_templateId");
+      this.createNameDataList.templateId = sessionStorage.getItem(
+        "management_templateId"
+      );
       // 接收模板名称
       this.createNameDataList.managementNamevalue = sessionStorage.getItem(
         "management_templateName"
@@ -317,11 +336,12 @@ export default {
       groupIdList = groupIdList.split(",");
 
       // 接收模板备注
-      this.createNameDataList.remarkTxt = sessionStorage.getItem("management_postScript");
+      this.createNameDataList.remarkTxt = sessionStorage.getItem(
+        "management_postScript"
+      );
 
       // 接收management进入：0表示从加号，1表示从编辑--因为不调取后端当前无用
       const managementRoute = sessionStorage.getItem("management_route");
-
 
       // --------------------从缓存获取数据存储-----------------------
       // 将下拉框内容清空并存储
@@ -355,6 +375,14 @@ export default {
       var temp = document.getElementById("editer").innerText; // 获取文本框内容
       temp = escape.htmlEncode(temp); // 将特殊字符转格式
       return temp;
+    },
+
+    onRefresh() {
+      const vm = this;
+      setTimeout(() => {
+        vm.pullRefresh.isLoading = false; //刷新完成，关闭刷新功能
+      }, 1000); //1000代表刷新时间
+      this.jumpToPageLoading(); //重新加载页面
     }
   }
 };

@@ -14,12 +14,18 @@
       :rightText="settingTitle.rightText"
       @listenTitlePerPageLeftClick="intoModel"    
     ></titlePerPage>
-
-
     <!-- <div class="title commonColor">
       <div class="button" @click="intoModel()">模板管理</div>
       <div class="titleName">模板设置</div>
     </div> -->
+
+    <van-pull-refresh
+      v-model="pullRefresh.isLoading"
+      :pulling-text="pullRefresh.pulling"
+      :loosing-text="pullRefresh.lossing"
+      :loading-text="pullRefresh.loading"
+      :success-text="pullRefresh.success"
+      @refresh="onRefresh" >
 
     <div class="body">
       <div class="nameTitle">分组设置</div>
@@ -47,6 +53,7 @@
       @listenToChildSetting="receivePopup"
       @listenToSettingInfo="receivePopupInfo"
     ></popup>
+    </van-pull-refresh>
   </div>
 </template>
 <style scoped>
@@ -138,7 +145,7 @@ import { mapState } from "vuex"; // 全局调取：可使用this.
 export default {
   computed: {
     // 展开运算符，将全局变量映射为自己界面的变量
-    ...mapState(["notifyInfo", ""]),// 映射store变量notigyInfo为当前页面变量，直接使用this即可
+    ...mapState(["notifyInfo", "pullRefresh"]),// 映射store变量notigyInfo为当前页面变量，直接使用this即可
     ...mapState(["TipsStore", ""]), // 映射store变量TipsStore为当前页面变量，直接使用this即可
 
   },
@@ -437,6 +444,14 @@ export default {
     // 接收输入弹框中修改的内容
     receivePopupInfo(newInfo, newI) {
       this.projectName[newI].templateGroupName = newInfo;
+    },
+
+    onRefresh() {
+      const vm = this;
+      setTimeout(() => {
+        vm.pullRefresh.isLoading = false; //刷新完成，关闭刷新功能
+      }, 1000); //1000代表刷新时间
+      this.queryTemplateGroupGet(); //重新加载页面
     }
   }
 };

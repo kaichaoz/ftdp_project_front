@@ -148,7 +148,8 @@
 import { mapState } from "vuex"; //全局调取，可queryTemplateComponentName使用this
 import {
   addTemplateRuleRecord,
-  queryTemplateRuleRecord
+  queryTemplateRuleRecord,
+  queryTemplateComponent
 } from "../../../api/Super/template/ruleTemplate"; //引入{初始化模板规则页面,初始化模板页面一条规则}接口的后端地址
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { Loading } from "vant";
@@ -194,10 +195,10 @@ export default {
       ],
 
       //存放组件Id
-      templateContentId: "",
+      // templateContentId: "",
 
-      // 组件下拉框的值
-      dropDownOptionComponent: [{ text: "", value: 0 }],
+      // 组件下拉框所有值
+      dropDownOptionComponent: [{ text: "", value: 0, id: "" }],
 
       // 组件下拉框当前值以及是否显示
       dropDownComponent: [{ isTrue: "", text: "", value: "" }],
@@ -206,7 +207,11 @@ export default {
       currentComponent: "",
 
       //页面文本框数量计数
-      fieldNumer: ""
+      fieldNumer: "",
+
+      resData: ""
+
+      // ruleTemplateId
     };
   },
 
@@ -217,7 +222,14 @@ export default {
     this.loaderRuleTemplate();
   },
   methods: {
-    //点击具体规则加载当前页面
+    //==============================================================================加载当前页面
+    /**
+     * @description: 点击具体规则加载当前页面
+     * @param ：无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date:2020年5月3日16:10:32
+     */
     concreteRuleToThis() {
       let vm = this;
       let arrayFieldData = []; //用于存放用户输入文本框的值
@@ -231,8 +243,9 @@ export default {
         )
         .then(res => {
           if (res.data.code == responseCode.SUCCESSCODE) {
-            let finData = res.data.data[0]; //后端返回数据
-            //显示文本框数据
+            let finData = res.data.data[0];
+
+            //=================渲染输入框数据
             arrayFieldData.push(
               finData.startRange,
               finData.endRange,
@@ -240,8 +253,6 @@ export default {
               finData.weight,
               finData.level
             );
-            //渲染输入框数据
-
             for (let index = 0; index < arrayFieldData.length; index++) {
               vm.fieldValue.push({
                 isTrue: "true",
@@ -249,38 +260,45 @@ export default {
               });
             }
 
-            //渲染年级性别 下拉框
+            //================渲染年级性别 下拉框
             vm.dropDownModel.push(
               this.exchangeDropDown(finData.grade),
               finData.sex
             );
 
-            //获取组件下拉框所有选项
-            vm.dropDownOptionComponent = [];
-            let componentInfo = JSON.parse(sessionStorage.getItem("ruleSetting_componentInfo"));
-            for (
-              let index = 0;
-              index < componentInfo.length;
-              index++
-            ) {
-              vm.dropDownOptionComponent.push({
-                text: componentInfo[index].title,
-                value: index
-              });
+            //================渲染组件下拉框，分为两种情况，显示(1)/不显示(0)组件下拉框
+            let componentIsTrue = sessionStorage.getItem(
+              "ruleSetting_componentIsTrue"
+            );
 
-              //判断组件下拉框中选项与当前组件默认值相等，返回下拉框中值的索引
-              if (vm.dropDownOptionComponent[index].text == finData.title) {
-                vm.currentComponent = vm.dropDownOptionComponent[index].value;
+            if (componentIsTrue == 0) {
+              vm.dropDownDisplay(2);
+            } else if (componentIsTrue == 1) {
+              vm.dropDownDisplay(3);
+              //组件下拉框所有选项
+              vm.dropDownComponentOption();
+              //点击具体规则组件下拉框默认值显示
+              // ??????????????????????????????????????????????????????????
+              console.log(vm.dropDownOptionComponent.length);
+
+              for (
+                let index = 0;
+                index < vm.dropDownOptionComponent.length;
+                index++
+              ) {
+                if (
+                  res.data.data[0].templateContentId ==
+                  vm.dropDownOptionComponent[index].id
+                ) {
+                  console.log("jjejwuiffuhu");
+
+                  vm.dropDownComponent[0].value =
+                    vm.dropDownOptionComponent[index].value;
+                }
               }
+              // vm.dropDownComponent[0].value =
+              //   res.data.data[0].templateContentId;
             }
-
-            //渲染组件下拉框默认值
-            vm.dropDownComponent = [];
-            vm.dropDownComponent.push({
-              isTrue: "true",
-              text: finData.title,
-              value: vm.currentComponent
-            });
           } else if (res.data.code == responseCode.NULLCODE) {
             vm.$Notify({
               message: this.notifyInfo[0].noData,
@@ -297,13 +315,82 @@ export default {
         });
     },
 
+    //组件下拉框默认值
+    componentDefaultValue() {},
+
+    /**
+     * @description: 组件下拉框所有选项
+     * @param ：无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date:2020年5月3日16:11:36
+     */
+    dropDownComponentOption() {
+      let vm = this;
+      vm.$axios
+        .get(
+          queryTemplateComponent +
+            "/{templateId}?templateId=" +
+            sessionStorage.getItem("management_templateId")
+        )
+        .then(res => {
+          if (res.data.code == responseCode.SUCCESSCODE) {
+            //===============所有组件下拉框选项
+            vm.dropDownOptionComponent = [];
+            for (let index = 0; index < res.data.data.length; index++) {
+              vm.dropDownOptionComponent.push({
+                text: res.data.data[index].title,
+                value: index,
+                id: res.data.data[index].id
+              });
+            }
+          }
+          console.log(vm.dropDownOptionComponent.length);
+        });
+    },
+
+    /**
+     * @description: 点击加号加载页面
+     * @param ：无
+     * @return: 无
+     * @author: 付媛媛
+     * @Date:2020年5月3日16:11:36
+     */
+    plusToThis() {
+      let vm = this;
+
+      //年级、性别下拉框赋默认值
+      vm.dropDownModel.push(0, 0);
+
+      //此模板所有输入组件信息
+      let component = JSON.parse(
+        sessionStorage.getItem("ruleSetting_componentInfo")
+      );
+
+      //case 1 : 1个组件 : 2个下拉框+5个输入框
+      if (component.length == 1) {
+        vm.dropDownDisplay(2);
+        vm.fieldTextDisplay(5);
+      } else if (component.length == 2) {
+        //case2 ：2个组件 : 2个下拉框+4个输入框
+        vm.dropDownDisplay(2);
+        vm.fieldTextDisplay(4);
+      } else {
+        //case3 ：3个组件 : 3个下拉框+5个输入框
+        vm.dropDownDisplay(3);
+        vm.dropDownComponent[0].value = 0;
+        vm.dropDownComponentOption();
+        vm.fieldTextDisplay(5);
+      }
+    },
+
     //显示下拉框
     dropDownDisplay(num) {
       let vm = this;
       if (num == 2) {
         vm.dropDownComponent.isTrue = "false";
       } else {
-        vm.dropDownComponent.isTrue = "true";
+        vm.dropDownComponent[0].isTrue = "true";
       }
     },
 
@@ -331,37 +418,6 @@ export default {
       }
     },
 
-    //当组件数为2时，计算值
-    calcuValue() {
-      let vm = this;
-      //第一个输入框：开始范围的值
-      let inputStart = vm.fieldValue[0].textValue;
-      //第二个输入框：结束范围的值
-      let inputEnd = vm.fieldValue[1].textValue;
-      let value = inputEnd / (((inputStart / 100) * inputStart) / 100);
-      return value;
-    },
-
-    //点击加号加载页面
-    plusToThis() {
-      let vm = this;
-      //年级、性别下拉框赋默认值
-      vm.dropDownModel.push(0, 0);
-      let component = JSON.parse(sessionStorage.getItem("ruleSetting_componentInfo"));
-      //case 1 :  2个下拉框+5个输入框
-      if (component.length == 1) {
-        vm.dropDownDisplay(2);
-        vm.fieldTextDisplay(5);
-      } else if (component.length == 2) {
-        //case2 ： 2个下拉框+4个输入框
-        vm.dropDownDisplay(2);
-        vm.fieldTextDisplay(4);
-      } else {
-        //case3 ： 3个下拉框+5个输入框
-        vm.dropDownDisplay(3);
-        vm.fieldTextDisplay(5);
-      }
-    },
     //初始化加载页面
     loaderRuleTemplate() {
       //0表示点击具体规则进入当前页面
@@ -428,8 +484,13 @@ export default {
     isEmpty() {
       let vm = this;
       let empty = false;
+
+      //当前模板组件信息
+      let component = JSON.parse(
+        sessionStorage.getItem("ruleSetting_componentInfo")
+      );
       //vm.fieldNumer ：表示当前页面文本框的数量
-      for (let index = 0; index < vm.fieldNumer; index++) {
+      for (let index = 0; index < component.length; index++) {
         if (
           vm.fieldValue[index].textValue == undefined ||
           vm.fieldValue[index].textValue == ""
@@ -456,9 +517,13 @@ export default {
     //判断文本框是否为数字
     isNumber() {
       let vm = this;
+      //当前模板组件信息
+      let component = JSON.parse(
+        sessionStorage.getItem("ruleSetting_componentInfo")
+      );
       var numReg = /^[+-]?((\d*(\.\d{1,2})$)|(\d+$))/;
       var numRe = new RegExp(numReg);
-      for (let index = 0; index < vm.fieldNumer - 1; index++) {
+      for (let index = 0; index < component.length - 1; index++) {
         if (!numRe.test(vm.fieldValue[index].textValue)) {
           vm.$Notify({
             message: this.notifyInfo[0].inputNumber,
@@ -471,12 +536,8 @@ export default {
       return true;
     },
 
-    //点击保存判断数据是否重复提交
-    // isRepeatSave(){
-
-    // },
-
     // 抬头右侧按钮保存页面数据
+
     savePage() {
       let vm = this;
 
@@ -484,15 +545,23 @@ export default {
       let templateConId = sessionStorage.getItem(
         "ruleSetting_templateContentId"
       );
+
+      //此模板所有输入组件信息
+      let component = JSON.parse(
+        sessionStorage.getItem("ruleSetting_componentInfo")
+      );
+
       let ruleTemplateId;
 
       //0表示点击具体规则进入当前页面
       if (sessionStorage.getItem("ruleSetting_addOrEditToRule") == 0) {
         ruleTemplateId = sessionStorage.getItem("ruleSetting_ruleTemplateId");
-        //1表示点击加号进入当前页面
+        // 1表示点击加号进入当前页面
       } else if (sessionStorage.getItem("ruleSetting_addOrEditToRule") == 1) {
-        ruleTemplateId = "";
+        ruleTemplateId = vm.resData;
       }
+
+      console.log(component.length == 2 ? " " : this.fieldValue[2].textValue);
 
       let model = {
         endRange: this.fieldValue[1].textValue,
@@ -501,7 +570,8 @@ export default {
         isDelete: 0,
         level: this.fieldValue[4].textValue,
         operator: "admin",
-        originalScore: this.fieldValue[2].textValue,
+        originalScore:
+          component.length == 2 ? "" : this.fieldValue[2].textValue,
         sex: this.dropDownModel[1],
         startRange: this.fieldValue[0].textValue,
         templateContentId: templateConId,
@@ -519,6 +589,7 @@ export default {
               background: this.notifyInfo[1].blue,
               duration: this.notifyInfo[2].duration
             });
+            vm.resData = res.data.data;
 
             sessionStorage.setItem("ruleTemplate_leave", "0");
           } else {
@@ -528,10 +599,6 @@ export default {
               duration: this.notifyInfo[2].duration
             });
           }
-          //保存成功后输入框置为空
-          // for (let index = 0; index < vm.fieldNumer; index++) {
-          //   vm.fieldValue[index].textValue = "";
-          // }
         });
       }
     },

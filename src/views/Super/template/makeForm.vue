@@ -21,66 +21,75 @@
       @listenTitlePerPageRightClick="nextStep"
     ></titlePerPage>
 
-    <!-- 页面框内容 -->
-    <div id="addTemplate" class="allTemplate" v-touch:right="eventFun">
-      <div v-for="(item ,i) in templateList ">
-        <!-- user组件 -->
-        <div
-          :id="'userComDiv' + i"
-          v-if="templateList[i].componentId ==libraryId.userInfoList.user"
-        >
-          <img @click="spliceList(i)" :src="cross" alt />
-          <div @click="isTrue(i)">
-            <user :isTrueList="templateList[i].templateArray" class="publicAll user"></user>
+    <van-pull-refresh
+      v-model="pullRefresh.isLoading"
+      :pulling-text="pullRefresh.pulling"
+      :loosing-text="pullRefresh.lossing"
+      :loading-text="pullRefresh.loading"
+      :success-text="pullRefresh.success"
+      @refresh="onRefresh"
+    >
+      <!-- 页面框内容 -->
+      <div id="addTemplate" class="allTemplate" v-touch:right="eventFun">
+        <div v-for="(item ,i) in templateList ">
+          <!-- user组件 -->
+          <div
+            :id="'userComDiv' + i"
+            v-if="templateList[i].componentId ==libraryId.userInfoList.user"
+          >
+            <img @click="spliceList(i)" :src="cross" alt />
+            <div @click="isTrue(i)">
+              <user :isTrueList="templateList[i].templateArray" class="publicAll user"></user>
+            </div>
+
+            <!-- 修改user页面底部弹框 -->
+            <siteUser
+              :siteUserShowP="templateList[i].isTrue"
+              :isTrueListP="templateList[i].templateArray"
+              @listenUserToMakeForm="listenUser"
+            ></siteUser>
           </div>
 
-          <!-- 修改user页面底部弹框 -->
-          <siteUser
-            :siteUserShowP="templateList[i].isTrue"
-            :isTrueListP="templateList[i].templateArray"
-            @listenUserToMakeForm="listenUser"
-          ></siteUser>
-        </div>
-
-        <!-- infoShow组件 -->
-        <div
-          :id="'infoShowComDiv' + i"
-          v-if="templateList[i].componentId ==libraryId.theMessageStatesList.infoShow"
-        >
-          <img @click="spliceList(i)" :src="cross" alt />
-          <div @click="isTrue(i)">
-            <infoShow :infoShowListP="templateList[i].templateArray" class="publicAll infoShow"></infoShow>
+          <!-- infoShow组件 -->
+          <div
+            :id="'infoShowComDiv' + i"
+            v-if="templateList[i].componentId ==libraryId.theMessageStatesList.infoShow"
+          >
+            <img @click="spliceList(i)" :src="cross" alt />
+            <div @click="isTrue(i)">
+              <infoShow :infoShowListP="templateList[i].templateArray" class="publicAll infoShow"></infoShow>
+            </div>
+            <!-- 修改infoShow页面底部弹框 -->
+            <siteInfoShow
+              :siteInfoShowIndexP="i"
+              :siteInfoShowShowP="templateList[i].isTrue"
+              :siteInfoShowListP="templateList[i].templateArray"
+              @listenSiteInfoShowToMakeForm="listenSiteInfoShow"
+            ></siteInfoShow>
           </div>
-          <!-- 修改infoShow页面底部弹框 -->
-          <siteInfoShow
-            :siteInfoShowIndexP="i"
-            :siteInfoShowShowP="templateList[i].isTrue"
-            :siteInfoShowListP="templateList[i].templateArray"
-            @listenSiteInfoShowToMakeForm="listenSiteInfoShow"
-          ></siteInfoShow>
-        </div>
 
-        <!-- numberIndex组件 -->
-        <div
-          :id="'numberIndexComDiv' + i"
-          v-if="templateList[i].componentId ==libraryId.enterInfomationList.numberIndex"
-        >
-          <img @click="spliceList(i)" :src="cross" alt />
-          <div @click="isTrue(i)">
-            <numberIndex
-              :numuberIndexListP="templateList[i].templateArray"
-              class="publicAll numberIndex"
-            ></numberIndex>
+          <!-- numberIndex组件 -->
+          <div
+            :id="'numberIndexComDiv' + i"
+            v-if="templateList[i].componentId ==libraryId.enterInfomationList.numberIndex"
+          >
+            <img @click="spliceList(i)" :src="cross" alt />
+            <div @click="isTrue(i)">
+              <numberIndex
+                :numuberIndexListP="templateList[i].templateArray"
+                class="publicAll numberIndex"
+              ></numberIndex>
+            </div>
+            <!-- 修改NumberIndex页面底部弹框 -->
+            <siteNumberIndex
+              :siteNumberIndexShowP="templateList[i].isTrue"
+              :siteNumberIndexListP="templateList[i].templateArray"
+              @listenSiteNumberIndexToMakeForm="listenSiteNumberIndex"
+            ></siteNumberIndex>
           </div>
-          <!-- 修改NumberIndex页面底部弹框 -->
-          <siteNumberIndex
-            :siteNumberIndexShowP="templateList[i].isTrue"
-            :siteNumberIndexListP="templateList[i].templateArray"
-            @listenSiteNumberIndexToMakeForm="listenSiteNumberIndex"
-          ></siteNumberIndex>
         </div>
       </div>
-    </div>
+    </van-pull-refresh>
 
     <div></div>
 
@@ -160,7 +169,8 @@ export default {
       "makeFormDataList",
       "libraryId",
       "libraryIdIndex",
-      "notifyInfo"
+      "notifyInfo",
+      "pullRefresh"
     ])
   },
   components: {
@@ -201,18 +211,24 @@ export default {
     this.sidbebarStar(); // 初始化侧边栏
   },
   beforeDestroy() {
-    // 保存时候判断：如果为0表示修改过可以进行保存，为1时候提示； 当前只有添加和删除做了修改为0
-    if (this.canSaveTemplateContent == 0) {
-      this.updateTemplateContent(); // 退出页面保存数据
-    } else {
-      this.$Notify({
-        message: this.notifyInfo[0].noModification,
-        background: this.notifyInfo[1].orange, //   橘色：#FF976A
-        duration: this.notifyInfo[2].duration
-      });
-    }
+    this.determineWhetherToModify();
   },
   methods: {
+    // =================判断部分：=====================
+    determineWhetherToModify() {
+      const vm = this;
+      // 保存时候判断：如果为0表示修改过可以进行保存，为1时候提示； 当前只有添加和删除做了修改为0
+      if (this.canSaveTemplateContent == 0) {
+        vm.updateTemplateContent(); // 退出页面保存数据
+      } else {
+        this.$Notify({
+          message: this.notifyInfo[0].noModification,
+          background: this.notifyInfo[1].orange, //   橘色：#FF976A
+          duration: this.notifyInfo[2].duration
+        });
+      }
+    },
+
     // =================页面加载和抬头按钮部分=====================
 
     /**
@@ -670,14 +686,23 @@ export default {
     },
 
     /**
-     * @description:  下一步按钮
+     * @description:  下一步按钮:如果当前没有数据只保存不跳转页面
      * @param {无}
      * @return: 无
      * @author: 白爱民
      * @Date: 2020年4月29日09:10:35
      */
     nextStep() {
-      this.$router.push({ name: "ruleSetting" });
+      if (this.templateList.length == "0") {
+        this.determineWhetherToModify();
+        this.$Notify({
+          message: this.notifyInfo[0].dataIsEmpty, // 提示：加载失败.==store.js
+          background: this.notifyInfo[1].orange, //橘色：#FF976A
+          duration: this.notifyInfo[2].duration //定义时长,1s
+        });
+      } else {
+        this.$router.push({ name: "ruleSetting" });
+      }
     },
 
     /**
@@ -694,6 +719,25 @@ export default {
         "4833953": "2"
       };
       return names[name] || names["default"];
+    },
+
+    /**
+     * @description:  下拉刷新
+     * @param {}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    onRefresh() {
+      const vm = this;
+      setTimeout(() => {
+        vm.pullRefresh.isLoading = false; //刷新完成，关闭刷新功能
+        this.start(); // 进入页面加载内容
+
+        this.queryGroup(); // 初始化接口
+        this.sidbebarStar(); // 初始化侧边栏
+      }, 1000); //1000代表刷新时间
+      // this.getQueryComponent(); //重新加载页面
     }
   }
 };

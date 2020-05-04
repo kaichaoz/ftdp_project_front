@@ -91,6 +91,7 @@ const store = new Vuex.Store({
         failed: "失败",
         noTemplateRule: "当前模板没有输入组件，无法添加模板规则",
         noModification: "暂无修改，无需保存",
+        dataIsEmpty:"数据为空，不可跳转"
       },
       {
         blue: "#29B8DB", //蓝色提示背景-提示成功使用

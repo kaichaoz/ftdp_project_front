@@ -3,11 +3,9 @@
 *@版本:V1.0
 *@作者:白爱民
 *@Date:2020年3月28日08:22:14
-*@最后修改人:白爱民
-*@LastEditTime:2020年3月28日08:22:14
+*@最后修改人:付媛媛
+*@LastEditTime:2020年5月4日16:38:51
 *@说明：
-
-进入页面前将数据存储到local里面
 -->
 <template>
   <div>
@@ -20,13 +18,6 @@
       @listenTitlePerPageLeftClick="intoModel()"
       @listenTitlePerPageRightClick="intoSetting()"
     ></titlePerPage>
-
-    <!-- 抬头 -->
-    <!-- <div class="title commonColor">
-      <img @click="intoSetting()" class="iocName" :src="plus" alt />
-      <div class="button" @click="intoModel()">编辑模板</div>
-      <div class="titleName" v-text="templateName + '规则'"></div>
-    </div>-->
     <van-pull-refresh
       v-model="pullRefresh.isLoading"
       :pulling-text="pullRefresh.pulling"
@@ -112,15 +103,17 @@ export default {
   },
   data() {
     return {
-      //编辑模板页面添加的模板Name
+      //缓存中读取--当前模板的模板Name
       templateName: "",
+      //缓存中读取--当前模板的模板Id
+      templateId: "",
+
       ruleSettingTitle: {
         title: "规则",
         leftText: "编辑模板",
         iconName: "plus",
         iconIsTrue: true
       },
-      plus: require("../../../assets/super/template/plus.png"), // 底部加号图片
       //页面加载规则数据,id：具体规则id，templateRuleTitle：具体规则title
       templateRuleRecord: [],
 
@@ -157,8 +150,8 @@ export default {
     };
   },
   mounted() {
-    this.start();
     this.initialization();
+    this.start();
   },
   methods: {
     //下拉刷新
@@ -171,9 +164,12 @@ export default {
     },
 
     initialization() {
-      //获取缓存中的 templateName
+      //获取缓存----当前模板name
       this.templateName = sessionStorage.getItem("management_templateName");
       this.ruleSettingTitle.title = this.templateName + "规则";
+
+      //获取缓存----当前模板id
+      this.templateId = sessionStorage.getItem("management_templateId");
     },
 
     //==========================================初始化加载当前页面================================================
@@ -225,11 +221,9 @@ export default {
     queryTemplateRule() {
       let vm = this;
       vm.templateRuleRecord = [];
-      //获取缓存中的templateId
-      const templateId = sessionStorage.getItem("management_templateId");
 
       vm.$axios
-        .get(queryTemplateRecord + "/{templateId}?templateId=" + templateId)
+        .get(queryTemplateRecord + "/{templateId}?templateId=" + vm.templateId)
         .then(res => {
           if (res.data.code == responseCode.SUCCESSCODE) {
             sessionStorage.setItem("ruleTemplate_leave", "0");
@@ -274,10 +268,10 @@ export default {
     queryTemplateComponent() {
       let vm = this;
       vm.componentInfo = [];
-      //获取缓存中的templateId
-      let templateId = sessionStorage.getItem("management_templateId");
       vm.$axios
-        .get(queryTemplateComponent + "/{templateId}?templateId=" + templateId)
+        .get(
+          queryTemplateComponent + "/{templateId}?templateId=" + vm.templateId
+        )
         .then(res => {
           if (res.data.code == responseCode.SUCCESSCODE) {
             for (let index = 0; index < res.data.data.length; index++) {
@@ -333,9 +327,10 @@ export default {
      */
     intoSetting() {
       let vm = this;
-      let templateId = sessionStorage.getItem("management_templateId");
       vm.$axios
-        .get(queryTemplateComponent + "/{templateId}?templateId=" + templateId)
+        .get(
+          queryTemplateComponent + "/{templateId}?templateId=" + vm.templateId
+        )
         .then(res => {
           switch (res.data.code) {
             case responseCode.SUCCESSCODE:

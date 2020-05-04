@@ -3,8 +3,8 @@
 *@版本:V1.0
 *@作者:白爱民
 *@Date:2020年3月28日08:22:14
-*@最后修改人:白爱民
-*@LastEditTime:2020年3月28日08:22:14
+*@最后修改人:付媛媛
+*@LastEditTime:2020年5月4日16:38:58
 *@说明：-->
 <template>
   <div>
@@ -231,8 +231,8 @@ export default {
 
   mounted() {
     // 初始化页面存缓存字段为1
-    sessionStorage.setItem("ruleTemplate_leave", "1");
-
+    // sessionStorage.setItem("ruleTemplate_leave", "1");
+    this.initialization();
     this.loaderRuleTemplate();
   },
   methods: {
@@ -244,15 +244,24 @@ export default {
       }, 1000); //1000代表刷新时间
       this.loaderRuleTemplate(); //重新加载页面
     },
+
+    initialization() {
+      // 初始化页面存缓存字段为1
+      sessionStorage.setItem("ruleTemplate_leave", "1");
+      //获取缓存---点击加号 or 具体规则进入ruleTemplate页面标识
+      this.addOrEditToRule = sessionStorage.getItem(
+        "ruleSetting_addOrEditToRule"
+      );
+    },
     //==========================================初始化加载当前页面================================================
 
     //初始化加载页面
     loaderRuleTemplate() {
       //0表示点击具体规则进入当前页面
-      if (sessionStorage.getItem("ruleSetting_addOrEditToRule") == 0) {
+      if (this.addOrEditToRule == 0) {
         this.concreteRuleToThis();
         //1表示点击加号进入当前页面
-      } else if (sessionStorage.getItem("ruleSetting_addOrEditToRule") == 1) {
+      } else if (this.addOrEditToRule == 1) {
         this.plusToThis();
       }
     },
@@ -688,7 +697,7 @@ export default {
       );
       let ruleTemplateId;
 
-      switch (sessionStorage.getItem("ruleSetting_addOrEditToRule")) {
+      switch (this.addOrEditToRule) {
         case "0":
           //0表示点击具体规则进入当前页面
           ruleTemplateId = sessionStorage.getItem("ruleSetting_ruleTemplateId");

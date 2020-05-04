@@ -9,10 +9,12 @@
 -->
 <template>
   <div>
-    <div class="title commonColor">
-      <div class="button" @click="intoManagement()">模板管理</div>
-      <div class="titleName">组件管理</div>
-    </div>
+    <titlePerPage
+      :title="libraryTitle.title"
+      :leftText="libraryTitle.leftText"
+      :rightText="libraryTitle.rightText"
+      @listenTitlePerPageLeftClick="intoManagement"
+    ></titlePerPage>
 
     <!-- 可以长按拖动内容 -->
     <vuedraggable v-model="classList" :options="options">
@@ -52,31 +54,6 @@
   </div>
 </template>
 <style scoped>
-/* ===============抬头部分================= */
-.title {
-  overflow: hidden;
-  border: 1px solid #fecd2a;
-  width: auto;
-  height: 48px;
-  /* background: #FECD2A; */
-}
-.button {
-  float: left;
-  width: 100px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  margin-bottom: auto;
-  font-size: 20px;
-}
-.titleName {
-  margin: 10px auto 10px;
-  font-size: 20px;
-  width: 100px;
-}
-.commonColor {
-  background: #fecd2a;
-}
-/* ===============抬头部分================= */
 .bodyDiv {
   margin-top: 50px;
   margin-left: 15px;
@@ -91,6 +68,7 @@
 
 
 <script>
+import titlePerPage from "../../../components/publicAll/title_per_page"; // title组件
 import userInfo from "../../../components/Super/library/userInfo/userInfo"; // 用户信息组件类
 import theMessageStates from "../../../components/Super/library/theMessageStates/theMessageStates"; // 信息显示组件类
 import enterInformation from "../../../components/Super/library/enterInformation/enterInformation"; // 输入信息组件类
@@ -113,10 +91,17 @@ export default {
     enterInformation,
     vuedraggable,
     swipeCell,
-    invalidComponents
+    invalidComponents,
+    titlePerPage
   },
   data() {
     return {
+      libraryTitle: {
+        title: "模板管理",
+        leftText: "组件管理",
+        rightText: ""
+      },
+
       // 分组ID：与数据库同步
       groupIdList: {},
       // 由invalidComponents传递过来，并传送给各自组件类(组件是否显示)

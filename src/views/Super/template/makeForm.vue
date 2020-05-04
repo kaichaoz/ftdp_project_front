@@ -13,11 +13,13 @@
 <template>
   <div>
     <!-- 抬头 -->
-    <div class="title commonColor">
-      <div class="buttonLeft" @click="returnPage()">返回</div>
-      <div class="buttonRight" @click="nextStep()">下一步</div>
-      <div class="titleName">编辑模板</div>
-    </div>
+    <titlePerPage
+      :title="makeFormTitle.title"
+      :leftText="makeFormTitle.leftText"
+      :rightText="makeFormTitle.rightText"
+      @listenTitlePerPageLeftClick="returnPage"
+      @listenTitlePerPageRightClick="nextStep"
+    ></titlePerPage>
 
     <!-- 页面框内容 -->
     <div id="addTemplate" class="allTemplate" v-touch:right="eventFun">
@@ -101,38 +103,6 @@ img {
   /* top: 200px; */
   left: 300px;
 }
-.commonColor {
-  background: #fecd2a;
-}
-
-.title {
-  overflow: hidden;
-  border: 1px solid #fecd2a;
-  width: auto;
-  height: 48px;
-  /* background: #FECD2A; */
-}
-.buttonLeft {
-  float: left;
-  width: 100px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  margin-bottom: auto;
-  font-size: 20px;
-}
-.buttonRight {
-  float: right;
-  width: 100px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  margin-bottom: auto;
-  font-size: 20px;
-}
-.titleName {
-  margin: 10px auto 10px;
-  font-size: 20px;
-  width: 100px;
-}
 
 .allTemplate {
   min-height: 550px;
@@ -164,6 +134,8 @@ img {
 }
 </style>
 <script>
+import titlePerPage from "../../../components/publicAll/title_per_page"; // title组件
+
 import sidebar from "../../../components/Super/template/sidebar"; // 侧边栏
 import user from "../../../components/Super/library/userInfo/user"; // 子组件用户显示
 import infoShow from "../../../components/Super/library/theMessageStates/infoShow"; // 子组件信息显示
@@ -198,10 +170,16 @@ export default {
     numberIndex,
     siteUser,
     siteInfoShow,
-    siteNumberIndex
+    siteNumberIndex,
+    titlePerPage
   },
   data() {
     return {
+      makeFormTitle: {
+        title: "编辑模板",
+        leftText: "返回",
+        rightText: "下一步"
+      },
       // groupIdList: {}, // 存放分组ID
       showPopup: false, // 遮罩层弹出
       templateList: [], // 存放当前页面显示的几个页面数据，012分别为三个组件

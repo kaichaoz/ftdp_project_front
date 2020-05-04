@@ -124,6 +124,7 @@ import vuedraggable from "vuedraggable";
 import { queryTemplateGroupd } from "../../../../src/api/Super/template/setting"; //引入初始化模板分组接口的后端地址
 import { modifyTemplateGroup } from "../../../../src/api/Super/template/setting"; //引入修改模板分组接口的后端地址
 
+import { responseCode } from "../../../../src/utils/responseCode";  // 引入状态码
 import { Dialog } from "vant"; // 引用dialog弹出框
 import { mapState } from "vuex"; // 全局调取：可使用this.
 
@@ -203,9 +204,30 @@ export default {
 
       // 请求后端数据
       vm.$axios.get(queryTemplateGroupd).then(res => {
-        if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          //遍历当前页面所有分组
-          for (let i = 0; i < res.data.data.length; i++) {
+        // if (res.data.code == this.$responseCode.SUCCESSCODE) {
+        //   //遍历当前页面所有分组
+        //   for (let i = 0; i < res.data.data.length; i++) {
+        //     // 将后端数据存放到数组中
+        //     this.projectName.push({
+        //       id: res.data.data[i].id,
+        //       templateGroupName: res.data.data[i].templateGroupName,
+        //       isUsable: res.data.data[i].isUsable,
+        //       groupSequence: res.data.data[i].groupSequence
+        //     });
+        //   }
+        // } else {
+        //   this.$Notify({
+        //     message: this.notifyInfo[0].loadFailed, // 提示：加载失败.==store.js
+        //     background: this.notifyInfo[1].orange, //橘色：#FF976A
+        //     duration: this.notifyInfo[2].duration //定义时长,1s
+        //   });
+        // }
+
+
+        switch (res.data.code){
+          case responseCode.SUCCESSCODE:
+            //遍历当前页面所有分组
+            for (let i = 0; i < res.data.data.length; i++) {
             // 将后端数据存放到数组中
             this.projectName.push({
               id: res.data.data[i].id,
@@ -213,14 +235,22 @@ export default {
               isUsable: res.data.data[i].isUsable,
               groupSequence: res.data.data[i].groupSequence
             });
-          }
-        } else {
-          this.$Notify({
-            message:this.notifyInfo[0].loadFailed,// 提示：加载失败.==store.js
-            background: this.notifyInfo[1].orange, //橘色：#FF976A
-            duration: this.notifyInfo[2].duration //定义时长,1s
-          })
-        }
+            }
+            break;
+          case responseCode.NULLCODE:
+            this.$Notify({
+              message: this.notifyInfo[0].loadFailed, // 提示：加载失败.==store.js
+              background: this.notifyInfo[1].orange, //橘色：#FF976A
+              duration: this.notifyInfo[2].duration //定义时长,1s
+            });
+            break;
+          default:
+            this.$Notify({
+              message: this.notifyInfo[0].loadFailed, // 提示：加载失败.==store.js
+              background: this.notifyInfo[1].orange, //橘色：#FF976A
+              duration: this.notifyInfo[2].duration //定义时长,1s
+          });                   
+        }     
       });
     },
 
@@ -250,23 +280,47 @@ export default {
       // const componentUrl =
       // "http://127.0.0.1:8091/ftdp-web/TemplateGroup/modifyTemplateGroup";
 
-      // 请求后端数据
+       // 请求后端数据
       vm.$axios.post(modifyTemplateGroup, resData).then(res => {
-        if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          this.$Notify({
-            message: this.notifyInfo[0].modifySucceed, // 提示：修改成功
-            background: this.notifyInfo[1].blue, // 蓝色：#29B8DB
-            duration: this.notifyInfo[2].duration //定义时长,1s
-          });
+        // if (res.data.code == this.$responseCode.SUCCESSCODE) {
+        //   this.$Notify({
+        //     message: this.notifyInfo[0].modifySucceed, // 提示：修改成功
+        //     background: this.notifyInfo[1].blue, // 蓝色：#29B8DB
+        //     duration: this.notifyInfo[2].duration //定义时长,1s
+        //   });
 
-          //保存数据，离开页面，setting_Leave的值为0（定时器使用，management页面）
-          sessionStorage.setItem("setting_Leave", "0");
-        } else {
-          this.$Notify({
-            message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
-            background: this.notifyInfo[1].orange, // 橘色:#FF976A
-            duration: this.notifyInfo[2].duration //定义时长,1s
-          });
+        //   //保存数据，离开页面，setting_Leave的值为0（定时器使用，management页面）
+        //   sessionStorage.setItem("setting_Leave", "0");
+        // } else {
+        //   this.$Notify({
+        //     message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
+        //     background: this.notifyInfo[1].orange, // 橘色:#FF976A
+        //     duration: this.notifyInfo[2].duration //定义时长,1s
+        //   });
+        // }
+        switch (res.data.code) {
+          case responseCode.SUCCESSCODE:
+            this.$Notify({
+              message: this.notifyInfo[0].modifySucceed, // 提示：修改成功
+              background: this.notifyInfo[1].blue, // 蓝色：#29B8DB
+              duration: this.notifyInfo[2].duration //定义时长,1s
+            });
+            //保存数据，离开页面，setting_Leave的值为0（定时器使用，management页面）
+            sessionStorage.setItem("setting_Leave", "0");
+            break;
+          case responseCode.NULLCODE:
+            this.$Notify({
+              message: this.notifyInfo[0].noData, // 提示：暂无数据
+              background: this.notifyInfo[1].orange, // 橘色:#FF976A
+              duration: this.notifyInfo[2].duration //定义时长,1s
+            });
+            break;
+          default:
+            this.$Notify({
+              message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
+              background: this.notifyInfo[1].orange, // 橘色:#FF976A
+              duration: this.notifyInfo[2].duration //定义时长,1s
+            });
         }
       });
     },
@@ -290,16 +344,33 @@ export default {
       const vm = this;
       //请求后端数据
       vm.$axios.post(modifyTemplateGroup, resData).then(res => {
-        if (res.data.code == this.$responseCode.SUCCESSCODE) {
-          // this.$toast({
-          // message: "修改成功"
-          // });
-        } else {
-         this.$Notify({
-            message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
-            background: this.notifyInfo[1].orange, // 橘色:#FF976A
-            duration: this.notifyInfo[2].duration //定义时长,1s
-          });
+        // if (res.data.code == this.$responseCode.SUCCESSCODE) {
+        //   // this.$toast({
+        //   // message: "修改成功"
+        //   // });
+        // } else {
+        //   this.$Notify({
+        //     message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
+        //     background: this.notifyInfo[1].orange, // 橘色:#FF976A
+        //     duration: this.notifyInfo[2].duration //定义时长,1s
+        //   });
+        // }
+        switch (res.data.code) {
+          case responseCode.SUCCESSCODE:
+            break;
+          case responseCode.NULLCODE:
+            this.$Notify({
+              message: this.notifyInfo[0].noData, // 提示：暂无数据
+              background: this.notifyInfo[1].orange, // 橘色:#FF976A
+              duration: this.notifyInfo[2].duration //定义时长,1s
+            });
+            break;
+          default:
+            this.$Notify({
+              message: this.notifyInfo[0].sorry, // 提示：抱歉,,,
+              background: this.notifyInfo[1].orange, // 橘色:#FF976A
+              duration: this.notifyInfo[2].duration //定义时长,1s
+            });
         }
       });
     },

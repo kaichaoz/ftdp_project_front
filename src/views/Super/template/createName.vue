@@ -12,11 +12,18 @@
 
 <template>
   <div>
-    <div class="title commonColor">
+     <titlePerPage
+      :title="createNameTitle.title"
+      :leftText="createNameTitle.leftText"
+      :rightText="createNameTitle.rightText"
+      @listenTitlePerPageLeftClick="returnPage"
+      @listenTitlePerPagerightClick="nextStep"
+    ></titlePerPage>
+    <!-- <div class="title commonColor">
       <div class="buttonLeft" @click="returnPage()">返回</div>
       <div class="buttonRight" @click="nextStep()">下一步</div>
       <div class="titleName">编辑模板</div>
-    </div>
+    </div> -->
 
     <div class="body">
       <!-- 输入框： -->
@@ -144,6 +151,7 @@ import { insertTemplate } from "../../../api/Super/template/createName"; //引�
 import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量，可使用this.
 
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
+import titlePerPage from "../../../components/publicAll/title_per_page"; // 引入title组件
 
 export default {
   computed: {
@@ -151,8 +159,17 @@ export default {
     // 展开运算符，将全局变量映射为自己界面的变量
     ...mapState(["notifyInfo", ""])
   },
+  components: {
+    // 组件
+    titlePerPage,
+  },
   data() {
     return {
+      createNameTitle: {
+        title:"编辑模板",
+        leftText:"返回",
+        rightText:"下一步",
+      },
       // 当前页面所有数据
       createNameDataList: {
         templateId: "", //模板ID

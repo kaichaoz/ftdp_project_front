@@ -15,42 +15,50 @@
       :rightText="libraryTitle.rightText"
       @listenTitlePerPageLeftClick="intoManagement"
     ></titlePerPage>
-
-    <!-- 可以长按拖动内容 -->
-    <vuedraggable v-model="classList" :options="options">
-      <div class="bodyDiv" v-for="(item ,index) in classList">
-        <userInfo
-          :userInfoListP="componentInvalidTouserInfoList"
-          @listenUserInfoToLibrary="listenUserInfo"
-          :titleP="classList[index].title"
-          v-if="classList[index].isTrue && classList[index].groupId == groupIdList.userInfo"
-        ></userInfo>
-        <theMessageStates
-          :theMessageStatesListP="componentInvalidToTheMessageStatesList"
-          @listenTheMessageStatesToLibrary="listenTheMessageStates"
-          :titleP="classList[index].title"
-          v-if="classList[index].isTrue
+    <van-pull-refresh
+      v-model="isLoading"
+      :pulling-text="pulling"
+      :loosing-text="lossing"
+      :loading-text="loading"
+      :success-text="success"
+      @refresh="onRefresh"
+    >
+      <!-- 可以长按拖动内容 -->
+      <vuedraggable v-model="classList" :options="options">
+        <div class="bodyDiv" v-for="(item ,index) in classList">
+          <userInfo
+            :userInfoListP="componentInvalidTouserInfoList"
+            @listenUserInfoToLibrary="listenUserInfo"
+            :titleP="classList[index].title"
+            v-if="classList[index].isTrue && classList[index].groupId == groupIdList.userInfo"
+          ></userInfo>
+          <theMessageStates
+            :theMessageStatesListP="componentInvalidToTheMessageStatesList"
+            @listenTheMessageStatesToLibrary="listenTheMessageStates"
+            :titleP="classList[index].title"
+            v-if="classList[index].isTrue
           && classList[index].groupId == groupIdList.theMessageStates "
-        ></theMessageStates>
-        <enterInformation
-          :enterInfomationListP="componentInvalidToEnterInfomationList"
-          @listenEnterInfomationToLibrary="listenEnterInfomation"
-          :titleP="classList[index].title"
-          v-if="classList[index].isTrue && classList[index].groupId == groupIdList.enterInfomation"
-        ></enterInformation>
+          ></theMessageStates>
+          <enterInformation
+            :enterInfomationListP="componentInvalidToEnterInfomationList"
+            @listenEnterInfomationToLibrary="listenEnterInfomation"
+            :titleP="classList[index].title"
+            v-if="classList[index].isTrue && classList[index].groupId == groupIdList.enterInfomation"
+          ></enterInformation>
 
-        <invalidComponents
-          @listen_Invalid_ToLibrary_userInfo="listenToUserInfo"
-          @listen_Invalid_ToLibrary_infoShow="listenToInfoShow"
-          @listen_Invalid_ToLibrary_numberIndex="listenToNumberIndex"
-          :userInfoP="componentuserInfoToInvalidList[0].isTrue"
-          :theMessageStatesListP="componentTheMessageStatesToInvalidList[0].isTrue"
-          :enterInfomationListP="componentEnterInfomationToInvalidList[0].isTrue"
-          :titleP="classList[index].title"
-          v-if="classList[index].isTrue && classList[index].groupId == groupIdList.invalid"
-        ></invalidComponents>
-      </div>
-    </vuedraggable>
+          <invalidComponents
+            @listen_Invalid_ToLibrary_userInfo="listenToUserInfo"
+            @listen_Invalid_ToLibrary_infoShow="listenToInfoShow"
+            @listen_Invalid_ToLibrary_numberIndex="listenToNumberIndex"
+            :userInfoP="componentuserInfoToInvalidList[0].isTrue"
+            :theMessageStatesListP="componentTheMessageStatesToInvalidList[0].isTrue"
+            :enterInfomationListP="componentEnterInfomationToInvalidList[0].isTrue"
+            :titleP="classList[index].title"
+            v-if="classList[index].isTrue && classList[index].groupId == groupIdList.invalid"
+          ></invalidComponents>
+        </div>
+      </vuedraggable>
+    </van-pull-refresh>
   </div>
 </template>
 <style scoped>
@@ -83,7 +91,7 @@ import { mapState } from "vuex";
 export default {
   computed: {
     // 展开运算符，将全局变量映射为自己界面的变量
-    ...mapState(["libraryId", "notifyInfo"])
+    ...mapState(["libraryId", "notifyInfo","pullRefresh"])
   },
   components: {
     userInfo,
@@ -160,7 +168,14 @@ export default {
         delay: 500, //延时时长
         touchStartThreshold: 3, //防止某些手机过于敏感(3~5 效果最好)
         chosenClass: "chosen" //选中之后拖拽项添加的class名(用于选中时候添加样式)
-      }
+      },
+      //下拉刷新属性
+      isLoading: false, //判断当前是否正在刷新，false为否
+      pulling:"下拉即可刷新",   //下拉即可刷新
+      lossing:"释放即可刷新",   //释放即可刷新
+      loading:"加载中",   //加载中
+      success:"刷新成功"    //刷新成功
+   
     };
   },
   // 初始化注入校验后，在el挂载前
@@ -364,6 +379,12 @@ export default {
     listenToNumberIndex(isTrue) {
       this.componentInvalidToEnterInfomationList[0].isTrue = isTrue;
       this.componentEnterInfomationToInvalidList[0].isTrue = false;
+    }, //下拉刷新功能
+    onRefresh() {
+      setTimeout(() => {
+        this.isLoading = false; //刷新完成，关闭刷新功能 // location.reload();      //重新加载页面 // this.getQueryComponent();
+      }, 1000); //1000代表刷新时间
+      this.getQueryComponent();
     }
   }
 };

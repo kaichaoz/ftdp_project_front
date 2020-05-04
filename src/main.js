@@ -24,6 +24,7 @@ import { Overlay } from "vant"; // 遮罩层
 import { ActionSheet } from "vant"; // 上拉菜单
 import { DropdownMenu, DropdownItem } from "vant"; // 下拉菜单
 import { Notify } from "vant"; // 顶部提示
+import { PullRefresh } from 'vant';   //下拉刷新
 // Vue.use(responseCode)
 // Vue.use(Notify);
 Vue.use(Vuex);
@@ -35,6 +36,7 @@ Vue.use(touch);
 Vue.use(Field);
 Vue.use(SwipeCell);
 Vue.use(Vant);
+Vue.use(PullRefresh); //下拉刷新
 Vue.config.productionTip = false;
 Vue.prototype.$axios = axios; // 全局挂载axios
 Vue.prototype.$echarts = echarts; // 全局挂载echarts

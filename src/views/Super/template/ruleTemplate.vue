@@ -14,7 +14,7 @@
       :leftText="ruleTemplateTitle.leftText"
       :rightText="ruleTemplateTitle.rightText"
       @listenTitlePerPageLeftClick="returnPage()"
-      @listenTitlePerPageRightClick="savePage()"
+      @listenTitlePerPageRightClick="determineWhetherToModify()"
     ></titlePerPage>
 
     <van-pull-refresh
@@ -34,6 +34,7 @@
               <van-dropdown-item
                 v-model="dropDownComponent[0].value"
                 :options="dropDownOptionComponent"
+                @blur.native.capture="notFocus()"
               />
             </van-dropdown-menu>
           </div>
@@ -43,23 +44,23 @@
         <div v-for="(item,i) in dropDownOptionList">
           <div class="managementName">
             <van-dropdown-menu active-color="#fecd2a">
-              <van-dropdown-item v-model="dropDownModel[i]" :options="dropDownOptionList[i]" />
+              <van-dropdown-item
+                v-model="dropDownModel[i]"
+                :options="dropDownOptionList[i]"
+                @blur.native.capture="notFocus()"
+              />
             </van-dropdown-menu>
           </div>
         </div>
 
         <!-- 输入任意文本 -->
-        <div
-          style="margin-top:30px"
-          v-for="(item,i) in fieldValue"
-          v-if="fieldValue[i].isTrue"
-          @blur="notFocus()"
-        >
+        <div style="margin-top:30px" v-for="(item,i) in fieldValue" v-if="fieldValue[i].isTrue">
           <van-field
             type="text"
             style="border-radius: 5px"
             v-model="fieldValue[i].textValue"
             :label="fieldText[i].textName"
+            @blur.native.capture="notFocus()"
           />
         </div>
       </div>
@@ -225,6 +226,7 @@ export default {
       //页面文本框数量计数
       fieldNumer: "",
       resData: "",
+      //提交页面上是否修改
       isModify: 0
     };
   },
@@ -235,6 +237,7 @@ export default {
     this.initialization();
     this.loaderRuleTemplate();
   },
+  directives: {},
   methods: {
     //下拉刷新
     onRefresh() {
@@ -252,6 +255,24 @@ export default {
       this.addOrEditToRule = sessionStorage.getItem(
         "ruleSetting_addOrEditToRule"
       );
+    },
+
+    determineWhetherToModify() {
+      let vm = this;
+      switch (vm.isModify) {
+        case 1:
+          vm.savePage();
+          break;
+        case 0:
+          if (vm.isEmpty()) {
+            this.$Notify({
+              message: this.notifyInfo[0].noModification,
+              background: this.notifyInfo[1].orange,
+              duration: this.notifyInfo[2].duration
+            });
+          }
+          break;
+      }
     },
     //==========================================初始化加载当前页面================================================
 
@@ -326,6 +347,7 @@ export default {
     disPlayConcreteRule(finData, c) {
       let vm = this;
       let arrayFieldData = []; //用于存放用户输入文本框的值
+      let i = 0;
       switch (c) {
         case 1:
           //================渲染年级性别 下拉框
@@ -358,10 +380,13 @@ export default {
           arrayFieldData.push(
             finData.startRange,
             finData.endRange,
+            finData.originalScore,
             finData.weight,
             finData.level
           );
-          for (let index = 0; index < arrayFieldData.length; index++) {
+          for (let index = 0; index < 5; index++) {
+            if (index == 2) {
+            }
             vm.fieldValue.push({
               isTrue: "true",
               textValue: arrayFieldData[index]
@@ -425,7 +450,6 @@ export default {
       let component = JSON.parse(
         sessionStorage.getItem("ruleSetting_componentInfo")
       );
-
       switch (component.length) {
         case 1:
           //case 1 : 1个组件 : 2个下拉框+5个输入框
@@ -515,6 +539,7 @@ export default {
           //显示4个文本框
           for (let index = 0; index < 5; index++) {
             if (index == 2) {
+              // vm.fieldValue[index].isTrue = "false";
             } else {
               vm.fieldValue[index].isTrue = "true";
               i++;
@@ -601,13 +626,8 @@ export default {
     isEmpty() {
       let vm = this;
       let empty = false;
-
-      //当前模板组件信息
-      let component = JSON.parse(
-        sessionStorage.getItem("ruleSetting_componentInfo")
-      );
-      //vm.fieldNumer ：表示当前页面文本框的数量
-      for (let index = 0; index < component.length; index++) {
+      //vm.fieldValue ：表示当前页面文本框的数量
+      for (let index = 0; index < vm.fieldValue.length; index++) {
         if (
           vm.fieldValue[index].textValue == undefined ||
           vm.fieldValue[index].textValue == ""
@@ -640,13 +660,9 @@ export default {
      */
     isNumber() {
       let vm = this;
-      //当前模板组件信息
-      let component = JSON.parse(
-        sessionStorage.getItem("ruleSetting_componentInfo")
-      );
       var numReg = /^[+-]?((\d*(\.\d{1,2})$)|(\d+$))/;
       var numRe = new RegExp(numReg);
-      for (let index = 0; index < component.length - 1; index++) {
+      for (let index = 0; index < vm.fieldValue.length - 1; index++) {
         if (!numRe.test(vm.fieldValue[index].textValue)) {
           vm.$Notify({
             message: this.notifyInfo[0].inputNumber,
@@ -672,7 +688,7 @@ export default {
     },
     //=================================================判断当前页面数据是否修改===================================================
     notFocus() {
-      vm.isModify = 1;
+      this.isModify = 1;
     },
 
     //=================================================保存当前页面===================================================
@@ -686,67 +702,72 @@ export default {
      */
     savePage() {
       let vm = this;
-
-      let templateId = sessionStorage.getItem("management_templateId");
-      let templateConId = sessionStorage.getItem(
-        "ruleSetting_templateContentId"
-      );
-      //此模板所有输入组件信息
-      let component = JSON.parse(
-        sessionStorage.getItem("ruleSetting_componentInfo")
-      );
-      let ruleTemplateId;
-
-      switch (this.addOrEditToRule) {
-        case "0":
-          //0表示点击具体规则进入当前页面
-          ruleTemplateId = sessionStorage.getItem("ruleSetting_ruleTemplateId");
-          break;
-        case "1":
-          // 1表示点击加号进入当前页面
-          ruleTemplateId = vm.resData;
-          break;
-      }
-      let model = {
-        endRange: this.fieldValue[1].textValue,
-        grade: this.exchangeDropDownToNum(this.dropDownModel[0]),
-        id: ruleTemplateId,
-        isDelete: 0,
-        level: this.fieldValue[4].textValue,
-        operator: "admin",
-        originalScore:
-          component.length == 2 ? "" : this.fieldValue[2].textValue,
-        sex: this.dropDownModel[1],
-        startRange: this.fieldValue[0].textValue,
-        templateContentId:
-          this.dropDownComponent[0].isTrue == "true" ? templateConId : "",
-        templateId: templateId,
-        weight: this.fieldValue[3].textValue
-      };
-
       //点击保存判断输入库内容是否符合规则
       if (vm.isEmpty() && vm.isNumber()) {
-        //调用添加模板规则 接口
-        vm.$axios.post(addTemplateRuleRecord, model).then(res => {
-          switch (res.data.code) {
-            case responseCode.SUCCESSCODE:
-              vm.$Notify({
-                message: this.notifyInfo[0].saveSucceed,
-                background: this.notifyInfo[1].blue,
-                duration: this.notifyInfo[2].duration
-              });
-              vm.resData = res.data.data;
-              sessionStorage.setItem("ruleTemplate_leave", "0");
-              break;
-            default:
-              vm.$Notify({
-                message: this.notifyInfo[0].saveFailed,
-                background: this.notifyInfo[1].orange,
-                duration: this.notifyInfo[2].duration
-              });
-              break;
-          }
-        });
+        let templateId = sessionStorage.getItem("management_templateId");
+        let templateConId = sessionStorage.getItem(
+          "ruleSetting_templateContentId"
+        );
+        //此模板所有输入组件信息
+        let component = JSON.parse(
+          sessionStorage.getItem("ruleSetting_componentInfo")
+        );
+        let ruleTemplateId;
+
+        switch (this.addOrEditToRule) {
+          case "0":
+            //0表示点击具体规则进入当前页面
+            ruleTemplateId = sessionStorage.getItem(
+              "ruleSetting_ruleTemplateId"
+            );
+            break;
+          case "1":
+            // 1表示点击加号进入当前页面
+            ruleTemplateId = vm.resData;
+            break;
+        }
+        let model = {
+          endRange: this.fieldValue[1].textValue,
+          grade: this.exchangeDropDownToNum(this.dropDownModel[0]),
+          id: ruleTemplateId,
+          isDelete: 0,
+          level: this.fieldValue[4].textValue,
+          operator: "admin",
+          originalScore:
+            component.length == 2 ? "" : this.fieldValue[2].textValue,
+          sex: this.dropDownModel[1],
+          startRange: this.fieldValue[0].textValue,
+          templateContentId:
+            this.dropDownComponent[0].isTrue == "true" ? templateConId : "",
+          templateId: templateId,
+          weight: this.fieldValue[3].textValue
+        };
+
+        //点击保存判断输入库内容是否符合规则
+        if (vm.isEmpty() && vm.isNumber()) {
+          //调用添加模板规则 接口
+          vm.$axios.post(addTemplateRuleRecord, model).then(res => {
+            switch (res.data.code) {
+              case responseCode.SUCCESSCODE:
+                vm.$Notify({
+                  message: this.notifyInfo[0].saveSucceed,
+                  background: this.notifyInfo[1].blue,
+                  duration: this.notifyInfo[2].duration
+                });
+                this.isModify = 1;
+                vm.resData = res.data.data;
+                sessionStorage.setItem("ruleTemplate_leave", "0");
+                break;
+              default:
+                vm.$Notify({
+                  message: this.notifyInfo[0].saveFailed,
+                  background: this.notifyInfo[1].orange,
+                  duration: this.notifyInfo[2].duration
+                });
+                break;
+            }
+          });
+        }
       }
     },
 

@@ -284,8 +284,6 @@ export default {
               "ruleSetting_templateContentId",
               vm.componentInfo[0].id
             );
-
-            // console.log(vm.componentInfo);
             sessionStorage.setItem(
               "ruleSetting_componentInfo",
               JSON.stringify(vm.componentInfo)

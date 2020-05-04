@@ -195,8 +195,7 @@ export default {
       templateList: [], // 存放当前页面显示的几个页面数据，012分别为三个组件
       cross: require("../../../assets/super/template/cross.png"), // 取消（叉号）
       sidebarModel: [], // 存储侧边栏数据
-      templateListIndex: "", // 临时存档当前的I值
-      canSaveTemplateContent: 1 // 1：页面数据未更改不用保存，0：页面数据更改可保存
+      templateListIndex: "" // 临时存档当前的I值
     };
   },
 
@@ -211,24 +210,9 @@ export default {
     this.sidbebarStar(); // 初始化侧边栏
   },
   beforeDestroy() {
-    this.determineWhetherToModify();
+    this.updateTemplateContent(); // 退出页面保存数据
   },
   methods: {
-    // =================判断部分：=====================
-    determineWhetherToModify() {
-      const vm = this;
-      // 保存时候判断：如果为0表示修改过可以进行保存，为1时候提示； 当前只有添加和删除做了修改为0
-      if (this.canSaveTemplateContent == 0) {
-        vm.updateTemplateContent(); // 退出页面保存数据
-      } else {
-        this.$Notify({
-          message: this.notifyInfo[0].noModification,
-          background: this.notifyInfo[1].orange, //   橘色：#FF976A
-          duration: this.notifyInfo[2].duration
-        });
-      }
-    },
-
     // =================页面加载和抬头按钮部分=====================
 
     /**
@@ -639,8 +623,6 @@ export default {
         isTrue: false, // 底部弹框是否显示
         templateArray: makeList[index].templateArray
       });
-
-      this.canSaveTemplateContent = 0; // 0表示当前页面数据修改过
     },
 
     /**
@@ -652,7 +634,6 @@ export default {
      */
     spliceList(i) {
       this.templateList.splice(i, 1);
-      this.canSaveTemplateContent = 0; // 0表示当前页面数据修改过
     },
 
     /**
@@ -694,7 +675,7 @@ export default {
      */
     nextStep() {
       if (this.templateList.length == "0") {
-        this.determineWhetherToModify();
+        this.updateTemplateContent();
         this.$Notify({
           message: this.notifyInfo[0].dataIsEmpty, // 提示：加载失败.==store.js
           background: this.notifyInfo[1].orange, //橘色：#FF976A
@@ -737,7 +718,6 @@ export default {
         this.queryGroup(); // 初始化接口
         this.sidbebarStar(); // 初始化侧边栏
       }, 1000); //1000代表刷新时间
-      // this.getQueryComponent(); //重新加载页面
     }
   }
 };

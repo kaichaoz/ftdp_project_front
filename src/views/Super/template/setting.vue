@@ -206,9 +206,10 @@ export default {
   },
 
   methods: {
+    
     /**
      * @description:  初始化请求后端数据
-     * @param {i:分组索引}
+     * @param ：{i:分组索引}
      * @return: 无
      * @author: 张颖娟
      * @Date: 2020年4月21日09:37:36
@@ -251,7 +252,7 @@ export default {
 
     /**
      * @description: 保存当前setting页面数据
-     * @param {i:分组索引}
+     * @param ：{i:分组索引}
      * @return: 无
      * @author: 张颖娟
      * @Date: 2020年4月21日09:37:36
@@ -306,7 +307,7 @@ export default {
 
     /**
      * @description: 删除分组设置
-     * @param {i:分组索引}
+     * @param ：{i:分组索引}
      * @return: 无
      * @author: 张颖娟
      * @Date: 2020年4月21日09:37:36
@@ -354,15 +355,25 @@ export default {
       });
     },
 
-    // 修改classList数组中位置，随着位置改变，数据改变
-    changeLocation(arrayList) {
-      for (let i = 0; i < arrayList.length; i++) {
-        arrayList[i].groupSequence = i;
-      }
-      return arrayList;
+     /**
+     * @description: 点击Title左侧按钮
+     * @param ：无
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月21日09:37:36
+     */
+    intoModel() {
+      this.$router.push({ name: "management" });
     },
-
-    // 替换前端true和false分别改为01
+    
+    // ==========================isUsable的状态替换：=========================== 
+    /**
+     * @description: 替换前端true和false分别改为01
+     * @param ：{index:数组索引}
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月21日09:37:36
+     */
     replace01(arrayList) {
       for (let index = 0; index < arrayList.length; index++) {
         if (arrayList[index].isUsable == true) {
@@ -373,7 +384,14 @@ export default {
         return arrayList;
       }
     },
-    //替换后端的01分别改为true和false
+
+    /**
+     * @description: 替换后端的01分别改为true和false
+     * @param ：{index:数组索引}
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月21日09:37:36
+     */
     replaceTF(arrayList) {
       for (let index = 0; index < arrayList.length; index++) {
         if (arrayList[index].isUsable == "0") {
@@ -385,7 +403,13 @@ export default {
       }
     },
 
-    // 修改isUsable的状态
+    /**
+     * @description: 修改isUsable的状态
+     * @param ：{i:分组索引}
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月21日09:37:36
+     */
     replaceTFF(i) {
       if (this.projectName[i].isUsable == 0) {
         this.projectName[i].isUsable = 1;
@@ -394,14 +418,15 @@ export default {
       }
     },
 
-    // 点击抬头左侧按钮
-    intoModel() {
-      this.$router.push({ name: "management" });
-    },
-
-    // 删除内容
+    // ==========================内容修改部分：===========================   
+    /**
+     * @description: 删除内容
+     * @param ：{i:分组索引}
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月21日09:37:36
+     */
     lessNum(i) {
-      // dialog();
       Dialog.confirm({
         // title: "标题",
         message: this.TipsStore[0].message, //提示框内容：确定删除吗？(store.js)
@@ -418,7 +443,13 @@ export default {
         });
     },
 
-    // 增加内容
+    /**
+     * @description: 增加内容
+     * @param ：无
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月27日09:37:36
+     */
     plusNum() {
       this.projectName.push({
         templateGroupName: "请输入信息", //模板分组名称
@@ -428,24 +459,63 @@ export default {
       });
     },
 
-    // 点击每个名字进弹框修改
+    /**
+     * @description: 点击每个名字进弹框修改
+     * @param ：{i:分组索引}
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月21日09:37:36
+     */
     popupInput(i) {
-      //alert("我是白爱民"+i)
       this.boolean = true;
       this.projectInfo = this.projectName[i].templateGroupName;
       this.projectIndex = i;
     },
 
-    //接收弹出框页面是否可见的boolean值
+    // ==========================接收内容部分：=========================== 
+    /**
+     * @description: 接收弹出框页面是否可见的boolean值
+     * @param ：
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月21日09:37:36
+     */
     receivePopup(newVal) {
       this.boolean = newVal;
     },
 
-    // 接收输入弹框中修改的内容
+    /**
+     * @description: 接收输入弹框中修改的内容
+     * @param ：
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月25日09:37:36
+     */
     receivePopupInfo(newInfo, newI) {
       this.projectName[newI].templateGroupName = newInfo;
     },
-
+    
+    // ==========================更新：位置、下拉刷新=========================== 
+    /**
+     * @description: 修改classList数组中位置，随着位置改变，数据改变
+     * @param ：{i:数组索引}
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月21日09:37:36
+     */
+    changeLocation(arrayList) {
+      for (let i = 0; i < arrayList.length; i++) {
+        arrayList[i].groupSequence = i;
+      }
+      return arrayList;
+    },
+    /**
+     * @description: 下拉刷新
+     * @param ：无
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年5月4日15:02:38
+     */
     onRefresh() {
       const vm = this;
       setTimeout(() => {

@@ -156,7 +156,8 @@ import siteNumberIndex from "../../../components/Super/template/siteNumberIndex"
 import {
   queryTemplateContent,
   insertTemplateContent,
-  queryComponentlibrary
+  queryComponentlibrary,
+  deleteTemplateContent
 } from "../../../api/Super/template/makeForm"; // 页面接口api
 
 import { mapState } from "vuex"; // vuex全局变量
@@ -210,9 +211,26 @@ export default {
     this.sidbebarStar(); // 初始化侧边栏
   },
   beforeDestroy() {
-    this.updateTemplateContent(); // 退出页面保存数据
+    this.judgmentIsEmpty(); // 退出页面保存数据
   },
   methods: {
+    // =================判断部分：=====================
+
+    /**
+     * @description: 判断当前页面数据为空时候走删除，有数据走更新
+     * @param {无}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    judgmentIsEmpty() {
+      if (this.templateList.length == 0) {
+        this.deleteTemplateContent();
+      } else {
+        this.updateTemplateContent();
+      }
+    },
+
     // =================页面加载和抬头按钮部分=====================
 
     /**
@@ -474,6 +492,35 @@ export default {
       });
     },
 
+    /**
+     * @description: 页面数据为空时候直接删除所有
+     * @param {无}
+     * @return: 无
+     * @author: 白爱民
+     * @Date: 2020年4月29日09:10:35
+     */
+    deleteTemplateContent() {
+      const _templateId = sessionStorage.getItem("management_templateId");
+      this.$axios.post(deleteTemplateContent + "/" + _templateId).then(res => {
+        switch (res.data.code) {
+          case this.$responseCode.SUCCESSCODE:
+            this.$Notify({
+              message: this.notifyInfo[0].saveSucceed,
+              background: this.notifyInfo[1].blue, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
+            });
+            break;
+          default:
+            this.$Notify({
+              message: this.notifyInfo[0].saveFailed,
+              background: this.notifyInfo[1].orange, //   橘色：#FF976A
+              duration: this.notifyInfo[2].duration
+            });
+            break;
+        }
+      });
+    },
+
     //  ============================右划添加组件部分=============================
 
     /**
@@ -675,7 +722,7 @@ export default {
      */
     nextStep() {
       if (this.templateList.length == "0") {
-        this.updateTemplateContent();
+        this.deleteTemplateContent();
         this.$Notify({
           message: this.notifyInfo[0].dataIsEmpty, // 提示：加载失败.==store.js
           background: this.notifyInfo[1].orange, //橘色：#FF976A

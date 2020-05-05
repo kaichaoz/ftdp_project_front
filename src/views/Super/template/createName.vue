@@ -40,13 +40,13 @@
 
       <div class="body">
         <!-- 输入框： -->
-        <div class="managementName" @blur="notFocus()">
+        <div class="managementName">
           <van-cell-group>
             <van-field v-model="createNameDataList.managementNamevalue" placeholder="请输入模板名称" />
           </van-cell-group>
         </div>
         <!-- 下拉框：分组： :title="createNameDataList.title" @change="changeDevelop"-->
-        <div class="managementName" @blur="notFocus()">
+        <div class="managementName">
           <van-dropdown-menu active-color="#fecd2a">
             <van-dropdown-item
               v-model="createNameDataList.groupValue"
@@ -55,7 +55,7 @@
           </van-dropdown-menu>
         </div>
         <!-- 下拉框：使用者默认自己 -->
-        <div class="managementName" @blur="notFocus()">
+        <div class="managementName">
           <van-dropdown-menu active-color="#fecd2a">
             <van-dropdown-item
               v-model="createNameDataList.personValue"
@@ -64,14 +64,13 @@
           </van-dropdown-menu>
         </div>
         <!-- 备注： -->
-        <div class="remark" @blur="notFocus()">
+        <div class="remark">
           <div class="remarkLabel">表单备注:</div>
           <div
             id="editer"
             contenteditable="canEdit"
             class="remarkTxt"
             v-text="createNameDataList.remarkTxt"
-            @blur="changeText()"
           ></div>
         </div>
       </div>
@@ -280,11 +279,7 @@ export default {
       );
     },
 
-    start() {
-      // // 初始化从vuex读取，后改为后端
-      // this.createNameDataList = {};
-      // this.createNameDataList = this.$store.state.createNameDataList;
-    },
+    start() {},
 
     /**
      * @description: 根据value值返回groupID
@@ -355,40 +350,77 @@ export default {
       }
     },
 
-    // 返回，模板管理页面
+    /**
+     * @description: 下一步，编辑模板拖拽页面
+     * @param ：无
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年5月5日14:51:58
+     */
+    nextStep() {
+      let vm = this;
+      if (
+        vm.createNameDataList.managementNamevalue == undefined ||
+        vm.createNameDataList.managementNamevalue == ""
+      ) {
+        vm.$Notify({
+          message: this.notifyInfo[0].boxEmpty,
+          background: this.notifyInfo[1].orange,
+          duration: this.notifyInfo[2].duration
+        });
+      } else {
+        this.$router.push({ name: "makeForm" });
+      }
+    },
+
+    /**
+     * @description: 返回，模板管理页面
+     * @param ：无
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月25日14:51:58
+     */
     returnPage() {
       this.$router.push({ name: "management" });
     },
 
-    //下一步，编辑模板拖拽页面
-    nextStep() {
-      this.$router.push({ name: "makeForm" });
-    },
-
-    // 光标离开备注输入框执行存储
+    /**
+     * @description: 光标离开备注输入框执行存储
+     * @param ：无
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月25日14:51:58
+     */
     changeText() {
       this.createNameDataList.remarkTxt = this.storageTxtNode();
     },
 
-    // 将输入内容存储，需要转html格式，有些字符无法存数据库
+    /**
+     * @description: 将输入内容存储，需要转html格式，有些字符无法存数据库
+     * @param ：无
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年4月25日14:51:58
+     */
     storageTxtNode() {
       var temp = document.getElementById("editer").innerText; // 获取文本框内容
       temp = escape.htmlEncode(temp); // 将特殊字符转格式
       return temp;
     },
 
-    // 下拉刷新
+    /**
+     * @description: 下拉刷新
+     * @param ：无
+     * @return: 无
+     * @author: 张颖娟
+     * @Date: 2020年5月5日14:51:58
+     */
     onRefresh() {
       const vm = this;
       setTimeout(() => {
         vm.pullRefresh.isLoading = false; //刷新完成，关闭刷新功能
       }, 1000); //1000代表刷新时间
       this.jumpToPageLoading(); //重新加载页面
-    },
-
-    // 判断当前页面数据是否修改
-    notFocus() {
-      vm.isModify = 1;
     }
   }
 };

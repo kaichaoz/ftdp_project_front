@@ -9,19 +9,34 @@
 -->
 <template>
   <div>
-    <div class="title commonColor">
-      <!-- <div class="iocNameDiv"> -->
+    <titlePerPage
+      :title="managementTitle.title"
+      :leftText="managementTitle.leftText"
+      :iconName="managementTitle.iconName"
+      :iconIsTrue="managementTitle.iconIsTrue"
+      @listenTitlePerPageLeftClick="intoModel()"
+      @listenTitlePerPageRightClick="intoSetting()"
+    ></titlePerPage>
+    <!-- <div class="title commonColor">
+      <div class="iocNameDiv"> 
       <img @click="intoSetting()" class="iocName" :src="iocName" alt />
-      <!-- </div> -->
+       </div> 
 
       <div class="button" @click="intoModel()">组件管理</div>
       <div class="titleName">模板管理</div>
-      <!-- <div class="iocName"> -->
-    </div>
-
-    <div class="body">
-      <!-- 拖动组件 在setting页面实现
-      <vuedraggable v-model="managementDataList" :options="options">-->
+       <div class="iocName"> 
+    </div>-->
+    <van-pull-refresh
+      v-model="pullRefresh.isLoading"
+      :pulling-text="pullRefresh.pulling"
+      :loosing-text="pullRefresh.lossing"
+      :loading-text="pullRefresh.loading"
+      :success-text="pullRefresh.success"
+      @refresh="onRefresh"
+    >
+      <div class="body">
+        <!-- 拖动组件 在setting页面实现
+        <vuedraggable v-model="managementDataList" :options="options">-->
         <!-- 多个模板类型 -->
         <div class="bodyDiv" v-for="(item ,index) in managementDataList ">
           <!-- 整个下拉框 -->
@@ -51,8 +66,9 @@
             </van-collapse-item>
           </van-collapse>
         </div>
-      </vuedraggable>
-    </div>
+        <!-- </vuedraggable> -->
+      </div>
+    </van-pull-refresh>
   </div>
 </template>
 <style scoped>
@@ -128,23 +144,32 @@ import {
 } from "../../../api/Super/template/management"; //引入{根据isUsable查询模板，删除模板，修改模板分组}接口的后端地址
 import { responseCode } from "../../../utils/responseCode"; //引入定义的状态码
 import { mapState } from "vuex"; // 引入vuex用于将全局变量映射为页面变量
+import titlePerPage from "../../../components/publicAll/title_per_page"; // 引入title组件
 
 export default {
   computed: {
     ...mapState(["managementDataListStore"]), // 映射store变量managementDataListStore为当前页面变量，直接使用this即可
-    ...mapState(["management_groupName_List"]) //映射store变量management_groupName_List为当前页面存储页面的分组项目变量，直接使用this即可
+    ...mapState(["management_groupName_List"]), //映射store变量management_groupName_List为当前页面存储页面的分组项目变量，直接使用this即可
+    ...mapState(["pullRefresh"])
   },
   components: {
     user,
     infoShow,
     numberIndex,
     vuedraggable,
-    swipeCell
+    swipeCell,
+    titlePerPage
   },
   data() {
     return {
-      //  此页数据
-      iocName: require("../../../assets/super/setting.png"), // 抬头右侧设置图片
+      managementTitle: {
+        title: "模板管理",
+        leftText: "组件管理",
+        iconName: "setting-o",
+        iconIsTrue: true
+      },
+      // //  此页数据
+      // iocName: require("../../../assets/super/setting.png"), // 抬头右侧设置图片
       plus: require("../../../assets/super/plus.png"), // 底部加号图片
 
       // // 长按后拖动，在setting页面实现
@@ -345,45 +370,52 @@ export default {
       let vm = this;
       vm.managementDataList = [];
       vm.$axios.get(queryByIsUsable).then(res => {
-        if (res.data.code == responseCode.SUCCESSCODE) {
-          //遍历当前页面所有分组模板
-          for (let index = 0; index < res.data.data.length; index++) {
-            //加载当前页面的所有分组模板
-            vm.managementDataList.push({
-              groupID: res.data.data[index].templateGroupId, //分组模板Id
-              activeNames: "1", //默认为 1
-              title: res.data.data[index].templateGroupName, //所有分组模板名称
-              comTitleList: [] //存放各分组模板的具体模板的数组
-            });
-            for (
-              let i = 0;
-              i < res.data.data[index].tempByIsUsableData.length;
-              i++
-            ) {
-              //加载当前页面的所有分组模板的具体模板
-              vm.managementDataList[index].comTitleList.push(
-                {
-                  templateName:
-                    res.data.data[index].tempByIsUsableData[i].templateName,
-                  templateId:
-                    res.data.data[index].tempByIsUsableData[i].templateId,
-                  isUsable: res.data.data[index].tempByIsUsableData[i].isUsable,
-                  postScript:
-                    res.data.data[index].tempByIsUsableData[i].postscript // 备注字段
-                } //所有分组模板的具体模板名称/id/是否可用
-              );
+        switch (res.data.code) {
+          case vm.$responseCode.SUCCESSCODE:
+            //遍历当前页面所有分组模板
+            for (let index = 0; index < res.data.data.length; index++) {
+              //加载当前页面的所有分组模板
+              vm.managementDataList.push({
+                groupID: res.data.data[index].templateGroupId, //分组模板Id
+                activeNames: "1", //默认为 1
+                title: res.data.data[index].templateGroupName, //所有分组模板名称
+                comTitleList: [] //存放各分组模板的具体模板的数组
+              });
+              for (
+                let i = 0;
+                i < res.data.data[index].tempByIsUsableData.length;
+                i++
+              ) {
+                //加载当前页面的所有分组模板的具体模板
+                vm.managementDataList[index].comTitleList.push(
+                  {
+                    templateName:
+                      res.data.data[index].tempByIsUsableData[i].templateName,
+                    templateId:
+                      res.data.data[index].tempByIsUsableData[i].templateId,
+                    isUsable:
+                      res.data.data[index].tempByIsUsableData[i].isUsable,
+                    postScript:
+                      res.data.data[index].tempByIsUsableData[i].postscript // 备注字段
+                  } //所有分组模板的具体模板名称/id/是否可用
+                );
+              }
             }
-          }
-        } else if (res.data.code == responseCode.NULLCODE) {
-          vm.$toast({
-            message: "暂无数据",
-            duration: 1000
-          });
-        } else {
-          vm.$toast({
-            message: "加载失败",
-            duration: 1000
-          });
+            break;
+          case vm.$responseCode.NULLCODE:
+            vm.$Notify({
+              message: vm.notifyInfo[0].noData,
+              background: vm.notifyInfo[1].orange, //   橘色：#FF976A
+              duration: vm.notifyInfo[2].duration
+            });
+            break;
+          default:
+            vm.$Notify({
+              message: vm.notifyInfo[0].noData,
+              background: vm.notifyInfo[1].orange, //   橘色：#FF976A
+              duration: vm.notifyInfo[2].duration
+            });
+            break;
         }
       });
     },
@@ -425,19 +457,42 @@ export default {
             this.managementDataList[index].comTitleList[i].templateId
         )
         .then(res => {
-          if (res.data.code == responseCode.SUCCESSCODE) {
-            vm.$toast({
-              message: "删除成功",
-              duration: 1000
+          switch (res.data.code ) {
+            case vm.$responseCode.SUCCESSCODE:
+              vm.$Notify({
+              message: vm.notifyInfo[0].deleteSucceed, // 删除成功
+              background: vm.notifyInfo[1].orange, // 橘色：#FF976A
+              duration: vm.notifyInfo[2].duration
             });
-          } else {
-            vm.$toast({
-              message: "删除失败",
-              duration: 1000
+            break;
+            case vm.$responseCode.NULLCODE:
+              vm.$Notify({
+              message: vm.notifyInfo[0].noData, // 暂无数据
+              background: vm.notifyInfo[1].orange, // 橘色：#FF976A
+              duration: vm.notifyInfo[2].duration
             });
-          }
+            break;
+            default:
+              vm.$Notify({
+              message: vm.notifyInfo[0].deleteFailed, // 删除失败
+              background: vm.notifyInfo[1].orange, // 橘色：#FF976A
+              duration: vm.notifyInfo[2].duration
+            });
+            break;
+
+       
+          } 
         });
       this.managementDataList[index].comTitleList.splice(i, 1);
+    },
+
+    //下拉刷新
+    onRefresh() {
+      const vm = this;
+      setTimeout(() => {
+        vm.pullRefresh.isLoading = false; //刷新完成，关闭刷新功能
+      }, 1000); //1000代表刷新时间
+      this.start(); //重新加载页面
     }
   }
 };

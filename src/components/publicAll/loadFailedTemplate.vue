@@ -8,20 +8,32 @@
  -->
 <template>
   <div>
-    <div class="pictureText">
-      <div class="img">
-        <img :src="load" />
+    <van-pull-refresh
+      v-model="pullRefresh.isLoading"
+      :pulling-text="pullRefresh.pulling"
+      :loosing-text="pullRefresh.lossing"
+      :loading-text="pullRefresh.loading"
+      :success-text="pullRefresh.success"
+      @refresh="onRefresh"
+    >
+      <div class="pictureText">
+        <div class="img">
+          <img :src="load" />
+        </div>
+        <div @click="loadPageClick">连接失败，点击重新连接</div>
       </div>
-      <div @click="loadPageClick">
-        连接失败，点击重新连接
-      </div>
-    </div>
+    </van-pull-refresh>
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
 //加载整个页面，下拉刷新，点击刷新
 /* eslint-disable */
 export default {
+  computed: {
+    // 展开运算符，将全局变量映射为自己界面的变量
+    ...mapState(["pullRefresh"])
+  },
   data() {
     return {
       load: require("../../assets/publicAll/loadFailed.jpg")
@@ -36,6 +48,14 @@ export default {
       // this.window.reload();
       // this.$router.go(0)
       window.location.reload();
+    },
+    //下拉刷新功能
+    onRefresh() {
+      const vm = this;
+      setTimeout(() => {
+        vm.pullRefresh.isLoading = false; //刷新完成，关闭刷新功能 
+      }, 1000); //1000代表刷新时间
+      window.location.reload();
     }
   }
 };
@@ -46,8 +66,8 @@ img {
   width: 3.5rem;
   margin-bottom: 0.8rem;
 }
-.pictureText{
-  position:fixed;
+.pictureText {
+  position: fixed;
   top: 200px;
   left: 0;
   right: 0;

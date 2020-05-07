@@ -373,7 +373,8 @@ export default {
     listenToNumberIndex(isTrue) {
       this.componentInvalidToEnterInfomationList[0].isTrue = isTrue;
       this.componentEnterInfomationToInvalidList[0].isTrue = false;
-    }, //下拉刷新功能
+    }, 
+    //下拉刷新功能
     onRefresh() {
       const vm = this;
       setTimeout(() => {

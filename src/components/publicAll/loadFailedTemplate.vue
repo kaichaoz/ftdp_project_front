@@ -13,8 +13,7 @@
         <img :src="load" />
       </div>
       <div @click="loadPageClick">
-        网络开小差了，点击
-        <span>重新加载</span>
+        连接失败，点击重新连接
       </div>
     </div>
   </div>

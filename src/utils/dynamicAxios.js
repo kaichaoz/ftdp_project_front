@@ -13,6 +13,7 @@ axios.defaults.baseURL = process.env.VUE_APP_BACKEND_URL
  */
 axios.interceptors.request.use(config => {
   store.state.isShowLoading = true // 加载中动画显示
+  store.state.isShowLoadFailed=false  //加载失败页面关闭
 
   // config.headers.Authorization = store.state.token
   //localStorage.getItem("token")//store.getToken()

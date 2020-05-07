@@ -7,7 +7,7 @@
  * @LastEditTime: 
  -->
 <template>
-  <div>
+  <div class="pictureText">
     <img :src="load" />
   </div>
 </template>
@@ -24,5 +24,11 @@ export default {
 <style scoped>
 img {
   margin-top: 50%;
+}
+.pictureText{
+  position:fixed;
+  top: 200px;
+  left: 0;
+  right: 0;
 }
 </style>
